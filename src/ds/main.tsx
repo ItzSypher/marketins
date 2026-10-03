@@ -34,15 +34,42 @@ function Secao({ id, titulo, porque, children }: { id: string; titulo: string; p
   );
 }
 
-function App() {
-  const marcelo = destaques[0];
+const PARA_SERGIO = location.pathname.startsWith('/sergio');
+
+/* Versão para o Sérgio: abre com uma carta da Fox e fecha com o próximo passo. */
+function CapaSergio() {
   return (
-    <main className="ds">
+    <section className="carta">
+      <img className="carta__icone" src="/icone.svg" alt="" width="72" height="72" />
+      <p className="carta__de">Da Fox para o Sérgio</p>
+      <h1>Sérgio, essa é a cara nova da Marketins.</h1>
+      <p>Antes de mexer em qualquer página do site, a gente montou a base: as cores, a fonte, os botões e o jeito de falar. Tudo o que vier depois sai daqui.</p>
+      <p>Pega o celular, aumenta o som e vai descendo devagar. Tem música, tem o seu time, tem o Instagram da agência abrindo dentro do celular.</p>
+      <p className="carta__dica">Role para ver ↓</p>
+    </section>
+  );
+}
+
+function FimSergio() {
+  return (
+    <section className="carta carta--fim">
+      <h2>E agora?</h2>
+      <p>Se gostou, a gente segue para a abertura do site: o "Nada de GTA 6. Aqui é Marketins", com o foguete em 3D.</p>
+      <p>Qualquer coisa que não tiver a sua cara, é só falar. Ajustamos antes de ir para o ar.</p>
+      <p className="carta__assina">Fox</p>
+    </section>
+  );
+}
+
+function App() {
+  return (
+    <main className={`ds${PARA_SERGIO ? ' ds--sergio' : ''}`}>
+      {PARA_SERGIO && <CapaSergio />}
       <header className="ds-topo">
         <img src="/logo-completo.svg" alt="Marketins, soluções de marketing" width="220" height="52" />
-        <p>Design system · prévia 1 para aprovação</p>
+        <p>{PARA_SERGIO ? 'Design system · feito pela Fox para a Marketins' : 'Design system · prévia 1 para aprovação'}</p>
         <nav aria-label="Seções">
-          {['logo', 'proposito', 'cores', 'tipografia', 'botoes', 'cards', 'time', 'clientes', 'instagram', 'motivos', 'movimento', 'hero'].map((s) => (
+          {['logo', 'proposito', 'cores', 'tipografia', 'botoes', 'time', 'clientes', 'instagram', 'motivos', 'movimento', 'hero'].map((s) => (
             <a key={s} href={`#${s}`}>{s === 'proposito' ? 'propósito' : s === 'botoes' ? 'botões' : s}</a>
           ))}
         </nav>
@@ -161,6 +188,7 @@ function App() {
 
       <Musica />
       <footer className="ds-rodape">Prévia para aprovação. Nada aqui está no site oficial.</footer>
+      {PARA_SERGIO && <FimSergio />}
     </main>
   );
 }

@@ -235,3 +235,15 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 @media (prefers-reduced-motion: reduce) {
   .mosaico__trilho, .pessoa__barras i.is-agora::after, .toque img, .som.is-tocando img { animation: none; }
 }
+
+/* Página do Sérgio: carta de abertura e fecho */
+.carta { min-height: 100svh; display: grid; align-content: center; gap: 1.1rem; padding: 3rem 0; max-width: 34rem; }
+.carta__icone { width: 64px; }
+.carta__de { font: 700 0.72rem/1 var(--display); letter-spacing: 0.25em; text-transform: uppercase; color: var(--laranja); }
+.carta h1, .carta h2 { font-weight: 800; font-size: clamp(2rem, 9vw, 3.6rem); line-height: 1; text-transform: uppercase; }
+.carta p { font-size: 1.05rem; line-height: 1.55; color: var(--texto-2); }
+.carta__dica { color: var(--texto) !important; font-size: 0.85rem !important; }
+.carta--fim { min-height: 80svh; }
+.carta__assina { font: 800 1.4rem/1 var(--display); color: var(--texto) !important; }
+.ds--sergio .ds-porque { display: none; }
+.ds--sergio .ds-topo p { display: none; }
