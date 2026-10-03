@@ -118,3 +118,14 @@ export const destaques = [
     texto: 'Aqui a gente é suspeito pra falar. Melhor deixar o resultado e os clientes da Locafácil falarem por nós.',
   },
 ];
+
+// Time novo (Figma "Versão Desktop/Mobile" do carrossel). Abre no Sérgio.
+export const equipe = [
+  { nome: 'Sérgio Martins', foto: '/time2/sergio.webp', texto: 'Gestor de tráfego há 15 anos, mercadólogo e fundador da Agência Marketins.' },
+  { nome: 'Julyane', foto: '/time2/julyane.webp', texto: 'Formada em gestão de marketing e pós-graduanda em ciência de dados e IA.' },
+  { nome: 'Gabriella', foto: '/time2/gabriella.webp', texto: 'Formada em UX/UI Design e desenvolvedora front-end de sites e aplicativos.' },
+  { nome: 'Elaine', foto: '/time2/elaine.webp', texto: 'Cursando publicidade e propaganda. Tem um curta-metragem premiado.' },
+  { nome: 'Janine', foto: '/time2/janine.webp', texto: 'Formada em audiovisual. Desenvolveu um projeto exclusivo para a maior assessoria previdenciária do Brasil.' },
+  { nome: 'Guilherme', foto: '/time2/guilherme.webp', texto: 'Formado em design gráfico e pós-graduado em design digital. Faz ilustração e motion design.' },
+  { nome: 'Henrique', foto: '/time2/henrique.webp', texto: 'Atuava na comunicação social da Força Aérea Brasileira.' },
+];

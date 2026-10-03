@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { cases, destaques, linkContato, sergio, servicos, time } from '../content';
+import { cases, destaques, linkContato, servicos } from '../content';
+import { CardsApple, Equipe, IphoneReels, Mosaico, Musica } from './blocos';
 import '../tokens.css';
 import './ds.css';
 
@@ -41,7 +42,7 @@ function App() {
         <img src="/logo-completo.svg" alt="Marketins, soluções de marketing" width="220" height="52" />
         <p>Design system · prévia 1 para aprovação</p>
         <nav aria-label="Seções">
-          {['logo', 'proposito', 'cores', 'tipografia', 'botoes', 'cards', 'motivos', 'movimento', 'hero'].map((s) => (
+          {['logo', 'proposito', 'cores', 'tipografia', 'botoes', 'cards', 'time', 'clientes', 'instagram', 'motivos', 'movimento', 'hero'].map((s) => (
             <a key={s} href={`#${s}`}>{s === 'proposito' ? 'propósito' : s === 'botoes' ? 'botões' : s}</a>
           ))}
         </nav>
@@ -117,15 +118,25 @@ function App() {
         <p className="ds-nota">Todos têm foco visível no teclado e área de toque de 48px no celular.</p>
       </Secao>
 
-      <Secao id="cards" titulo="Cards" porque="Um modelo por tipo de conteúdo, todos com o mesmo raio (14px) e a mesma borda.">
-        <div className="ds-cards">
-          <article className="c-case"><img src={cases[7].img} alt="" /><div><h3>{cases[7].nome}</h3><p>Social media e audiovisual</p></div></article>
-          <article className="c-destaque"><img src={marcelo.img} alt="" /><div><p className="t-legenda">Cliente em destaque</p><h3>{marcelo.nome}</h3><p>{marcelo.texto}</p></div></article>
-          <article className="c-pessoa"><img src={sergio.foto} alt="" /><h3>{sergio.nome}</h3><p>{sergio.cargo}</p></article>
-          <article className="c-pessoa"><img src={time[0].foto} alt="" /><h3>{time[0].nome}</h3><p>Time Marketins</p></article>
-          <article className="c-servico"><h3>{servicos[3].nome}</h3><p>{servicos[3].texto}</p><ul>{servicos[3].itens.map((i) => <li key={i}>{i}</li>)}</ul></article>
-          <article className="c-evento"><img src="/conecta-logo.webp" alt="Marketins Conecta" /><p>16 de outubro. O maior evento da Baixada.</p><a className="b-seta" href="#cards"><span>Saber mais</span><i aria-hidden="true">↗</i></a></article>
-        </div>
+      <Secao id="cards" titulo="Cards" porque="Imagem grande, título curto e um botão + que abre o detalhe no próprio card. Toque no + para ver.">
+        <CardsApple itens={[
+          { titulo: destaques[0].nome, resumo: 'A maior assessoria previdenciária do país.', detalhe: 'Redes sociais, tráfego, mídia digital e offline, eventos e a landing page.', img: destaques[0].img },
+          { titulo: 'Locagora', resumo: 'Aluguel de motos na Baixada.', detalhe: 'Social media, campanhas, stories e landing page.', img: cases[9].img },
+          { titulo: servicos[2].nome, resumo: 'Equipe e equipamento próprios.', detalhe: servicos[2].texto, img: cases[7].img },
+          { titulo: 'Marketins Conecta', resumo: '16 de outubro. O maior evento da Baixada.', detalhe: 'Influenciadores, marcas e empresários da Baixada no mesmo lugar.', tom: 'marca' },
+        ]} />
+      </Secao>
+
+      <Secao id="time" titulo="Time" porque="Começa aberto no Sérgio. Clique em outra pessoa para abrir, com nome e descrição. Só isso.">
+        <Equipe />
+      </Secao>
+
+      <Secao id="clientes" titulo="Clientes" porque="A imagem do mosaico do Figma, rolando devagar. Sem cards por cima.">
+        <Mosaico />
+      </Secao>
+
+      <Secao id="instagram" titulo="Instagram" porque="O celular mostra o perfil e, ao rolar, abre o Reels da Marketins.">
+        <IphoneReels />
       </Secao>
 
       <Secao id="motivos" titulo="Motivos gráficos" porque="Elementos que repetem e fazem o site parecer Marketins sem precisar do logo.">
@@ -157,6 +168,7 @@ function App() {
         <p className="ds-nota">A abertura GTA, o X e o ícone 3D entram na prévia 2, antes desta parte.</p>
       </Secao>
 
+      <Musica />
       <footer className="ds-rodape">Prévia para aprovação. Nada aqui está no site oficial.</footer>
     </main>
   );
