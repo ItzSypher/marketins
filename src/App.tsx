@@ -3,7 +3,7 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Stage } from './sections/Stage';
-import { cases, conecta, depoimentos, linkContato, INSTAGRAM, numeros, sergio, servicos, time } from './content';
+import { cases, conecta, destaques, historia, depoimentos, linkContato, INSTAGRAM, numeros, sergio, servicos, time } from './content';
 
 const CHAVE_POPUP = 'marketins-conecta-visto';
 const CASES_INICIAIS = 10;
@@ -84,6 +84,29 @@ export default function App() {
               <span>{n.rotulo}</span>
             </div>
           ))}
+        </section>
+
+        <section className="historia" aria-labelledby="historia-titulo" data-revela>
+          <h2 id="historia-titulo">{historia.titulo}</h2>
+          <div className="historia__texto">
+            {historia.texto.map((t) => <p key={t}>{t}</p>)}
+          </div>
+        </section>
+
+        <section className="destaques" aria-labelledby="destaques-titulo">
+          <h2 id="destaques-titulo" className="titulo">Quem confia na Marketins</h2>
+          <ul className="destaques__grade" data-revela>
+            {destaques.map((d, i) => (
+              <li key={d.nome} className={`destaque destaque--${i + 1}`}>
+                {d.img && <img src={d.img} alt={`Case ${d.nome}`} width="800" height="568" loading="lazy" decoding="async" />}
+                <div className="destaque__texto">
+                  <h3>{d.nome}</h3>
+                  <p>{d.texto}</p>
+                  {d.link && <a href={d.link} target="_blank" rel="noopener">Visitar o site</a>}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="servicos" aria-labelledby="servicos-titulo">

@@ -75,8 +75,7 @@ export function Stage() {
         },
       });
 
-      tl.fromTo(q('.abertura__icone'), { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -40, duration: 0.8 }, 0)
-        .fromTo(q('.abertura__frase'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6 }, 0)
+      tl.fromTo(q('.abertura'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6 }, 0)
         // o gradiente sai das letras e a foto aparece dentro delas
         .fromTo(q('.hero__tela'), { opacity: 1 }, { opacity: 0, duration: 2.2 }, 0.3)
         // as letras abrem até a foto ocupar a tela
@@ -85,7 +84,27 @@ export function Stage() {
         .fromTo(q('.hero__copy > *'), { autoAlpha: 0, y: 28 },
           { autoAlpha: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power2.out' }, 6.4);
 
-      return () => el.classList.remove('is-animated', 'is-open');
+      // Criado depois da timeline do scroll para o estado inicial dela não sobrescrever este.
+      // Ao carregar: o ícone cai no centro, some, e o "marketins" aparece no lugar.
+      document.body.classList.add('com-abertura');
+      const vh = el.clientHeight;
+      gsap.timeline({ delay: 0.2 })
+        .fromTo(q('.abertura__icone'), { y: -vh * 0.7, autoAlpha: 1 }, { y: 0, duration: 1.1, ease: 'bounce.out' })
+        .to(q('.abertura__icone'), { scale: 0.4, autoAlpha: 0, duration: 0.45, ease: 'power2.in' }, '+=0.35')
+        .fromTo(hero, { autoAlpha: 0, scale: 0.92 }, { autoAlpha: 1, scale: 1, duration: 0.8, ease: 'power3.out' }, '-=0.15')
+        .fromTo(q('.abertura__frase'), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4');
+
+      // O ícone do topo só aparece depois da abertura, para a marca não se repetir.
+      ScrollTrigger.create({
+        trigger: el, start: 'top top', end: '+=2200',
+        onLeave: () => document.body.classList.add('passou-abertura'),
+        onEnterBack: () => document.body.classList.remove('passou-abertura'),
+      });
+
+      return () => {
+        el.classList.remove('is-animated', 'is-open');
+        document.body.classList.remove('com-abertura', 'passou-abertura');
+      };
     });
 
     return () => mm.revert();

@@ -31,12 +31,13 @@ h1, h2, h3, .titulo, .eyebrow, .btn { font-family: var(--display); }
 
 .topo { position: absolute; top: 2.6rem; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 16px; pointer-events: none; }
 .topo > * { pointer-events: auto; }
-.topo img { width: 40px; height: 40px; }
+.topo img { width: 40px; height: 40px; transition: opacity 0.4s ease; }
+.com-abertura:not(.passou-abertura) .topo img { opacity: 0; }
 
 /* ---------- Abertura + hero ---------- */
 .stage { position: relative; width: 100%; height: 100svh; overflow: hidden; background: var(--chao); --logo-h: 14vw; }
 .abertura { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.abertura__icone { position: absolute; left: 50%; top: calc(50% - var(--logo-h) / 2 - clamp(56px, 9vh, 96px) - 1.25rem); width: clamp(56px, 9vh, 96px); height: auto; transform: translateX(-50%); }
+.abertura__icone { position: absolute; left: 50%; top: 50%; width: clamp(96px, 18vh, 168px); height: auto; margin: calc(clamp(96px, 18vh, 168px) / -2) 0 0 calc(clamp(96px, 18vh, 168px) / -2); }
 .abertura__frase { position: absolute; left: 0; right: 0; top: calc(50% + var(--logo-h) / 2 + 1.1rem); text-align: center; font: 600 clamp(0.62rem, 1.4vw, 0.85rem)/1 var(--display); letter-spacing: 0.42em; text-transform: uppercase; color: var(--texto-2); }
 
 .hero { position: absolute; inset: 0; z-index: 2; }
@@ -67,6 +68,22 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 .numeros { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
 .numero strong { display: block; font: 800 clamp(2.2rem, 11vw, 4.8rem)/1 var(--display); color: var(--laranja); letter-spacing: -0.02em; }
 .numero span { display: block; margin-top: 0.5rem; max-width: 16ch; font-size: 0.9rem; color: var(--texto-2); }
+
+/* História: manifesto em tipo grande, texto curto embaixo. */
+.historia { display: grid; gap: 2rem; }
+.historia h2 { font-weight: 800; font-size: clamp(2rem, 8.5vw, 4.4rem); line-height: 0.98; text-transform: uppercase; letter-spacing: -0.02em; max-width: 18ch; }
+.historia__texto { display: grid; gap: 1rem; max-width: 52ch; color: var(--texto-2); font-size: 1.05rem; }
+
+/* Clientes em destaque: um grande e dois menores. */
+.destaques__grade { margin-top: 2.5rem; display: grid; gap: 12px; }
+.destaque { overflow: hidden; border-radius: 14px; background: var(--chao-2); display: grid; align-content: start; }
+.destaque img { width: 100%; height: auto; aspect-ratio: 800 / 568; object-fit: cover; }
+.destaque__texto { padding: 1.5rem; display: grid; gap: 0.75rem; justify-items: start; }
+.destaque h3 { font-weight: 800; font-size: 1.35rem; line-height: 1.05; text-transform: uppercase; }
+.destaque p { color: var(--texto-2); max-width: 44ch; }
+.destaque a { font: 700 0.75rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.08em; color: var(--laranja); text-underline-offset: 4px; }
+.destaque--3 { background: var(--gradiente-texto); align-content: end; min-height: 16rem; }
+.destaque--3 p { color: rgb(255 255 255 / 0.92); }
 
 /* Serviços em bento: 1 coluna no celular, grade mista no desktop. */
 .bento { margin-top: 2.5rem; display: grid; gap: 12px; }
@@ -132,6 +149,12 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 
   .numeros { grid-template-columns: repeat(4, 1fr); padding-top: 5rem !important; padding-bottom: 5rem !important; }
 
+  .historia { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; column-gap: 4rem; }
+  .destaques__grade { grid-template-columns: repeat(2, 1fr); }
+  .destaque--1 { grid-column: span 2; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-content: stretch; }
+  .destaque--1 img { height: 100%; }
+  .destaque--1 .destaque__texto { align-content: end; padding: 2.5rem; }
+  .destaque--1 h3 { font-size: clamp(1.6rem, 2.6vw, 2.4rem); }
   .bento { grid-template-columns: repeat(6, 1fr); }
   .bento__item--1 { grid-column: span 4; grid-row: span 2; }
   .bento__item--1 img { aspect-ratio: 16 / 8; }

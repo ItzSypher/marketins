@@ -91,3 +91,30 @@ export const conecta = {
   link: 'https://www.instagram.com/p/Dd4W2yxCqc8/',
   parceiros: ['Mezi', 'Núcleo IDEA'],
 };
+
+export const historia = {
+  titulo: 'Nascida na Baixada. Com padrão de agência grande.',
+  texto: [
+    'A Marketins começou em São João de Meriti, juntando gente de marketing, audiovisual, design, tráfego e desenvolvimento num time só.',
+    'Hoje atende mais de 100 empresas, de negócios do bairro a marcas com atuação nacional, com equipe própria de gravação e o mesmo cuidado em cada conta.',
+  ],
+};
+
+// Clientes que a Marketins escolheu destacar.
+export const destaques = [
+  {
+    nome: 'Marcelo Manhães Assessoria Previdenciária',
+    texto: 'A maior assessoria previdenciária do país. Cuidamos das redes, do tráfego, da mídia digital e offline e da landing page.',
+    img: '/cases/marcelo-manhaes.webp',
+    link: 'https://marcelomanhaesassessoria.com.br',
+  },
+  {
+    nome: 'Locagora Baixada',
+    texto: 'Aluguel de motos na Baixada Fluminense. Social media e campanhas.',
+    img: '/cases/locagora-baixada.webp',
+  },
+  {
+    nome: 'Locafácil',
+    texto: 'Aqui a gente é suspeito pra falar. Melhor deixar o resultado e os clientes da Locafácil falarem por nós.',
+  },
+];
