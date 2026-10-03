@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { cases, equipe } from '../content';
+import { Logo3D } from './Logo3D';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -201,9 +202,12 @@ export function Musica() {
   const [tocando, setTocando] = useState(false);
   const [entrada, setEntrada] = useState(true);
 
+  const [saindo, setSaindo] = useState(0);
   const tocar = () => {
     audio.current?.play().then(() => setTocando(true)).catch(() => setTocando(false));
-    setEntrada(false);
+    // o foguete dá um giro e a tela some
+    setSaindo((n) => n + 1);
+    window.setTimeout(() => setEntrada(false), 700);
   };
   const alternar = () => {
     const a = audio.current;
@@ -235,8 +239,8 @@ export function Musica() {
     <>
       <audio ref={audio} src="/media/musica.mp3" loop preload="auto" />
       {entrada && (
-        <button className="toque" onClick={tocar} aria-label="Toque na tela para entrar com som">
-          <img src="/icone.svg" alt="" />
+        <button className={`toque${saindo ? ' is-saindo' : ''}`} onClick={tocar} aria-label="Toque na tela para entrar com som">
+          <Logo3D tipo="icone" className="toque__logo" impulso={saindo} />
           <span>Toque na tela</span>
         </button>
       )}

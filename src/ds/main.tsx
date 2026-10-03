@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { destaques, linkContato } from '../content';
 import { Equipe, IphoneReels, Mosaico, Musica } from './blocos';
 import '../tokens.css';
+import { Logo3D } from './Logo3D';
+import { Stage } from '../sections/Stage';
 import './ds.css';
+import './stage.css';
 
 const cores = [
   { nome: 'Magenta', var: '--magenta', hex: '#D0004D', uso: 'Marca. Fundo com texto branco (5,5:1).' },
@@ -62,15 +65,37 @@ function FimSergio() {
 }
 
 function App() {
+  const vitrine = (
+    <>
+      <Secao id="tres-d" titulo="3D" porque="Foguete extrudado do SVG oficial e o Conecta em camadas, em WebGL. Mexa o mouse ou o dedo.">
+        <div className="ds-3d">
+          <figure><Logo3D tipo="icone" /><figcaption><b>Marketins</b> O mesmo que gira no "toque na tela".</figcaption></figure>
+          <figure><Logo3D tipo="conecta" /><figcaption><b>Marketins Conecta</b> 16 de outubro. O maior evento da Baixada.</figcaption></figure>
+        </div>
+      </Secao>
+      <Secao id="time" titulo="Time" porque="Funciona como stories: abre no Sérgio e passa sozinho para o próximo, com a barra no topo. Clique em alguém para abrir na hora.">
+        <Equipe />
+      </Secao>
+
+      <Secao id="clientes" titulo="Clientes" porque="Duas faixas de trabalhos andando em sentidos opostos. Cada peça aparece inteira, sem corte, em qualquer tela.">
+        <Mosaico />
+      </Secao>
+
+      <Secao id="instagram" titulo="Instagram" porque="Toque em um post para abrir o feed dentro do celular. Rolando, abre o Reels com som e miniplayer; a música do site pausa.">
+        <IphoneReels />
+      </Secao>
+
+    </>
+  );
   return (
     <main className={`ds${PARA_SERGIO ? ' ds--sergio' : ''}`}>
-      {PARA_SERGIO && <CapaSergio />}
+      {PARA_SERGIO && <><CapaSergio /><div className="ds-stage"><Stage /></div>{vitrine}</>}
       <header className="ds-topo">
         <img src="/logo-completo.svg" alt="Marketins, soluções de marketing" width="220" height="52" />
         <p>{PARA_SERGIO ? 'Design system · feito pela Fox para a Marketins' : 'Design system · prévia 1 para aprovação'}</p>
         <nav aria-label="Seções">
-          {['logo', 'proposito', 'cores', 'tipografia', 'botoes', 'time', 'clientes', 'instagram', 'motivos', 'movimento', 'hero'].map((s) => (
-            <a key={s} href={`#${s}`}>{s === 'proposito' ? 'propósito' : s === 'botoes' ? 'botões' : s}</a>
+          {['logo', 'tres-d', 'proposito', 'cores', 'tipografia', 'botoes', 'time', 'clientes', 'instagram', 'motivos', 'movimento', 'hero'].map((s) => (
+            <a key={s} href={`#${s}`}>{s === 'proposito' ? 'propósito' : s === 'botoes' ? 'botões' : s === 'tres-d' ? '3D' : s}</a>
           ))}
         </nav>
       </header>
@@ -145,18 +170,7 @@ function App() {
         <p className="ds-nota">Todos têm foco visível no teclado e área de toque de 48px no celular.</p>
       </Secao>
 
-      <Secao id="time" titulo="Time" porque="Funciona como stories: abre no Sérgio e passa sozinho para o próximo, com a barra no topo. Clique em alguém para abrir na hora.">
-        <Equipe />
-      </Secao>
-
-      <Secao id="clientes" titulo="Clientes" porque="Duas faixas de trabalhos andando em sentidos opostos. Cada peça aparece inteira, sem corte, em qualquer tela.">
-        <Mosaico />
-      </Secao>
-
-      <Secao id="instagram" titulo="Instagram" porque="Toque em um post para abrir o feed dentro do celular. Rolando, abre o Reels com som e miniplayer; a música do site pausa.">
-        <IphoneReels />
-      </Secao>
-
+      {!PARA_SERGIO && vitrine}
       <Secao id="motivos" titulo="Motivos gráficos" porque="Elementos que repetem e fazem o site parecer Marketins sem precisar do logo.">
         <div className="ds-motivos">
           <div className="m-orbita"><span /><b>Órbita do foguete</b><small>Arcos magenta e laranja, tirados do ícone. Fundo de seções e da revelação circular.</small></div>

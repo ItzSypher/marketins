@@ -219,7 +219,9 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 
 /* Música */
 .toque { position: fixed; inset: 0; z-index: 60; display: grid; place-content: center; justify-items: center; gap: 1.25rem; border: 0; background: rgb(11 7 9 / 0.94); color: var(--texto); cursor: pointer; font: 600 0.8rem/1 var(--display); letter-spacing: 0.3em; text-transform: uppercase; }
-.toque img { width: clamp(96px, 20vw, 150px); animation: pulso 2s ease-in-out infinite; }
+.toque { transition: opacity 0.6s 0.15s; }
+.toque.is-saindo { opacity: 0; pointer-events: none; }
+.toque__logo { width: min(70vw, 300px); }
 @keyframes pulso { 50% { transform: scale(1.06); } }
 .som { position: fixed; z-index: 50; right: 16px; bottom: 16px; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--linha); background: rgb(22 16 19 / 0.85); backdrop-filter: blur(10px); display: grid; place-items: center; cursor: pointer; }
 .som img { width: 34px; opacity: 0.55; transition: opacity 0.3s; }
@@ -247,3 +249,20 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 .carta__assina { font: 800 1.4rem/1 var(--display); color: var(--texto) !important; }
 .ds--sergio .ds-porque { display: none; }
 .ds--sergio .ds-topo p { display: none; }
+
+/* 3D */
+.logo3d { position: relative; aspect-ratio: 1; display: grid; place-items: center; }
+.logo3d--conecta { aspect-ratio: 16 / 9; }
+.logo3d canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.logo3d__fallback { width: 55%; }
+.logo3d--conecta .logo3d__fallback { width: 90%; }
+.logo3d.is-3d .logo3d__fallback { visibility: hidden; }
+.ds-3d { display: grid; gap: 1.5rem; }
+.ds-3d figure { display: grid; gap: 0.75rem; padding: 1rem; border-radius: 22px; background: radial-gradient(circle at 50% 40%, #2a0f19, var(--chao-2) 70%); border: 1px solid var(--linha); }
+.ds-3d figcaption { color: var(--texto-2); font-size: 0.9rem; }
+.ds-3d figcaption b { display: block; color: var(--texto); font-family: var(--display); text-transform: uppercase; }
+@media (min-width: 768px) { .ds-3d { grid-template-columns: 1fr 1.4fr; align-items: stretch; } .ds-3d .logo3d--icone { max-height: 360px; margin-inline: auto; } }
+/* barra do topo não cobre o celular fixado */
+.iphone-sec { padding-top: 64px; gap: 1rem; }
+.iphone { width: min(78vw, 330px, calc((100svh - 190px) * 9 / 19.3)); }
+.ds--sergio .ds-topo { position: static; }
