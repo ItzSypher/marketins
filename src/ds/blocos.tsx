@@ -5,23 +5,49 @@ import { cases, equipe } from '../content';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---------- Time: abre no Sérgio, clique abre os outros ---------- */
+/* ---------- Time: stories. Abre no Sérgio e passa sozinho; clique abre na hora ---------- */
+const TEMPO_STORY = 6000;
 export function Equipe() {
   const [ativo, setAtivo] = useState(0);
-  const cols = equipe.map((_, i) => (i === ativo ? '3.2fr' : '1fr')).join(' ');
+  const [auto, setAuto] = useState(true);
+  const raiz = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!auto || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = window.setTimeout(() => setAtivo((a) => (a + 1) % equipe.length), TEMPO_STORY);
+    return () => window.clearTimeout(id);
+  }, [ativo, auto]);
+
+  // a foto aberta acompanha o mouse de leve
+  const mover = (e: React.PointerEvent) => {
+    const el = raiz.current; if (!el || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--px', `${((e.clientX - r.left) / r.width - 0.5) * 2}`);
+    el.style.setProperty('--py', `${((e.clientY - r.top) / r.height - 0.5) * 2}`);
+  };
+
+  const cols = equipe.map((_, i) => (i === ativo ? '4fr' : '1fr')).join(' ');
   return (
-    <div className="equipe2" style={{ '--cols': cols } as React.CSSProperties}>
+    <div className="equipe2" ref={raiz} onPointerMove={mover} style={{ '--cols': cols } as React.CSSProperties}>
       {equipe.map((p, i) => {
         const aberto = i === ativo;
         return (
           <button
             key={p.nome}
             className={`pessoa${aberto ? ' is-aberto' : ''}`}
-            onClick={() => setAtivo(i)}
+            onClick={() => { setAtivo(i); setAuto(false); }}
             aria-expanded={aberto}
             aria-label={aberto ? `${p.nome}. ${p.texto}` : `Ver ${p.nome}`}
           >
             <img src={p.foto} alt="" width="800" height="800" loading="lazy" />
+            {aberto && (
+              <span className="pessoa__barras" aria-hidden="true">
+                {equipe.map((_, j) => (
+                  <i key={j} className={j < i ? 'is-visto' : j === i ? (auto ? 'is-agora' : 'is-visto') : ''} />
+                ))}
+              </span>
+            )}
+            <span className="pessoa__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <span className="pessoa__nome">{p.nome}</span>
             <span className="pessoa__texto">{p.texto}</span>
           </button>
@@ -31,51 +57,37 @@ export function Equipe() {
   );
 }
 
-/* ---------- Cards interativos (estilo Apple: imagem, título e "+") ---------- */
-type Card = { titulo: string; resumo: string; detalhe: string; img?: string; tom?: 'marca' };
-
-export function CardsApple({ itens }: { itens: Card[] }) {
-  const [aberto, setAberto] = useState<number | null>(null);
-  return (
-    <ul className="apple">
-      {itens.map((c, i) => {
-        const on = aberto === i;
-        return (
-          <li key={c.titulo} className={`apple__card${on ? ' is-aberto' : ''}${c.tom ? ' apple__card--marca' : ''}`}>
-            {c.img && <img src={c.img} alt="" loading="lazy" />}
-            <div className="apple__topo">
-              <h3>{c.titulo}</h3>
-              <p>{c.resumo}</p>
-            </div>
-            <div className="apple__detalhe" aria-hidden={!on}>
-              <p>{c.detalhe}</p>
-            </div>
-            <button className="apple__mais" onClick={() => setAberto(on ? null : i)} aria-expanded={on} aria-label={on ? `Fechar ${c.titulo}` : `Mais sobre ${c.titulo}`}>
-              <span aria-hidden="true">+</span>
-            </button>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-/* ---------- Mosaico de clientes (imagem do Figma, rolando devagar) ---------- */
+/* ---------- Mosaico: duas faixas em sentidos opostos, peças inteiras ---------- */
 export function Mosaico() {
+  const linhas = [cases.slice(0, 11), cases.slice(11)];
   return (
-    <div className="mosaico" aria-label="Clientes da Marketins">
-      <div className="mosaico__trilho">
-        <img src="/mosaico-clientes.webp" alt="Trabalhos para clientes da Marketins" />
-        <img src="/mosaico-clientes.webp" alt="" aria-hidden="true" />
-      </div>
+    <div className="mosaico" aria-label="Trabalhos para clientes da Marketins">
+      {linhas.map((l, k) => (
+        <div key={k} className={`mosaico__trilho${k ? ' mosaico__trilho--volta' : ''}`}>
+          {[...l, ...l].map((c, i) => (
+            <img key={i} src={c.img} alt={i < l.length ? `Case ${c.nome}` : ''} aria-hidden={i >= l.length} width="800" height="568" loading="lazy" />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
 
-/* ---------- iPhone: feed do Instagram que abre o Reels ao rolar ---------- */
+/* ---------- Música do site: outros blocos pedem pausa/retomada por evento ---------- */
+export const somDoSite = (acao: 'pausar' | 'retomar') =>
+  window.dispatchEvent(new CustomEvent('marketins:musica', { detail: acao }));
+
+/* ---------- iPhone: feed do Instagram. Post abre micro feed; rolando, abre o Reels ---------- */
+const POSTS = cases.slice(0, 12);
 export function IphoneReels() {
   const sec = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const microRef = useRef<HTMLDivElement>(null);
+  const [post, setPost] = useState<number | null>(null);
+  const [tocando, setTocando] = useState(false);
+  const [mudo, setMudo] = useState(false);
+  const [prog, setProg] = useState(0);
+  const [reel, setReel] = useState(false);
 
   useLayoutEffect(() => {
     const el = sec.current!;
@@ -86,22 +98,41 @@ export function IphoneReels() {
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: el, start: 'top top', end: '+=1600', pin: true, scrub: 1,
+          // o celular sobe: a música do site pausa; saiu dele, volta
+          onEnter: () => somDoSite('pausar'),
+          onEnterBack: () => somDoSite('pausar'),
+          onLeave: () => { video.current?.pause(); somDoSite('retomar'); },
+          onLeaveBack: () => { video.current?.pause(); somDoSite('retomar'); },
           onUpdate: (st) => {
-            const v = video.current;
-            if (!v) return;
-            if (st.progress > 0.55) { if (v.paused) v.play().catch(() => {}); }
+            const v = video.current; if (!v) return;
+            const dentro = st.progress > 0.55;
+            setReel(dentro);
+            if (dentro) { setPost(null); if (v.paused && !v.dataset.pausadoPeloUsuario) v.play().catch(() => { v.muted = true; setMudo(true); v.play().catch(() => {}); }); }
             else if (!v.paused) v.pause();
           },
         },
       });
-      tl.fromTo(q('.ig__feed'), { yPercent: 0 }, { yPercent: -28, duration: 4 })
+      tl.fromTo(q('.ig__feed'), { yPercent: 0 }, { yPercent: -20, duration: 4 })
         .fromTo(q('.ig__reel'), { clipPath: 'inset(58% 34% 24% 34% round 6px)', autoAlpha: 0 },
-          { clipPath: 'inset(0% 0% 0% 0% round 0px)', autoAlpha: 1, duration: 3, ease: 'power2.inOut' }, 3.6)
-        .fromTo(q('.iphone__legenda'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 1 }, 6);
+          { clipPath: 'inset(0% 0% 0% 0% round 0px)', autoAlpha: 1, duration: 3, ease: 'power2.inOut' }, 3.6);
     });
     mm.add('(prefers-reduced-motion: reduce)', () => { el.classList.add('is-estatico'); });
     return () => mm.revert();
   }, []);
+
+  // abre o micro feed já no post tocado
+  useEffect(() => {
+    if (post === null) return;
+    const alvo = microRef.current?.querySelector<HTMLElement>(`[data-i="${post}"]`);
+    alvo?.scrollIntoView({ block: 'start' });
+  }, [post]);
+
+  const alternar = () => {
+    const v = video.current; if (!v) return;
+    if (v.paused) { delete v.dataset.pausadoPeloUsuario; v.play().catch(() => {}); }
+    else { v.dataset.pausadoPeloUsuario = '1'; v.pause(); }
+  };
+  const alternarSom = () => { const v = video.current; if (!v) return; v.muted = !v.muted; setMudo(v.muted); };
 
   return (
     <div className="iphone-sec" ref={sec}>
@@ -118,15 +149,48 @@ export function IphoneReels() {
             </div>
             <p className="ig__bio">A agência de marketing que te entrega tudo que você precisa para decolar.</p>
             <ul className="ig__grade">
-              {cases.slice(0, 12).map((c) => <li key={c.nome}><img src={c.img} alt="" loading="lazy" /></li>)}
+              {POSTS.map((c, i) => (
+                <li key={c.nome}>
+                  <button onClick={() => setPost(i)} aria-label={`Abrir post de ${c.nome}`}>
+                    <img src={c.img} alt="" loading="lazy" />
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
+
+          <div className={`ig__micro${post !== null ? ' is-aberto' : ''}`} aria-hidden={post === null}>
+            <div className="ig__micro-topo">
+              <button onClick={() => setPost(null)} aria-label="Voltar para o perfil" tabIndex={post === null ? -1 : 0}>‹</button>
+              <b>Publicações</b>
+            </div>
+            <div className="ig__micro-lista" ref={microRef} data-lenis-prevent>
+              {POSTS.map((c, i) => (
+                <article key={c.nome} data-i={i} className="ig__post">
+                  <header><img src="/icone.svg" alt="" /><b>marketins.mkt</b></header>
+                  <img src={c.img} alt={`Case ${c.nome}`} loading="lazy" />
+                  <p><b>marketins.mkt</b> {c.nome}. Feito pela Marketins.</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
           <div className="ig__reel">
-            <video ref={video} src="/media/reels.mp4" poster="/media/reels-capa.webp" muted loop playsInline preload="metadata" />
+            <video ref={video} src="/media/reels.mp4" poster="/media/reels-capa.webp" loop playsInline preload="metadata"
+              onPlay={() => setTocando(true)} onPause={() => setTocando(false)}
+              onTimeUpdate={(e) => { const v = e.currentTarget; setProg(v.duration ? v.currentTime / v.duration : 0); }} />
           </div>
         </div>
       </div>
-      <p className="iphone__legenda">Reels da Marketins, direto do Instagram.</p>
+
+      <div className={`mini${reel ? ' is-visivel' : ''}`} aria-hidden={!reel}>
+        <button onClick={alternar} aria-label={tocando ? 'Pausar o Reels' : 'Tocar o Reels'} tabIndex={reel ? 0 : -1}>{tocando ? '❚❚' : '▶'}</button>
+        <div className="mini__info">
+          <b>Reels da Marketins</b>
+          <span className="mini__barra"><i style={{ transform: `scaleX(${prog})` }} /></span>
+        </div>
+        <button onClick={alternarSom} aria-label={mudo ? 'Ligar o som' : 'Tirar o som'} tabIndex={reel ? 0 : -1}>{mudo ? 'Som off' : 'Som on'}</button>
+      </div>
     </div>
   );
 }
@@ -147,6 +211,18 @@ export function Musica() {
     if (a.paused) a.play().then(() => setTocando(true)).catch(() => {});
     else { a.pause(); setTocando(false); }
   };
+
+  // o celular pede pausa; só retoma se a música estava tocando antes
+  useEffect(() => {
+    let pausadaPorFora = false;
+    const ouvir = (e: Event) => {
+      const a = audio.current; if (!a) return;
+      if ((e as CustomEvent).detail === 'pausar' && !a.paused) { a.pause(); setTocando(false); pausadaPorFora = true; }
+      if ((e as CustomEvent).detail === 'retomar' && pausadaPorFora) { pausadaPorFora = false; a.play().then(() => setTocando(true)).catch(() => {}); }
+    };
+    window.addEventListener('marketins:musica', ouvir);
+    return () => window.removeEventListener('marketins:musica', ouvir);
+  }, []);
 
   useEffect(() => {
     if (!entrada) return;

@@ -73,55 +73,27 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 .b-transicao, .b-seta, .b-agendar, .b-whats { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
 
 .b-transicao { position: relative; display: grid; min-width: 200px; height: 52px; border-radius: 999px; overflow: hidden; border: 1.5px solid transparent; background-image: linear-gradient(90deg, #4a4a4a, #1e1e1e), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s; }
+.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s; }
 .b-transicao__a { color: #fff; }
 .b-transicao__b { background: #fff; color: var(--chao); transform: translateY(100%); }
 .b-transicao__b img { width: 22px; }
 .b-transicao:hover .b-transicao__a, .b-transicao:focus-visible .b-transicao__a { transform: translateY(-100%); opacity: 0; }
 .b-transicao:hover .b-transicao__b, .b-transicao:focus-visible .b-transicao__b { transform: translateY(0); }
-
-/* Branco com seta: o círculo da seta cresce para a esquerda e cobre o rótulo, sempre dentro do botão. */
-.b-seta { position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 52px; padding: 4px; border-radius: 999px; border: 1.5px solid rgb(255 255 255 / 0.85); overflow: hidden; }
-.b-seta span { position: relative; z-index: 1; display: flex; align-items: center; height: 100%; padding: 0 1.6rem; margin-right: 6px; border-radius: 999px; background: #fff; color: var(--chao); }
-.b-seta i { position: relative; z-index: 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--chao); font-style: normal; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-seta::after { content: ''; position: absolute; z-index: 1; inset: 4px; border-radius: 999px; background: #fff; clip-path: inset(0 0 0 calc(100% - 42px) round 999px); transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-seta:hover::after, .b-seta:focus-visible::after { clip-path: inset(0 0 0 0 round 999px); }
+/* Botões com seta: o preenchimento sai da seta e cobre o botão inteiro; o texto troca de cor junto. */
+.b-seta, .b-agendar { --fill: #1e1e1e; --ease: cubic-bezier(0.65, 0, 0.35, 1); position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 52px; padding: 4px; border-radius: 999px; overflow: hidden; }
+.b-seta { border: 1.5px solid rgb(255 255 255 / 0.85); }
+.b-seta span, .b-agendar span { position: relative; z-index: 2; display: flex; align-items: center; height: 100%; padding: 0 1.4rem 0 1.6rem; border-radius: 999px; color: var(--chao); transition: color 0.4s 0.2s, background-color 0.4s 0.2s; }
+.b-seta span { background-color: #fff; }
+.b-seta i, .b-agendar i { position: relative; z-index: 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #fff; font-style: normal; transition: transform 0.7s var(--ease); }
+.b-seta::after, .b-agendar::after { content: ''; position: absolute; z-index: 1; inset: 0; border-radius: 999px; background: var(--fill); clip-path: inset(4px 4px 4px calc(100% - 46px) round 999px); transition: clip-path 0.7s var(--ease); }
+.b-seta:hover::after, .b-seta:focus-visible::after, .b-agendar:hover::after, .b-agendar:focus-visible::after { clip-path: inset(0 0 0 0 round 999px); }
+.b-seta:hover span, .b-seta:focus-visible span { background-color: transparent; color: #fff; }
+.b-agendar:hover span, .b-agendar:focus-visible span { color: #fff; }
 .b-seta:hover i, .b-seta:focus-visible i { transform: rotate(45deg); }
-.b-seta--escuro { border-color: transparent; background-image: linear-gradient(var(--chao), var(--chao)), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-seta--escuro::after { background: #1e1e1e; }
-.b-seta--escuro i { color: #fff; }
-
-/* Agendar compacto: o bloco escuro da seta cresce para a esquerda. */
-.b-agendar { position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 48px; padding: 4px 4px 4px 1.4rem; gap: 1.2rem; border-radius: 999px; background: #fff; overflow: hidden; }
-.b-agendar span { position: relative; z-index: 2; background: var(--borda-figma); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.b-agendar i { position: relative; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; color: #fff; font-style: normal; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-agendar::after { content: ''; position: absolute; z-index: 1; inset: 4px; border-radius: 999px; background: #1e1e1e; clip-path: inset(0 0 0 calc(100% - 40px) round 999px); transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-agendar:hover::after, .b-agendar:focus-visible::after { clip-path: inset(0 0 0 52% round 999px); }
 .b-agendar:hover i, .b-agendar:focus-visible i { transform: translateX(3px); }
-
-.b-whats { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
-
-.b-transicao { position: relative; display: grid; min-width: 200px; height: 52px; border-radius: 999px; overflow: hidden; border: 1.5px solid transparent; background-image: linear-gradient(90deg, #4a4a4a, #1e1e1e), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s; }
-.b-transicao__a { color: #fff; }
-.b-transicao__b { background: #fff; color: var(--chao); transform: translateY(100%); }
-.b-transicao__b img { width: 22px; }
-.b-transicao:hover .b-transicao__a, .b-transicao:focus-visible .b-transicao__a { transform: translateY(-100%); opacity: 0; }
-.b-transicao:hover .b-transicao__b, .b-transicao:focus-visible .b-transicao__b { transform: translateY(0); }
-
-.b-seta { position: relative; display: inline-flex; align-items: center; gap: 0.4rem; height: 52px; padding: 4px; border-radius: 999px; border: 1.5px solid rgb(255 255 255 / 0.85); }
-.b-seta span { display: flex; align-items: center; height: 100%; padding: 0 1.6rem; border-radius: 999px; background: #fff; color: var(--chao); transition: background-color 0.35s ease, color 0.35s ease; }
-.b-seta i { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff; color: var(--chao); font-style: normal; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-seta:hover span, .b-seta:focus-visible span { background: linear-gradient(90deg, #6b6b6b, #2a2a2a); color: #fff; }
-.b-seta:hover i, .b-seta:focus-visible i { transform: rotate(45deg); }
 .b-seta--escuro { border-color: transparent; background-image: linear-gradient(var(--chao), var(--chao)), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-seta--escuro i { background: #1e1e1e; color: #fff; }
-
-.b-agendar { display: inline-flex; align-items: center; height: 48px; padding: 4px 4px 4px 1.4rem; gap: 1.2rem; border-radius: 999px; background: #fff; border: 1.5px solid #fff; transition: background-color 0.35s; }
-.b-agendar span { background: var(--borda-figma); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.b-agendar i { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #1e1e1e; color: #fff; font-style: normal; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
-.b-agendar:hover, .b-agendar:focus-visible { background: #1e1e1e; }
-.b-agendar:hover i, .b-agendar:focus-visible i { transform: translateX(4px) scale(1.08); }
+.b-agendar { height: 48px; background: #fff; }
+.b-agendar i { width: 38px; height: 38px; }
 
 .b-whats { display: inline-flex; align-items: center; height: 52px; padding: 0 1.6rem; border-radius: 999px; background: #25d366; color: #0b2a17; box-shadow: 0 0 0 4px rgb(37 211 102 / 0.18); transition: transform 0.25s; }
 .b-whats:hover { transform: translateY(-2px); }
@@ -183,43 +155,33 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 }
 
 /* Cards estilo Apple */
-.apple { display: grid; gap: 16px; }
-.apple__card { position: relative; overflow: hidden; border-radius: 24px; background: var(--chao-2); min-height: 420px; display: grid; align-content: start; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.apple__card:hover { transform: scale(1.01); }
-.apple__card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s; }
-.apple__card:hover > img { transform: scale(1.04); }
-.apple__card::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, rgb(11 7 9 / 0.85), transparent 45%); pointer-events: none; }
-.apple__card--marca { background: var(--gradiente-texto); }
-.apple__card--marca::before { display: none; }
-.apple__topo { position: relative; z-index: 2; padding: 1.75rem 1.75rem 0; display: grid; gap: 0.4rem; }
-.apple__topo h3 { font-weight: 800; font-size: clamp(1.3rem, 4vw, 1.8rem); line-height: 1.05; text-transform: uppercase; max-width: 16ch; }
-.apple__topo p { color: rgb(246 239 241 / 0.85); font-size: 0.95rem; max-width: 32ch; }
-.apple__detalhe { position: absolute; z-index: 3; inset: 0; padding: 1.75rem; display: flex; align-items: flex-end; background: rgb(11 7 9 / 0.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); opacity: 0; transform: translateY(16px); transition: opacity 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
-.apple__detalhe p { font-size: 1.05rem; line-height: 1.5; max-width: 34ch; padding-bottom: 3.5rem; }
-.apple__card.is-aberto .apple__detalhe { opacity: 1; transform: none; pointer-events: auto; }
-.apple__mais { position: absolute; z-index: 4; right: 1.25rem; bottom: 1.25rem; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgb(255 255 255 / 0.92); color: var(--chao); font: 400 1.6rem/1 var(--corpo); cursor: pointer; display: grid; place-items: center; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.apple__mais:hover { transform: scale(1.08); }
-.apple__card.is-aberto .apple__mais { transform: rotate(45deg); }
-
-/* Time: acordeão */
-.equipe2 { display: grid; grid-template-rows: var(--cols); grid-template-columns: 1fr; gap: 10px; height: 1100px; transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.equipe2 { display: grid; grid-template-rows: var(--cols); grid-template-columns: 1fr; gap: 10px; height: 980px; transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 .pessoa { position: relative; overflow: hidden; border: 0; padding: 0; border-radius: 22px; background: #2a0a12; color: #fff; cursor: pointer; text-align: center; min-height: 0; }
-.pessoa img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.pessoa img { position: absolute; inset: -4%; width: 108%; height: 108%; max-width: none; object-fit: cover; object-position: center 20%; filter: grayscale(1) brightness(0.7); transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s; }
+.pessoa.is-aberto img { filter: none; transform: translate(calc(var(--px, 0) * -10px), calc(var(--py, 0) * -8px)); }
+.pessoa__barras { position: absolute; z-index: 2; top: 14px; left: 14px; right: 14px; display: flex; gap: 4px; }
+.pessoa__barras i { flex: 1; height: 3px; border-radius: 3px; background: rgb(255 255 255 / 0.3); overflow: hidden; position: relative; }
+.pessoa__barras i::after { content: ''; position: absolute; inset: 0; background: #fff; transform: scaleX(0); transform-origin: left; }
+.pessoa__barras i.is-visto::after { transform: none; }
+.pessoa__barras i.is-agora::after { animation: story 6s linear forwards; }
+@keyframes story { to { transform: none; } }
+.pessoa__num { position: absolute; z-index: 1; top: 30px; left: 16px; font: 800 0.75rem/1 var(--display); color: rgb(255 255 255 / 0.6); letter-spacing: 0.1em; }
 .pessoa::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.9), transparent 60%); }
 .pessoa__nome { position: absolute; z-index: 1; left: 1.25rem; bottom: 50%; transform: translateY(50%); font: 800 1.15rem/1 var(--display); text-transform: uppercase; transition: bottom 0.5s, transform 0.5s, font-size 0.5s; }
 .pessoa__texto { position: absolute; z-index: 1; left: 1.25rem; right: 1.25rem; bottom: 1.25rem; font-size: 0.95rem; line-height: 1.35; opacity: 0; transform: translateY(12px); transition: opacity 0.4s, transform 0.5s; }
 .pessoa.is-aberto { cursor: default; }
 .pessoa.is-aberto .pessoa__nome { left: 0; right: 0; bottom: 6.5rem; transform: none; font-size: 1.6rem; }
 .pessoa.is-aberto .pessoa__texto { opacity: 1; transform: none; transition-delay: 0.2s; }
-.pessoa:not(.is-aberto):hover img { transform: scale(1.05); }
+.pessoa:not(.is-aberto):hover img { filter: grayscale(0) brightness(0.85); }
 
 /* Mosaico */
-.mosaico { overflow: hidden; border-radius: 22px; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
-.mosaico__trilho { display: flex; width: max-content; animation: mosaico 70s linear infinite; }
-.mosaico__trilho img { height: clamp(160px, 26vw, 300px); width: auto; max-width: none; }
-@keyframes mosaico { to { transform: translateX(-50%); } }
+.mosaico { display: grid; gap: 12px; overflow: hidden; margin-inline: calc(50% - 50vw); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.mosaico__trilho { display: flex; gap: 12px; width: max-content; animation: mosaico 80s linear infinite; }
+.mosaico__trilho--volta { animation-direction: reverse; animation-duration: 95s; }
+.mosaico__trilho img { height: clamp(130px, 22vw, 250px); width: auto; aspect-ratio: 800 / 568; object-fit: contain; border-radius: 14px; background: var(--chao-2); }
+.mosaico:hover .mosaico__trilho { animation-play-state: paused; }
+@keyframes mosaico { to { transform: translateX(calc(-50% - 6px)); } }
 
-/* iPhone + Instagram */
 .iphone-sec { min-height: 100svh; display: grid; place-items: center; gap: 1.5rem; padding: 2rem 0; }
 .iphone { position: relative; width: min(78vw, 330px); aspect-ratio: 9 / 19.3; border-radius: 52px; padding: 11px; background: linear-gradient(145deg, #3a3a3e, #121214); box-shadow: inset 0 0 0 2px #55555a, 0 40px 80px -30px rgb(208 0 77 / 0.45); }
 .iphone__ilha { position: absolute; z-index: 5; top: 22px; left: 50%; width: 30%; height: 26px; transform: translateX(-50%); border-radius: 999px; background: #000; }
@@ -231,10 +193,28 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 .ig__perfil span { font-size: 0.75rem; color: #aaa; }
 .ig__bio { margin: 12px 0; font-size: 0.78rem; line-height: 1.4; }
 .ig__grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 0 -14px; }
-.ig__grade img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.ig__grade button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.ig__grade img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: filter 0.3s; }
+.ig__grade button:hover img { filter: brightness(1.15); }
+.ig__micro { position: absolute; inset: 0; z-index: 3; background: #000; color: #fff; display: grid; grid-template-rows: auto 1fr; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+.ig__micro.is-aberto { transform: none; }
+.ig__micro-topo { display: flex; align-items: center; gap: 10px; padding: 52px 12px 10px; border-bottom: 1px solid #222; font: 600 0.85rem/1 var(--corpo); }
+.ig__micro-topo button { width: 32px; height: 32px; border: 0; background: none; color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.ig__micro-lista { overflow-y: auto; overscroll-behavior: contain; scroll-snap-type: y proximity; scrollbar-width: none; }
+.ig__post { scroll-snap-align: start; padding-bottom: 14px; font: 400 0.72rem/1.4 var(--corpo); }
+.ig__post header { display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
+.ig__post header img { width: 26px; height: 26px; border-radius: 50%; }
+.ig__post > img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.ig__post p { padding: 8px 10px 0; }
+.mini { display: flex; align-items: center; gap: 12px; width: min(92vw, 360px); padding: 10px 12px; border-radius: 18px; border: 1px solid var(--linha); background: rgb(22 16 19 / 0.9); backdrop-filter: blur(12px); opacity: 0; transform: translateY(12px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; }
+.mini.is-visivel { opacity: 1; transform: none; pointer-events: auto; }
+.mini button { min-width: 44px; height: 44px; padding: 0 10px; border-radius: 12px; border: 0; background: var(--gradiente-texto); color: #fff; font: 600 0.7rem/1 var(--display); cursor: pointer; }
+.mini button:last-child { background: #2b2025; }
+.mini__info { flex: 1; display: grid; gap: 8px; font: 600 0.75rem/1 var(--display); text-transform: uppercase; }
+.mini__barra { height: 3px; border-radius: 3px; background: #3a2c32; overflow: hidden; }
+.mini__barra i { display: block; height: 100%; background: var(--laranja); transform-origin: left; }
 .ig__reel { position: absolute; inset: 0; background: #000; }
 .ig__reel video { width: 100%; height: 100%; object-fit: cover; }
-.iphone__legenda { color: var(--texto-2); font-size: 0.9rem; }
 .is-estatico .ig__feed { display: none; }
 
 /* Música */
@@ -247,15 +227,11 @@ h2, h3, b, .t-legenda, nav { font-family: var(--display); }
 @keyframes girar { to { transform: rotate(360deg); } }
 
 @media (min-width: 768px) {
-  .apple { grid-template-columns: repeat(2, 1fr); }
-  .apple__card:first-child { grid-column: span 2; min-height: 520px; }
-  .equipe2 { grid-template-rows: none; grid-template-columns: var(--cols); height: 520px; transition-property: grid-template-columns; }
+  .equipe2 { grid-template-rows: none; grid-template-columns: var(--cols); height: min(620px, 72vh); transition-property: grid-template-columns; }
   .pessoa:not(.is-aberto) .pessoa__nome { left: 50%; bottom: 1.5rem; transform: translateX(-50%) rotate(180deg); writing-mode: vertical-rl; white-space: nowrap; font-size: 1.3rem; }
 }
 @media (min-width: 1024px) {
-  .apple { grid-template-columns: repeat(3, 1fr); }
-  .apple__card:first-child { grid-column: span 2; grid-row: span 2; min-height: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mosaico__trilho, .toque img, .som.is-tocando img { animation: none; }
+  .mosaico__trilho, .pessoa__barras i.is-agora::after, .toque img, .som.is-tocando img { animation: none; }
 }

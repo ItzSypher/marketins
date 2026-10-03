@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { cases, destaques, linkContato, servicos } from '../content';
-import { CardsApple, Equipe, IphoneReels, Mosaico, Musica } from './blocos';
+import { destaques, linkContato } from '../content';
+import { Equipe, IphoneReels, Mosaico, Musica } from './blocos';
 import '../tokens.css';
 import './ds.css';
 
@@ -118,24 +118,15 @@ function App() {
         <p className="ds-nota">Todos têm foco visível no teclado e área de toque de 48px no celular.</p>
       </Secao>
 
-      <Secao id="cards" titulo="Cards" porque="Imagem grande, título curto e um botão + que abre o detalhe no próprio card. Toque no + para ver.">
-        <CardsApple itens={[
-          { titulo: destaques[0].nome, resumo: 'A maior assessoria previdenciária do país.', detalhe: 'Redes sociais, tráfego, mídia digital e offline, eventos e a landing page.', img: destaques[0].img },
-          { titulo: 'Locagora', resumo: 'Aluguel de motos na Baixada.', detalhe: 'Social media, campanhas, stories e landing page.', img: cases[9].img },
-          { titulo: servicos[2].nome, resumo: 'Equipe e equipamento próprios.', detalhe: servicos[2].texto, img: cases[7].img },
-          { titulo: 'Marketins Conecta', resumo: '16 de outubro. O maior evento da Baixada.', detalhe: 'Influenciadores, marcas e empresários da Baixada no mesmo lugar.', tom: 'marca' },
-        ]} />
-      </Secao>
-
-      <Secao id="time" titulo="Time" porque="Começa aberto no Sérgio. Clique em outra pessoa para abrir, com nome e descrição. Só isso.">
+      <Secao id="time" titulo="Time" porque="Funciona como stories: abre no Sérgio e passa sozinho para o próximo, com a barra no topo. Clique em alguém para abrir na hora.">
         <Equipe />
       </Secao>
 
-      <Secao id="clientes" titulo="Clientes" porque="A imagem do mosaico do Figma, rolando devagar. Sem cards por cima.">
+      <Secao id="clientes" titulo="Clientes" porque="Duas faixas de trabalhos andando em sentidos opostos. Cada peça aparece inteira, sem corte, em qualquer tela.">
         <Mosaico />
       </Secao>
 
-      <Secao id="instagram" titulo="Instagram" porque="O celular mostra o perfil e, ao rolar, abre o Reels da Marketins.">
+      <Secao id="instagram" titulo="Instagram" porque="Toque em um post para abrir o feed dentro do celular. Rolando, abre o Reels com som e miniplayer; a música do site pausa.">
         <IphoneReels />
       </Secao>
 
