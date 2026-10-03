@@ -268,3 +268,10 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
 .ds--sergio .ds-topo { position: static; }
 .ig__som { position: absolute; z-index: 2; left: 50%; bottom: 18%; transform: translateX(-50%); padding: 0.8rem 1.2rem; border: 0; border-radius: 999px; background: rgb(0 0 0 / 0.6); backdrop-filter: blur(8px); color: #fff; font: 700 0.7rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
 .ds-secao h2 { will-change: transform; }
+
+/* Sem rolagem horizontal; barra vertical laranja */
+html, body { overflow-x: clip; max-width: 100%; }
+html { scrollbar-color: var(--laranja) var(--chao); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 8px; height: 0; }
+::-webkit-scrollbar-track { background: var(--chao); }
+::-webkit-scrollbar-thumb { background: var(--laranja); border-radius: 8px; }
