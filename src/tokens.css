@@ -1,0 +1,31 @@
+/* Identidade da Marketins: fonte Benzin e paleta da marca.
+ * Cores de marca vêm dos SVGs oficiais (assets/brand). Contraste medido em WCAG 2.1. */
+
+@font-face { font-family: 'Benzin'; src: url('/fonts/Benzin-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Benzin'; src: url('/fonts/Benzin-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Benzin'; src: url('/fonts/Benzin-Semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Benzin'; src: url('/fonts/Benzin-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Benzin'; src: url('/fonts/Benzin-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+
+:root {
+  /* Marca */
+  --magenta: #d0004d;          /* branco por cima: 5,5:1 */
+  --laranja: #fe5223;          /* sobre --chao: 6,2:1. Branco por cima: 3,3:1, só para texto grande ou decoração */
+  --laranja-texto: #cf3f17;    /* laranja escurecido para fundos com texto branco pequeno: 4,8:1 */
+  --gradiente: linear-gradient(115deg, var(--magenta) 10%, var(--laranja) 90%);              /* decorativo, sem texto em cima */
+  --gradiente-texto: linear-gradient(115deg, var(--magenta) 10%, var(--laranja-texto) 90%);  /* fundos que levam texto */
+
+  /* Neutros (quase preto puxado para o magenta) */
+  --chao: #0b0709;
+  --chao-2: #161013;
+  --linha: #2b2025;
+  --texto: #f6eff1;            /* sobre --chao: 17:1 */
+  --texto-2: #b9aab0;          /* sobre --chao: 9:1 */
+
+  /* Tipografia */
+  --display: 'Benzin', system-ui, sans-serif;
+  --corpo: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --gutter: clamp(16px, 5vw, 72px);
+  color-scheme: dark;
+}
