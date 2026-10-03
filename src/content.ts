@@ -24,21 +24,25 @@ export const numeros = [
 export const servicos = [
   {
     nome: 'Social media',
+    img: '/cases/otica-by-economica.webp',
     texto: 'Planejamos o mês, criamos os posts, escrevemos as legendas e cuidamos do perfil. Todo mês você recebe as métricas e o que vamos mudar.',
     itens: ['Calendário editorial', 'Design, legenda e vídeo', 'Relatório mensal'],
   },
   {
     nome: 'Design',
+    img: '/cases/jr-uniformes.webp',
     texto: 'Peça de feed, identidade, cardápio, fachada. O que sua marca precisar, no mesmo padrão em todo lugar onde ela aparece.',
     itens: ['Posts e campanhas', 'Identidade visual', 'Materiais impressos'],
   },
   {
     nome: 'Audiovisual',
+    img: '/cases/owl-mobilidade.webp',
     texto: 'Roteiro, direção, gravação e edição com equipe e equipamento próprios. A gente vai até a sua empresa e grava lá.',
     itens: ['Roteiro e direção', 'Diárias de vídeo maker', 'Edição para cada rede'],
   },
   {
     nome: 'Tráfego pago',
+    img: '/cases/pdv-legal.webp',
     texto: 'Campanhas no Meta e no Google com acompanhamento diário. Cada real do orçamento tem destino e aparece no relatório.',
     itens: ['Meta Ads e Google Ads', 'Otimização diária', 'Relatório de investimento'],
   },
@@ -61,7 +65,12 @@ export const cases = [
 ].map(([slug, nome]) => ({ nome, img: `/cases/${slug}.webp` }));
 
 // Fotos do Figma (frames "JULYANE 1" etc.); a de destaque é o Sergio.
-export const sergio = { nome: 'Sergio Martins', cargo: 'CEO', foto: '/time/sergio.webp' };
+export const sergio = {
+  nome: 'Sergio Martins',
+  cargo: 'CEO',
+  foto: '/time/sergio.webp',
+  texto: 'Mais de dez anos de mercado. Juntou marketing, audiovisual, design, tráfego e desenvolvimento num time só.',
+};
 export const time = [
   { nome: 'Julyane', foto: '/time/julyane.webp' },
   { nome: 'Gabriella', foto: '/time/gabriella.webp' },
@@ -77,7 +86,7 @@ export const depoimentos = [
 
 export const conecta = {
   nome: 'Marketins Conecta',
-  data: '2026 · data em breve',
+  data: '2026, data em breve',
   chamada: 'O maior encontro de influenciadores da Baixada está chegando.',
   link: 'https://www.instagram.com/p/Dd4W2yxCqc8/',
   parceiros: ['Mezi', 'Núcleo IDEA'],

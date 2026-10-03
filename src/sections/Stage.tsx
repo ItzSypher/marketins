@@ -8,25 +8,29 @@ gsap.registerPlugin(ScrollTrigger);
 // Geometria do wordmark-mask.svg (viewBox 2141 × 330).
 const VB_W = 2141;
 const VB_H = 330;
-const RATIO = VB_H / VB_W; // altura/largura
-// O centro do logo cai no vão do "k". A máscara começa ancorada na haste do
-// "k" (x 848–924, y 27–324), que é cheia, e migra para o centro ao encolher.
+const RATIO = VB_H / VB_W;
+// O centro do logo cai no vão do "k". Quando a máscara cresce, o ponto de
+// foco migra do centro para a haste do "k" (x 848 a 924, y 27 a 324), que é
+// cheia, para a foto cobrir a tela inteira no fim.
 const ANCHOR = { x: 886, y: 175, w: 76, h: 297 };
 const CENTER = { x: VB_W / 2, y: VB_H / 2 };
 
-/** Largura final do logo: o maior possível sem encostar nas bordas. */
-function finalWidth(vw: number, vh: number) {
-  const byWidth = vw * (vw < 768 ? 0.9 : 0.72);
-  const byHeight = (vh * 0.34) / RATIO;
+/** Largura do wordmark na abertura: o maior possível sem encostar nas bordas. */
+function logoWidth(vw: number, vh: number) {
+  const byWidth = vw * (vw < 768 ? 0.88 : 0.7);
+  const byHeight = (vh * 0.3) / RATIO;
   return Math.min(byWidth, byHeight);
 }
 
-/** Largura inicial em que a haste do "k" cobre a tela inteira (com folga). */
-function startWidth(vw: number, vh: number) {
-  const scale = Math.max(vw / ANCHOR.w, vh / ANCHOR.h) * 1.12;
-  return VB_W * scale;
+/** Largura em que a haste do "k" cobre a tela inteira (com folga). */
+function openWidth(vw: number, vh: number) {
+  return VB_W * Math.max(vw / ANCHOR.w, vh / ANCHOR.h) * 1.12;
 }
 
+/**
+ * Abertura: a página começa no "marketins" com o ícone. Ao rolar, as letras
+ * abrem como janela, a foto da capa toma a tela e o texto do hero entra por cima.
+ */
 export function Stage() {
   const stage = useRef<HTMLDivElement>(null);
 
@@ -37,57 +41,51 @@ export function Stage() {
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       el.classList.add('is-animated');
+      const hero = q('.hero')[0] as HTMLElement;
       const proxy = { p: 0 };
 
-      const paintMask = () => {
+      const paint = () => {
         const vw = el.clientWidth;
         const vh = el.clientHeight;
-        const w0 = startWidth(vw, vh);
-        const w1 = finalWidth(vw, vh);
+        const w0 = logoWidth(vw, vh);
+        const w1 = openWidth(vw, vh);
         const w = w0 + (w1 - w0) * proxy.p;
         const s = w / VB_W;
-        const ux = ANCHOR.x + (CENTER.x - ANCHOR.x) * proxy.p;
-        const uy = ANCHOR.y + (CENTER.y - ANCHOR.y) * proxy.p;
-        const hero = q('.hero')[0] as HTMLElement;
+        const ux = CENTER.x + (ANCHOR.x - CENTER.x) * proxy.p;
+        const uy = CENTER.y + (ANCHOR.y - CENTER.y) * proxy.p;
         hero.style.setProperty('--mask-size', `${w}px`);
         hero.style.setProperty('--mask-x', `${vw / 2 - ux * s}px`);
         hero.style.setProperty('--mask-y', `${vh / 2 - uy * s}px`);
-        el.style.setProperty('--logo-h', `${w1 * RATIO}px`);
+        el.style.setProperty('--logo-h', `${w0 * RATIO}px`);
+        // Com a foto cobrindo tudo, a máscara sai: evita rasterizar um SVG gigante.
+        el.classList.toggle('is-open', proxy.p > 0.995);
       };
-      paintMask();
+      paint();
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: el,
           start: 'top top',
-          end: '+=2500',
+          end: '+=2200',
           pin: true,
-          scrub: 1.5,
+          scrub: 1.2,
           invalidateOnRefresh: true,
-          onRefresh: paintMask,
+          onRefresh: paint,
         },
       });
 
-      // 1. máscara encolhe até o tamanho final do logo
-      tl.fromTo(proxy, { p: 0 }, { p: 1, duration: 6, ease: 'expo.out', onUpdate: paintMask }, 0)
-        // 2. logo grande some logo no início
-        .fromTo(q('.hero__logo'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6 }, 0)
-        .fromTo(q('.hero__hint'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.4 }, 0)
-        // 3. tela-branca ganha o gradiente da marca na segunda metade
-        .fromTo(q('.hero__tela'), { opacity: 0 }, { opacity: 1, duration: 3 }, 3)
-        // 4. tagline da seção 2 entra com fade e blur
-        .fromTo(q('.s2__tag'), { autoAlpha: 0, filter: 'blur(14px)', y: 16 },
-          { autoAlpha: 1, filter: 'blur(0px)', y: 0, duration: 1.6 }, 5.2)
-        // logo decola: sobe e sai pelo topo
-        .fromTo(q('.hero'), { yPercent: 0 }, { yPercent: -62, duration: 2.4, ease: 'power2.in' }, 7.2)
-        .fromTo(q('.s2__tag'), { yPercent: 0 }, { yPercent: -120, autoAlpha: 0, duration: 1.6, ease: 'power2.in' }, 7.6)
-        // 5. círculo da seção 3 abre a tela final
-        .fromTo(el, { '--r': '0vmax' }, { '--r': '150vmax', duration: 3, ease: 'power2.inOut' }, 7.8)
-        .fromTo(q('.s3__inner > *'), { autoAlpha: 0, y: 24 },
-          { autoAlpha: 1, y: 0, duration: 1, stagger: 0.25 }, 9.6);
+      tl.fromTo(q('.abertura__icone'), { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -40, duration: 0.8 }, 0)
+        .fromTo(q('.abertura__frase'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6 }, 0)
+        // o gradiente sai das letras e a foto aparece dentro delas
+        .fromTo(q('.hero__tela'), { opacity: 1 }, { opacity: 0, duration: 2.2 }, 0.3)
+        // as letras abrem até a foto ocupar a tela
+        .fromTo(proxy, { p: 0 }, { p: 1, duration: 6, ease: 'expo.in', onUpdate: paint }, 0.6)
+        .fromTo(q('.hero__sombra'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 1 }, 6)
+        .fromTo(q('.hero__copy > *'), { autoAlpha: 0, y: 28 },
+          { autoAlpha: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power2.out' }, 6.4);
 
-      return () => el.classList.remove('is-animated');
+      return () => el.classList.remove('is-animated', 'is-open');
     });
 
     return () => mm.revert();
@@ -95,30 +93,22 @@ export function Stage() {
 
   return (
     <div className="stage" ref={stage}>
-      <section className="hero" aria-label="Marketins">
+      <div className="abertura" aria-hidden="true">
+        <img className="abertura__icone" src="/icone.svg" alt="" width="106" height="105" />
+        <p className="abertura__frase">Soluções de marketing</p>
+      </div>
+
+      <section className="hero" aria-labelledby="hero-titulo">
         <picture className="hero__img">
           <source media="(max-width: 767px)" srcSet="/hero-mobile.webp" />
-          <img src="/hero-desktop.webp" alt="" fetchPriority="high" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
+          <img src="/hero-desktop.webp" alt="" fetchPriority="high" />
         </picture>
-        <img className="hero__logo" src="/logo-completo.svg" alt="Marketins, soluções de marketing" />
         <div className="hero__tela" aria-hidden="true" />
-        <p className="hero__hint" aria-hidden="true">role para decolar</p>
-      </section>
-
-      <section className="s2" aria-label="Quem somos">
-        <p className="s2__tag">Tudo o que o seu negócio precisa, em um só lugar.</p>
-      </section>
-
-      <section className="s3" aria-label="Fale com a Marketins">
-        <div className="s3__inner">
-          <p className="eyebrow">Consultoria de marketing</p>
-          <h1>Ajudamos empresas como a sua a decolar.</h1>
-          <p className="s3__sub">
-            Social media, design, audiovisual e tráfego pago com o mesmo time. A gente começa entendendo o seu negócio.
-          </p>
-          <a className="btn btn--light" href={linkContato('hero')} target="_blank" rel="noopener">
-            Agendar consultoria <span aria-hidden="true">→</span>
-          </a>
+        <div className="hero__sombra" aria-hidden="true" />
+        <div className="hero__copy">
+          <h1 id="hero-titulo">Ajudamos empresas como a sua a decolar.</h1>
+          <p>Social media, design, audiovisual e tráfego pago com o mesmo time. A gente começa entendendo o seu negócio.</p>
+          <a className="btn btn--brand" href={linkContato('hero')} target="_blank" rel="noopener">Agendar consultoria</a>
         </div>
       </section>
     </div>
