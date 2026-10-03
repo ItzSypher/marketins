@@ -1,0 +1,40 @@
+/* Cópia das regras da abertura do site (src/styles.css) para usar a máscara na página do Sérgio sem mexer no site. */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 1.6em; border-radius: 999px; border: 0; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; white-space: nowrap; cursor: pointer; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+.btn--light { background: var(--texto); color: var(--chao); }
+.btn--brand { background: var(--gradiente-texto); color: #fff; }
+.btn--ghost { min-height: 40px; border: 1px solid rgb(255 255 255 / 0.4); background: rgb(11 7 9 / 0.35); color: #fff; font-size: 0.66rem; padding: 0 1.1em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.btn--ghost:hover { background: rgb(255 255 255 / 0.12); }
+.stage { position: relative; width: 100%; height: 100svh; overflow: hidden; background: var(--chao); --logo-h: 14vw; }
+.abertura { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.abertura__icone { position: absolute; left: 50%; top: 50%; width: clamp(96px, 18vh, 168px); height: auto; margin: calc(clamp(96px, 18vh, 168px) / -2) 0 0 calc(clamp(96px, 18vh, 168px) / -2); }
+.abertura__frase { position: absolute; left: 0; right: 0; top: calc(50% + var(--logo-h) / 2 + 1.1rem); text-align: center; font: 600 clamp(0.62rem, 1.4vw, 0.85rem)/1 var(--display); letter-spacing: 0.42em; text-transform: uppercase; color: var(--texto-2); }
+
+.hero { position: absolute; inset: 0; z-index: 2; }
+.hero__img, .hero__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 58% 40%; }
+.hero__tela { position: absolute; inset: 0; background: var(--gradiente); opacity: 0; }
+.hero__sombra { position: absolute; inset: 0; background: linear-gradient(to top, rgb(11 7 9 / 0.92) 0%, rgb(11 7 9 / 0.55) 38%, transparent 62%); }
+.hero__copy { position: absolute; left: 16px; right: 16px; bottom: max(2rem, 6svh); display: grid; gap: 1rem; justify-items: start; }
+.hero__copy h1 { font-weight: 800; font-size: clamp(2rem, 9vw, 3.6rem); line-height: 0.98; text-transform: uppercase; letter-spacing: -0.02em; max-width: 13ch; }
+.hero__copy p { max-width: 38ch; color: var(--texto); font-size: 1rem; }
+
+.is-animated:not(.is-open) .hero {
+  -webkit-mask-image: url('/wordmark-mask.svg');
+  mask-image: url('/wordmark-mask.svg');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: var(--mask-size) auto;
+  mask-size: var(--mask-size) auto;
+  -webkit-mask-position: var(--mask-x) var(--mask-y);
+  mask-position: var(--mask-x) var(--mask-y);
+}
+
+.stage:not(.is-animated) .abertura { display: none; }
+@media (min-width: 768px) {
+  .hero__copy { left: var(--gutter); right: auto; bottom: 12svh; }
+  .hero__sombra { background: linear-gradient(100deg, rgb(11 7 9 / 0.9) 0%, rgb(11 7 9 / 0.6) 34%, transparent 62%); }
+  .hero__img, .hero__img img { object-position: 62% 50%; }
+}
+.ds-stage { margin-inline: calc(50% - 50vw); }
+.ds-stage .hero__copy h1 { font-family: var(--display); }
