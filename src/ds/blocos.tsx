@@ -209,10 +209,11 @@ export function IphoneReels() {
 }
 
 /* ---------- Música: "toque na tela" + ícone para parar ---------- */
-export function Musica() {
+/** comToque: a tela "Toque na tela" só existe junto da abertura GTA. */
+export function Musica({ comToque = false }: { comToque?: boolean }) {
   const audio = useRef<HTMLAudioElement>(null);
   const [tocando, setTocando] = useState(false);
-  const [entrada, setEntrada] = useState(true);
+  const [entrada, setEntrada] = useState(comToque);
 
   const [saindo, setSaindo] = useState(0);
   const tocar = () => {
