@@ -1,7 +1,10 @@
-import { StrictMode } from 'react';
+import { StrictMode, useLayoutEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createRoot } from 'react-dom/client';
 import { destaques, linkContato } from '../content';
 import { Equipe, IphoneReels, Mosaico, Musica } from './blocos';
+import '@fontsource-variable/montserrat';
 import '../tokens.css';
 import { Logo3D } from './Logo3D';
 import { Stage } from '../sections/Stage';
@@ -45,10 +48,10 @@ function CapaSergio() {
     <section className="carta">
       <img className="carta__icone" src="/icone.svg" alt="" width="72" height="72" />
       <p className="carta__de">Da Fox para o Sérgio</p>
-      <h1>Sérgio, essa é a cara nova da Marketins.</h1>
-      <p>Antes de mexer em qualquer página do site, a gente montou a base: as cores, a fonte, os botões e o jeito de falar. Tudo o que vier depois sai daqui.</p>
-      <p>Pega o celular, aumenta o som e vai descendo devagar. Tem música, tem o seu time, tem o Instagram da agência abrindo dentro do celular.</p>
-      <p className="carta__dica">Role para ver ↓</p>
+      <h1>Sérgio, uma pitada do que vem aí.</h1>
+      <p>A gente está construindo o site novo da Marketins, e não deu para guardar segredo. Separamos um pedaço para você sentir o clima.</p>
+      <p>Pega o celular, aumenta o som e vai descendo devagar.</p>
+      <p className="carta__dica">Desça ↓</p>
     </section>
   );
 }
@@ -56,15 +59,46 @@ function CapaSergio() {
 function FimSergio() {
   return (
     <section className="carta carta--fim">
-      <h2>E agora?</h2>
-      <p>Se gostou, a gente segue para a abertura do site: o "Nada de GTA 6. Aqui é Marketins", com o foguete em 3D.</p>
-      <p>Qualquer coisa que não tiver a sua cara, é só falar. Ajustamos antes de ir para o ar.</p>
+      <h2>Isso foi só o começo.</h2>
+      <p>Ainda tem a abertura, os cases e o Marketins Conecta para chegar. Quando estiver pronto, você vai ser o primeiro a ver.</p>
       <p className="carta__assina">Fox</p>
     </section>
   );
 }
 
+/* Entradas ao descer: título sobe de trás de uma linha, texto vem depois, blocos abrem como janela. */
+function useEntradas() {
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.from('.carta > *', { autoAlpha: 0, y: 40, duration: 1.1, stagger: 0.12, ease: 'expo.out', delay: 0.3 });
+      gsap.utils.toArray<HTMLElement>('.ds-secao, .carta--fim').forEach((sec) => {
+        const titulo = sec.querySelector('h2');
+        const texto = sec.querySelectorAll(':scope > header p, :scope > p');
+        const blocos = sec.querySelectorAll(':scope > :not(header):not(.iphone-sec):not(p)');
+        const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top 78%', once: true } });
+        if (titulo) tl.from(titulo, { yPercent: 110, clipPath: 'inset(0 0 100% 0)', duration: 1, ease: 'expo.out' });
+        if (texto.length) tl.from(texto, { autoAlpha: 0, y: 20, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, '-=0.7');
+        blocos.forEach((b) => {
+          gsap.from(b, {
+            clipPath: 'inset(18% 6% 18% 6% round 28px)', scale: 0.94, autoAlpha: 0, duration: 1.3, ease: 'expo.out',
+            clearProps: 'clipPath,transform',
+            scrollTrigger: { trigger: b, start: 'top 85%', once: true },
+          });
+        });
+      });
+    });
+    // fontes e imagens mudam a altura da página: recalcula os pontos do scroll (máscara e celular)
+    const recalcular = () => ScrollTrigger.refresh();
+    document.fonts?.ready.then(recalcular);
+    addEventListener('load', recalcular);
+    return () => { mm.revert(); removeEventListener('load', recalcular); };
+  }, []);
+}
+
 function App() {
+  useEntradas();
   const vitrine = (
     <>
       <Secao id="tres-d" titulo="3D" porque="Foguete extrudado do SVG oficial e o Conecta em camadas, em WebGL. Mexa o mouse ou o dedo.">

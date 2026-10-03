@@ -108,7 +108,7 @@ export function IphoneReels() {
             const v = video.current; if (!v) return;
             const dentro = st.progress > 0.55;
             setReel(dentro);
-            if (dentro) { setPost(null); if (v.paused && !v.dataset.pausadoPeloUsuario) v.play().catch(() => { v.muted = true; setMudo(true); v.play().catch(() => {}); }); }
+            if (dentro) { setPost(null); if (v.paused && !v.dataset.pausadoPeloUsuario) { v.muted = false; setMudo(false); v.play().catch(() => { v.muted = true; setMudo(true); v.play().catch(() => {}); }); } }
             else if (!v.paused) v.pause();
           },
         },
@@ -119,6 +119,17 @@ export function IphoneReels() {
     });
     mm.add('(prefers-reduced-motion: reduce)', () => { el.classList.add('is-estatico'); });
     return () => mm.revert();
+  }, []);
+
+  // no "toque na tela" o vídeo é destravado com som: toca e pausa na hora, dentro do toque
+  useEffect(() => {
+    const liberar = () => {
+      const v = video.current; if (!v) return;
+      v.muted = false;
+      v.play().then(() => { v.pause(); v.currentTime = 0; }).catch(() => {});
+    };
+    window.addEventListener('marketins:liberar', liberar);
+    return () => window.removeEventListener('marketins:liberar', liberar);
   }, []);
 
   // abre o micro feed já no post tocado
@@ -133,7 +144,7 @@ export function IphoneReels() {
     if (v.paused) { delete v.dataset.pausadoPeloUsuario; v.play().catch(() => {}); }
     else { v.dataset.pausadoPeloUsuario = '1'; v.pause(); }
   };
-  const alternarSom = () => { const v = video.current; if (!v) return; v.muted = !v.muted; setMudo(v.muted); };
+  const alternarSom = () => { const v = video.current; if (!v) return; v.muted = !v.muted; setMudo(v.muted); if (v.paused) v.play().catch(() => {}); };
 
   return (
     <div className="iphone-sec" ref={sec}>
@@ -177,6 +188,7 @@ export function IphoneReels() {
           </div>
 
           <div className="ig__reel">
+            {reel && mudo && <button className="ig__som" onClick={alternarSom}>Toque para ouvir</button>}
             <video ref={video} src="/media/reels.mp4" poster="/media/reels-capa.webp" loop playsInline preload="metadata"
               onPlay={() => setTocando(true)} onPause={() => setTocando(false)}
               onTimeUpdate={(e) => { const v = e.currentTarget; setProg(v.duration ? v.currentTime / v.duration : 0); }} />
@@ -206,6 +218,7 @@ export function Musica() {
   const tocar = () => {
     audio.current?.play().then(() => setTocando(true)).catch(() => setTocando(false));
     // o foguete dá um giro e a tela some
+    window.dispatchEvent(new Event('marketins:liberar'));
     setSaindo((n) => n + 1);
     window.setTimeout(() => setEntrada(false), 700);
   };

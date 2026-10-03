@@ -24,7 +24,7 @@
 
   /* Tipografia */
   --display: 'Benzin', system-ui, sans-serif;
-  --corpo: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --corpo: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif;
 
   --gutter: clamp(16px, 5vw, 72px);
   color-scheme: dark;
