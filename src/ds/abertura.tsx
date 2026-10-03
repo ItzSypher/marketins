@@ -36,8 +36,8 @@ function GTA() {
       });
       tl.to(q('.gta__dica'), { autoAlpha: 0, duration: 0.3 }, 0)
         // o X corta: duas faixas atravessam a tela
-        .fromTo(q('.gta__x--a'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.3)
-        .fromTo(q('.gta__x--b'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.7)
+        .fromTo(q('.gta__x--a i'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.3)
+        .fromTo(q('.gta__x--b i'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.7)
         .to(q('.gta__logo'), { filter: 'grayscale(1) brightness(0.35)', scale: 0.92, duration: 0.6 }, 1.1)
         .to(q('.gta__logo'), { x: 6, duration: 0.05, repeat: 5, yoyo: true }, 1.1)
         // a frase
@@ -60,8 +60,8 @@ function GTA() {
     <section className="gta" ref={raiz} aria-label="Nada de GTA 6. Aqui é Marketins.">
       <div className="gta__ceu" aria-hidden="true" />
       <img className="gta__logo" src="/gta6.svg" alt="" />
-      <span className="gta__x gta__x--a" aria-hidden="true" />
-      <span className="gta__x gta__x--b" aria-hidden="true" />
+      <span className="gta__x gta__x--a" aria-hidden="true"><i /></span>
+      <span className="gta__x gta__x--b" aria-hidden="true"><i /></span>
       <h1 className="gta__frase">
         <span><span className="gta__frase-1">Nada de GTA 6.</span></span>
         <span><span className="gta__frase-2">Aqui é Marketins.</span></span>
