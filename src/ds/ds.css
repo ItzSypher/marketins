@@ -261,7 +261,7 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
 .ds-3d figure { display: grid; gap: 0.75rem; padding: 1rem; border-radius: 22px; background: radial-gradient(circle at 50% 40%, #2a0f19, var(--chao-2) 70%); border: 1px solid var(--linha); }
 .ds-3d figcaption { color: var(--texto-2); font-size: 0.9rem; }
 .ds-3d figcaption b { display: block; color: var(--texto); font-family: var(--display); text-transform: uppercase; }
-@media (min-width: 768px) { .ds-3d { grid-template-columns: 1fr 1.4fr; align-items: stretch; } .ds-3d .logo3d--icone { max-height: 360px; margin-inline: auto; } }
+@media (min-width: 768px) { .ds-3d { grid-template-columns: 1fr 1fr; align-items: stretch; } .ds-3d figure { align-content: space-between; } .ds-3d .logo3d--icone { width: min(100%, 340px); margin-inline: auto; } .ds-3d .logo3d--conecta { align-self: center; } }
 /* barra do topo não cobre o celular fixado */
 .iphone-sec { padding-top: 64px; gap: 1rem; }
 .iphone { width: min(78vw, 330px, calc((100svh - 190px) * 9 / 19.3)); }
@@ -275,3 +275,26 @@ html { scrollbar-color: var(--laranja) var(--chao); scrollbar-width: thin; }
 ::-webkit-scrollbar { width: 8px; height: 0; }
 ::-webkit-scrollbar-track { background: var(--chao); }
 ::-webkit-scrollbar-thumb { background: var(--laranja); border-radius: 8px; }
+
+/* Responsivo: botões não herdam fonte; telas pequenas e baixas */
+button { font-family: inherit; }
+.pessoa__texto { font-family: var(--corpo); }
+.ds-3d .logo3d--icone { width: min(100%, 300px); margin-inline: auto; }
+.carta__de { line-height: 1.4; }
+@media (max-width: 380px) {
+  .carta h1, .carta h2 { font-size: 1.85rem; }
+  .ds-secao h2 { font-size: 1.6rem; }
+  .pessoa.is-aberto .pessoa__nome { font-size: 1.3rem; bottom: 7rem; }
+  .mini__info b { font-size: 0.65rem; }
+}
+@media (max-width: 767px) {
+  .equipe2 { height: min(980px, 150svh); }
+  .pessoa.is-aberto .pessoa__texto { font-size: 0.88rem; }
+}
+@media (max-height: 640px) {
+  .iphone-sec { padding-top: 40px; }
+  .iphone { width: min(70vw, calc((100svh - 150px) * 9 / 19.3)); }
+}
+@media (min-width: 1024px) {
+  .equipe2 { height: min(640px, 78svh); }
+}
