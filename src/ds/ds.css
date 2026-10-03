@@ -49,9 +49,9 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
 .ds-tom td:last-child { color: var(--texto-2); text-decoration: line-through; text-decoration-color: rgb(255 123 123 / 0.6); }
 
 /* Cores */
-.ds-cores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.ds-cores li { display: grid; gap: 0.25rem; font-size: 0.8rem; color: var(--texto-2); }
-.ds-amostra { display: block; aspect-ratio: 16 / 10; border-radius: 14px; border: 1px solid var(--linha); margin-bottom: 0.4rem; }
+.ds-cores { display: grid; grid-template-columns: 1fr; gap: 10px; list-style: none; padding: 0; }
+.ds-cores li { display: grid; grid-template-columns: 72px 1fr; grid-template-rows: auto auto 1fr; column-gap: 14px; row-gap: 2px; align-items: start; padding: 10px; border-radius: 16px; background: var(--chao-2); border: 1px solid var(--linha); font-size: 0.8rem; line-height: 1.45; color: var(--texto-2); min-width: 0; overflow-wrap: anywhere; }
+.ds-amostra { grid-row: 1 / -1; display: block; width: 72px; height: 100%; min-height: 72px; border-radius: 10px; border: 1px solid rgb(255 255 255 / 0.12); }
 .ds-cores b { color: var(--texto); font-size: 0.85rem; }
 .ds-cores code { color: var(--texto); }
 .ds-gradientes { margin-top: 12px; display: grid; gap: 12px; }
@@ -141,7 +141,7 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
   .ds-secao { padding-top: 7rem; }
   .ds-logos { grid-template-columns: repeat(2, 1fr); }
   .ds-proposito { grid-template-columns: 1fr 1fr; gap: 3rem; }
-  .ds-cores { grid-template-columns: repeat(4, 1fr); }
+  .ds-cores { grid-template-columns: repeat(2, 1fr); }
   .ds-gradientes { grid-template-columns: repeat(3, 1fr); }
   .ds-botoes { grid-template-columns: repeat(3, 1fr); }
   .ds-cards { grid-template-columns: repeat(4, 1fr); }
@@ -175,12 +175,12 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
 .pessoa:not(.is-aberto):hover img { filter: grayscale(0) brightness(0.85); }
 
 /* Mosaico */
-.mosaico { display: grid; gap: 12px; overflow: hidden; margin-inline: calc(50% - 50vw); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.mosaico__trilho { display: flex; gap: 12px; width: max-content; animation: mosaico 80s linear infinite; }
-.mosaico__trilho--volta { animation-direction: reverse; animation-duration: 95s; }
-.mosaico__trilho img { height: clamp(130px, 22vw, 250px); width: auto; aspect-ratio: 800 / 568; object-fit: contain; border-radius: 14px; background: var(--chao-2); }
-.mosaico:hover .mosaico__trilho { animation-play-state: paused; }
-@keyframes mosaico { to { transform: translateX(calc(-50% - 6px)); } }
+.mosaico { display: grid; gap: 14px; overflow: hidden; margin-inline: calc(50% - 50vw); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+.mosaico__trilho { --gap: 14px; display: flex; gap: var(--gap); width: max-content; animation: mosaico 110s linear infinite; }
+.mosaico__trilho--volta { display: none; animation-direction: reverse; animation-duration: 130s; }
+.mosaico__trilho img { width: min(78vw, 420px); height: auto; aspect-ratio: 800 / 568; object-fit: cover; border-radius: 18px; background: var(--chao-2); }
+.mosaico:hover .mosaico__trilho, .mosaico:active .mosaico__trilho { animation-play-state: paused; }
+@keyframes mosaico { to { transform: translateX(calc(-50% - var(--gap) / 2)); } }
 
 .iphone-sec { min-height: 100svh; display: grid; place-items: center; gap: 1.5rem; padding: 2rem 0; }
 .iphone { position: relative; width: min(78vw, 330px); aspect-ratio: 9 / 19.3; border-radius: 52px; padding: 11px; background: linear-gradient(145deg, #3a3a3e, #121214); box-shadow: inset 0 0 0 2px #55555a, 0 40px 80px -30px rgb(208 0 77 / 0.45); }
@@ -297,4 +297,11 @@ button { font-family: inherit; }
 }
 @media (min-width: 1024px) {
   .equipe2 { height: min(640px, 78svh); }
+}
+
+@media (min-width: 768px) { .mosaico__trilho--volta { display: flex; } }
+@media (min-width: 1024px) {
+  .ds-cores { grid-template-columns: repeat(4, 1fr); }
+  .ds-cores li { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .ds-amostra { grid-row: auto; width: 100%; height: auto; aspect-ratio: 16 / 9; margin-bottom: 8px; }
 }

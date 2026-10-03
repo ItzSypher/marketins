@@ -66,7 +66,7 @@ export function Mosaico() {
       {linhas.map((l, k) => (
         <div key={k} className={`mosaico__trilho${k ? ' mosaico__trilho--volta' : ''}`}>
           {[...l, ...l].map((c, i) => (
-            <img key={i} src={c.img} alt={i < l.length ? `Case ${c.nome}` : ''} aria-hidden={i >= l.length} width="800" height="568" loading="lazy" />
+            <img key={i} src={c.img} alt={i < l.length ? `Case ${c.nome}` : ''} aria-hidden={i >= l.length} width="800" height="568" decoding="async" draggable={false} />
           ))}
         </div>
       ))}
