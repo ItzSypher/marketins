@@ -3,6 +3,7 @@
 .gta { position: relative; height: 100svh; overflow: hidden; display: grid; place-items: center; background: var(--chao); }
 /* céu de pôr do sol no estilo da arte do GTA VI */
 .gta__ceu { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 110%, #ff9a3c 0%, #ff4f7b 32%, #7a2a8c 60%, #1b0b2a 85%); }
+.gta__entrada { position: relative; display: grid; place-items: center; }
 .gta__logo { position: relative; width: min(70vw, 52svh); height: auto; filter: drop-shadow(0 20px 40px rgb(0 0 0 / 0.45)); }
 .gta__x { position: absolute; left: 50%; top: 50%; width: 150vmax; height: clamp(16px, 3.2vw, 34px); translate: -50% -50%; }
 .gta__x i { display: block; height: 100%; background: var(--laranja); box-shadow: 0 0 40px rgb(254 82 35 / 0.6); transform-origin: left center; transform: scaleX(0); }

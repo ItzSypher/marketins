@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import '@fontsource-variable/montserrat';
 import '../tokens.css';
 import { Musica } from './blocos';
+import { linkContato } from '../content';
 import { Logo3D } from './Logo3D';
 import { Stage } from '../sections/Stage';
 import './ds.css';
@@ -27,31 +28,32 @@ function GTA() {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       // entrada no carregamento: o logo do GTA aparece como no site deles
-      gsap.from(q('.gta__logo'), { autoAlpha: 0, scale: 1.15, filter: 'blur(12px)', duration: 1.6, ease: 'expo.out', delay: 0.2 });
-      gsap.from(q('.gta__dica'), { autoAlpha: 0, y: 10, duration: 0.8, delay: 1.4 });
+      // (anima os invólucros: assim a timeline do scroll não guarda o estado "invisível" da entrada)
+      gsap.from(q('.gta__entrada'), { autoAlpha: 0, scale: 1.15, filter: 'blur(12px)', duration: 1.6, ease: 'expo.out', delay: 0.2 });
+      gsap.from(q('.gta__dica span'), { autoAlpha: 0, y: 10, duration: 0.8, delay: 1.4 });
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: { trigger: el, start: 'top top', end: '+=3400', pin: true, scrub: 1 },
       });
-      tl.to(q('.gta__dica'), { autoAlpha: 0, duration: 0.3 }, 0)
+      tl.fromTo(q('.gta__dica'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3 }, 0)
         // o X corta: duas faixas atravessam a tela
         .fromTo(q('.gta__x--a i'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.3)
         .fromTo(q('.gta__x--b i'), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power4.in' }, 0.7)
-        .to(q('.gta__logo'), { filter: 'grayscale(1) brightness(0.35)', scale: 0.92, duration: 0.6 }, 1.1)
-        .to(q('.gta__logo'), { x: 6, duration: 0.05, repeat: 5, yoyo: true }, 1.1)
+        .fromTo(q('.gta__logo'), { filter: 'grayscale(0) brightness(1)', scale: 1 }, { filter: 'grayscale(1) brightness(0.35)', scale: 0.92, duration: 0.6 }, 1.1)
+        .fromTo(q('.gta__logo'), { x: 0 }, { x: 6, duration: 0.05, repeat: 5, yoyo: true, immediateRender: false }, 1.1)
         // a frase
         .fromTo(q('.gta__frase-1'), { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: 'expo.out' }, 1.4)
         .fromTo(q('.gta__frase-2'), { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: 'expo.out' }, 1.9)
         // tudo do GTA sai, o fundo vira Marketins
-        .to(q('.gta__logo, .gta__x'), { autoAlpha: 0, scale: 1.3, duration: 0.8, ease: 'power2.in' }, 2.8)
-        .to(q('.gta__frase'), { autoAlpha: 0, y: -40, duration: 0.6 }, 3.0)
-        .to(q('.gta__ceu'), { autoAlpha: 0, duration: 0.8 }, 2.8)
+        .fromTo(q('.gta__entrada, .gta__x'), { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 1.3, duration: 0.8, ease: 'power2.in', immediateRender: false }, 2.8)
+        .fromTo(q('.gta__frase'), { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -40, duration: 0.6, immediateRender: false }, 3.0)
+        .fromTo(q('.gta__ceu'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.8, immediateRender: false }, 2.8)
         // o foguete sobe em 3D
         .fromTo(q('.gta__foguete'), { yPercent: 120, scale: 0.4, autoAlpha: 0 }, { yPercent: 0, scale: 1, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 3.2)
         .fromTo(q('.gta__assina'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6 }, 4.2)
         // segura um pouco e sai para o "marketins" (o logo não aparece duas vezes)
-        .to(q('.gta__foguete, .gta__assina'), { autoAlpha: 0, scale: 0.6, duration: 0.7, ease: 'power2.in' }, 5.4);
+        .fromTo(q('.gta__foguete, .gta__assina'), { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 0.6, duration: 0.7, ease: 'power2.in', immediateRender: false }, 5.4);
     });
     return () => mm.revert();
   }, []);
@@ -59,7 +61,7 @@ function GTA() {
   return (
     <section className="gta" ref={raiz} aria-label="Nada de GTA 6. Aqui é Marketins.">
       <div className="gta__ceu" aria-hidden="true" />
-      <img className="gta__logo" src="/gta6.svg" alt="" />
+      <div className="gta__entrada"><img className="gta__logo" src="/gta6.svg" alt="" /></div>
       <span className="gta__x gta__x--a" aria-hidden="true"><i /></span>
       <span className="gta__x gta__x--b" aria-hidden="true"><i /></span>
       <h1 className="gta__frase">
@@ -68,7 +70,7 @@ function GTA() {
       </h1>
       <div className="gta__foguete"><Logo3D tipo="icone" /></div>
       <p className="gta__assina">Soluções de marketing</p>
-      <p className="gta__dica">Role para baixo ↓</p>
+      <p className="gta__dica"><span>Role para baixo ↓</span></p>
     </section>
   );
 }
@@ -77,7 +79,12 @@ function App() {
   return (
     <main className="ab">
       <GTA />
-      <Stage />
+      <Stage cta={
+        <a className="b-transicao" href={linkContato('abertura')} target="_blank" rel="noopener">
+          <span className="b-transicao__a">Agendar reunião</span>
+          <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
+        </a>
+      } />
       <section className="ab-fim">
         <p>Prévia 2 · só a abertura. Daqui para baixo entra o resto do site.</p>
       </section>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { linkContato } from '../content';
@@ -31,7 +31,7 @@ function openWidth(vw: number, vh: number) {
  * Abertura: a página começa no "marketins" com o ícone. Ao rolar, as letras
  * abrem como janela, a foto da capa toma a tela e o texto do hero entra por cima.
  */
-export function Stage() {
+export function Stage({ cta }: { cta?: ReactNode } = {}) {
   const stage = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -127,7 +127,7 @@ export function Stage() {
         <div className="hero__copy">
           <h1 id="hero-titulo">Ajudamos empresas como a sua a decolar.</h1>
           <p>Social media, design, audiovisual e tráfego pago com o mesmo time. A gente começa entendendo o seu negócio.</p>
-          <a className="btn btn--brand" href={linkContato('hero')} target="_blank" rel="noopener">Agendar consultoria</a>
+          {cta ?? <a className="btn btn--brand" href={linkContato('hero')} target="_blank" rel="noopener">Agendar consultoria</a>}
         </div>
       </section>
     </div>
