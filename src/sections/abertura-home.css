@@ -1,0 +1,63 @@
+/* Abertura V2 na home: botão Transição, toque na tela, música e 3D (copiados do design system) */
+.b-transicao { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
+.b-transicao { position: relative; display: grid; min-width: 200px; height: 52px; border-radius: 999px; overflow: hidden; border: 1.5px solid transparent; background-image: linear-gradient(90deg, #4a4a4a, #1e1e1e), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
+.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s; }
+.b-transicao__a { color: #fff; }
+.b-transicao__b { background: #fff; color: var(--chao); transform: translateY(100%); }
+.b-transicao__b img { width: 22px; }
+.b-transicao:hover .b-transicao__a, .b-transicao:focus-visible .b-transicao__a { transform: translateY(-100%); opacity: 0; }
+.b-transicao:hover .b-transicao__b, .b-transicao:focus-visible .b-transicao__b { transform: translateY(0); }
+.toque { position: fixed; inset: 0; z-index: 60; display: grid; place-content: center; justify-items: center; gap: 1.25rem; border: 0; background: rgb(11 7 9 / 0.94); color: var(--texto); cursor: pointer; font: 600 0.8rem/1 var(--display); letter-spacing: 0.3em; text-transform: uppercase; }
+.toque { transition: opacity 0.6s 0.15s; }
+.toque.is-saindo { opacity: 0; pointer-events: none; }
+.toque__logo { width: min(70vw, 300px); }
+@keyframes pulso { 50% { transform: scale(1.06); } }
+.som { position: fixed; z-index: 50; right: 16px; bottom: 16px; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--linha); background: rgb(22 16 19 / 0.85); backdrop-filter: blur(10px); display: grid; place-items: center; cursor: pointer; }
+.som img { width: 34px; opacity: 0.55; transition: opacity 0.3s; }
+.som.is-tocando img { opacity: 1; animation: girar 6s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.logo3d { position: relative; aspect-ratio: 1; display: grid; place-items: center; }
+.logo3d--conecta { aspect-ratio: 16 / 9; }
+.logo3d canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.logo3d__fallback { width: 55%; }
+.logo3d--conecta .logo3d__fallback { width: 90%; }
+.logo3d.is-3d .logo3d__fallback { visibility: hidden; }
+.som { position: fixed; }
+.som__play { position: absolute; right: -2px; bottom: -2px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--laranja); color: #fff; font-size: 0.6rem; padding-left: 2px; }
+.som__balao { position: fixed; z-index: 50; right: 82px; bottom: 26px; padding: 0.6rem 0.9rem; border: 0; border-radius: 14px 14px 4px 14px; background: #fff; color: var(--chao); font: 700 0.68rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 10px 30px rgb(0 0 0 / 0.4); animation: balao 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes balao { from { opacity: 0; transform: translateX(10px) scale(0.9); } }
+/* Prévia 2: abertura "GTA" → Marketins */
+.ab { overflow-x: clip; }
+.gta { position: relative; height: 100svh; overflow: hidden; display: grid; place-items: center; background: var(--chao); }
+/* céu de pôr do sol no estilo da arte do GTA VI */
+.gta__ceu { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 110%, #ff9a3c 0%, #ff4f7b 32%, #7a2a8c 60%, #1b0b2a 85%); }
+.gta__entrada, .gta__brilho { position: relative; display: grid; place-items: center; }
+.gta__logo { position: relative; width: min(70vw, 52svh); height: auto; filter: drop-shadow(0 20px 40px rgb(0 0 0 / 0.45)); }
+.gta__x { position: absolute; left: 50%; top: 50%; width: 150vmax; height: clamp(16px, 3.2vw, 34px); translate: -50% -50%; }
+.gta__x i { display: block; height: 100%; background: var(--laranja); box-shadow: 0 0 40px rgb(254 82 35 / 0.6); transform-origin: left center; transform: scaleX(0); }
+.gta__x--b i { transform-origin: right center; }
+.gta__x--a { rotate: 32deg; }
+.gta__x--b { rotate: -32deg; }
+.gta__frase { position: absolute; left: 16px; right: 16px; bottom: 12svh; display: grid; gap: 0.2em; text-align: center; font: 800 clamp(1.7rem, 7.5vw, 4.4rem)/1 var(--display); text-transform: uppercase; letter-spacing: -0.01em; }
+.gta__frase > span { display: block; overflow: hidden; padding-bottom: 0.08em; }
+.gta__frase > span > span { display: block; transform: translateY(110%); }
+.gta__frase-2 { color: var(--laranja); }
+.gta__foguete { position: absolute; width: min(72vw, 420px); opacity: 0; }
+.gta__assina { position: absolute; bottom: 14svh; font: 600 clamp(0.62rem, 1.4vw, 0.85rem)/1 var(--display); letter-spacing: 0.42em; text-transform: uppercase; color: var(--texto-2); opacity: 0; }
+.gta__dica { position: absolute; bottom: 4svh; font: 600 0.7rem/1 var(--display); letter-spacing: 0.25em; text-transform: uppercase; color: rgb(255 255 255 / 0.8); }
+.ab-fim { min-height: 60svh; display: grid; place-items: center; padding: 2rem 16px; color: var(--texto-2); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gta__frase > span > span { transform: none; }
+  .gta__foguete { opacity: 1; }
+}
+
+@media (max-width: 767px) {
+  .gta__logo { width: min(82vw, 46svh); }
+  .gta__x { height: 16px; }
+  .gta__x--a { rotate: 52deg; }
+  .gta__x--b { rotate: -52deg; }
+  .gta__frase { bottom: 10svh; }
+}
+@media (min-width: 1024px) and (max-height: 760px) { .gta__logo { width: min(50vw, 50svh); } }
+.faixa ~ main .gta__dica, main .gta__dica { bottom: calc(4svh + 2.4rem); }

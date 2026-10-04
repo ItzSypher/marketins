@@ -1,0 +1,34 @@
+/* Prévia 2: abertura "GTA" → Marketins */
+.ab { overflow-x: clip; }
+.gta { position: relative; height: 100svh; overflow: hidden; display: grid; place-items: center; background: var(--chao); }
+/* céu de pôr do sol no estilo da arte do GTA VI */
+.gta__ceu { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 110%, #ff9a3c 0%, #ff4f7b 32%, #7a2a8c 60%, #1b0b2a 85%); }
+.gta__entrada, .gta__brilho { position: relative; display: grid; place-items: center; }
+.gta__logo { position: relative; width: min(70vw, 52svh); height: auto; filter: drop-shadow(0 20px 40px rgb(0 0 0 / 0.45)); }
+.gta__x { position: absolute; left: 50%; top: 50%; width: 150vmax; height: clamp(16px, 3.2vw, 34px); translate: -50% -50%; }
+.gta__x i { display: block; height: 100%; background: var(--laranja); box-shadow: 0 0 40px rgb(254 82 35 / 0.6); transform-origin: left center; transform: scaleX(0); }
+.gta__x--b i { transform-origin: right center; }
+.gta__x--a { rotate: 32deg; }
+.gta__x--b { rotate: -32deg; }
+.gta__frase { position: absolute; left: 16px; right: 16px; bottom: 12svh; display: grid; gap: 0.2em; text-align: center; font: 800 clamp(1.7rem, 7.5vw, 4.4rem)/1 var(--display); text-transform: uppercase; letter-spacing: -0.01em; }
+.gta__frase > span { display: block; overflow: hidden; padding-bottom: 0.08em; }
+.gta__frase > span > span { display: block; transform: translateY(110%); }
+.gta__frase-2 { color: var(--laranja); }
+.gta__foguete { position: absolute; width: min(72vw, 420px); opacity: 0; }
+.gta__assina { position: absolute; bottom: 14svh; font: 600 clamp(0.62rem, 1.4vw, 0.85rem)/1 var(--display); letter-spacing: 0.42em; text-transform: uppercase; color: var(--texto-2); opacity: 0; }
+.gta__dica { position: absolute; bottom: 4svh; font: 600 0.7rem/1 var(--display); letter-spacing: 0.25em; text-transform: uppercase; color: rgb(255 255 255 / 0.8); }
+.ab-fim { min-height: 60svh; display: grid; place-items: center; padding: 2rem 16px; color: var(--texto-2); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gta__frase > span > span { transform: none; }
+  .gta__foguete { opacity: 1; }
+}
+
+@media (max-width: 767px) {
+  .gta__logo { width: min(82vw, 46svh); }
+  .gta__x { height: 16px; }
+  .gta__x--a { rotate: 52deg; }
+  .gta__x--b { rotate: -52deg; }
+  .gta__frase { bottom: 10svh; }
+}
+@media (min-width: 1024px) and (max-height: 760px) { .gta__logo { width: min(50vw, 50svh); } }

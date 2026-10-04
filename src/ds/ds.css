@@ -306,5 +306,11 @@ button { font-family: inherit; }
   .ds-amostra { grid-row: auto; width: 100%; height: auto; aspect-ratio: 16 / 9; margin-bottom: 8px; }
 }
 
+/* Música: play quando parada e balão para tocar de novo */
+.som { position: fixed; }
+.som__play { position: absolute; right: -2px; bottom: -2px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--laranja); color: #fff; font-size: 0.6rem; padding-left: 2px; }
+.som__balao { position: fixed; z-index: 50; right: 82px; bottom: 26px; padding: 0.6rem 0.9rem; border: 0; border-radius: 14px 14px 4px 14px; background: #fff; color: var(--chao); font: 700 0.68rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 10px 30px rgb(0 0 0 / 0.4); animation: balao 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes balao { from { opacity: 0; transform: translateX(10px) scale(0.9); } }
+
 /* Montserrat só nas páginas novas, sem mudar a home */
 :root { --corpo: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif; }

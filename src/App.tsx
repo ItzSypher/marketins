@@ -3,6 +3,9 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Stage } from './sections/Stage';
+import { GTA } from './sections/Gta';
+import { Musica } from './ds/blocos';
+import './sections/abertura-home.css';
 import { cases, conecta, destaques, historia, depoimentos, linkContato, INSTAGRAM, numeros, sergio, servicos, time } from './content';
 
 const CHAVE_POPUP = 'marketins-conecta-visto';
@@ -75,7 +78,13 @@ export default function App() {
       </header>
 
       <main>
-        <Stage />
+        <GTA />
+        <Stage cta={
+          <a className="b-transicao" href={linkContato('hero')} target="_blank" rel="noopener">
+            <span className="b-transicao__a">Agendar reunião</span>
+            <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
+          </a>
+        } />
 
         <section className="numeros" aria-label="A Marketins em números" data-revela>
           {numeros.map((n) => (
@@ -189,6 +198,8 @@ export default function App() {
         <a href={INSTAGRAM} target="_blank" rel="noopener">@marketins.mkt</a>
         <p>© {new Date().getFullYear()} Marketins</p>
       </footer>
+
+      <Musica comToque />
 
       {popup && (
         <div className="popup" role="dialog" aria-modal="true" aria-labelledby="popup-titulo" onClick={fecharPopup}>

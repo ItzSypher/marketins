@@ -209,25 +209,38 @@ export function IphoneReels() {
 }
 
 /* ---------- Música: "toque na tela" + ícone para parar ---------- */
-/** comToque: a tela "Toque na tela" só existe junto da abertura GTA. */
+const LIMITE_MUSICA = 10;
+
+/** comToque: a tela "Toque na tela" só existe junto da abertura GTA. A música toca 10s e para. */
 export function Musica({ comToque = false }: { comToque?: boolean }) {
   const audio = useRef<HTMLAudioElement>(null);
   const [tocando, setTocando] = useState(false);
+  const [acabou, setAcabou] = useState(false);
   const [entrada, setEntrada] = useState(comToque);
-
   const [saindo, setSaindo] = useState(0);
+
+  const tocarDoInicio = () => {
+    const a = audio.current; if (!a) return;
+    a.currentTime = 0; a.volume = 1; setAcabou(false);
+    a.play().then(() => setTocando(true)).catch(() => setTocando(false));
+  };
   const tocar = () => {
-    audio.current?.play().then(() => setTocando(true)).catch(() => setTocando(false));
-    // o foguete dá um giro e a tela some
     window.dispatchEvent(new Event('marketins:liberar'));
+    tocarDoInicio();
+    // o foguete dá um giro e a tela some
     setSaindo((n) => n + 1);
     window.setTimeout(() => setEntrada(false), 700);
   };
   const alternar = () => {
-    const a = audio.current;
-    if (!a) return;
-    if (a.paused) a.play().then(() => setTocando(true)).catch(() => {});
+    const a = audio.current; if (!a) return;
+    if (a.paused) tocarDoInicio();
     else { a.pause(); setTocando(false); }
+  };
+  // aos 10s some aos poucos e para
+  const tempo = () => {
+    const a = audio.current; if (!a || a.paused) return;
+    if (a.currentTime >= LIMITE_MUSICA - 1) a.volume = Math.max(0, LIMITE_MUSICA - a.currentTime);
+    if (a.currentTime >= LIMITE_MUSICA) { a.pause(); a.volume = 1; setTocando(false); setAcabou(true); }
   };
 
   // o celular pede pausa; só retoma se a música estava tocando antes
@@ -251,15 +264,19 @@ export function Musica({ comToque = false }: { comToque?: boolean }) {
 
   return (
     <>
-      <audio ref={audio} src="/media/musica.mp3" loop preload="auto" />
+      <audio ref={audio} src="/media/musica.mp3" loop preload="auto" onTimeUpdate={tempo} />
       {entrada && (
         <button className={`toque${saindo ? ' is-saindo' : ''}`} onClick={tocar} aria-label="Toque na tela para entrar com som">
           <Logo3D tipo="icone" className="toque__logo" impulso={saindo} />
           <span>Toque na tela</span>
         </button>
       )}
-      <button className={`som${tocando ? ' is-tocando' : ''}`} onClick={alternar} aria-pressed={tocando} aria-label={tocando ? 'Parar a música' : 'Tocar a música'}>
+      {acabou && !entrada && (
+        <button className="som__balao" onClick={tocarDoInicio}>Tocar de novo ▶</button>
+      )}
+      <button className={`som${tocando ? ' is-tocando' : ' is-parado'}`} onClick={alternar} aria-pressed={tocando} aria-label={tocando ? 'Parar a música' : 'Tocar a música'}>
         <img src="/icone.svg" alt="" />
+        {!tocando && <span className="som__play" aria-hidden="true">▶</span>}
       </button>
     </>
   );
