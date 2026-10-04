@@ -14,6 +14,10 @@ import './abertura.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// a abertura sempre começa do topo (o navegador não volta para o meio da página)
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+scrollTo(0, 0);
+
 /**
  * Prévia 2: parece o site do GTA VI. Ao rolar, um X corta o logo,
  * entra "Nada de GTA 6. Aqui é Marketins", o foguete sobe em 3D
@@ -29,12 +33,17 @@ function GTA() {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       // entrada no carregamento: o logo do GTA aparece como no site deles
       // (anima os invólucros: assim a timeline do scroll não guarda o estado "invisível" da entrada)
-      gsap.from(q('.gta__entrada'), { autoAlpha: 0, scale: 1.15, filter: 'blur(12px)', duration: 1.6, ease: 'expo.out', delay: 0.2 });
+      // cada camada tem um dono só: .gta__entrada (scroll), .gta__brilho (entrada), .gta__logo (escurece/treme)
+      if (scrollY < 10) gsap.from(q('.gta__brilho'), { opacity: 0, scale: 1.15, filter: 'blur(12px)', duration: 1.6, ease: 'expo.out', delay: 0.2, clearProps: 'filter,transform' });
       gsap.from(q('.gta__dica span'), { autoAlpha: 0, y: 10, duration: 0.8, delay: 1.4 });
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: el, start: 'top top', end: '+=3400', pin: true, scrub: 1 },
+        scrollTrigger: {
+          trigger: el, start: 'top top', end: '+=3400', pin: true, scrub: 1,
+          // voltou para antes do X: o GTA fica inteiro, mesmo se a rolagem pulou etapas
+          onLeaveBack: () => gsap.set([q('.gta__entrada'), q('.gta__ceu')], { autoAlpha: 1, scale: 1 }),
+        },
       });
       tl.fromTo(q('.gta__dica'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3 }, 0)
         // o X corta: duas faixas atravessam a tela
@@ -61,7 +70,7 @@ function GTA() {
   return (
     <section className="gta" ref={raiz} aria-label="Nada de GTA 6. Aqui é Marketins.">
       <div className="gta__ceu" aria-hidden="true" />
-      <div className="gta__entrada"><img className="gta__logo" src="/gta6.svg" alt="" /></div>
+      <div className="gta__entrada"><div className="gta__brilho"><img className="gta__logo" src="/gta6.svg" alt="" /></div></div>
       <span className="gta__x gta__x--a" aria-hidden="true"><i /></span>
       <span className="gta__x gta__x--b" aria-hidden="true"><i /></span>
       <h1 className="gta__frase">
