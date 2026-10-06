@@ -86,8 +86,8 @@ export const depoimentos = [
 
 export const conecta = {
   nome: 'Marketins Conecta',
-  data: '2026, data em breve',
-  chamada: 'O maior encontro de influenciadores da Baixada está chegando.',
+  data: '16 de outubro',
+  chamada: 'O maior evento da Baixada.',
   link: 'https://www.instagram.com/p/Dd4W2yxCqc8/',
   parceiros: ['Mezi', 'Núcleo IDEA'],
 };

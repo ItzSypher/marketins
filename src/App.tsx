@@ -4,12 +4,21 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Stage } from './sections/Stage';
 import { GTA } from './sections/Gta';
-import { Musica } from './ds/blocos';
 import './sections/abertura-home.css';
-import { cases, conecta, destaques, historia, depoimentos, linkContato, INSTAGRAM, numeros, sergio, servicos, time } from './content';
+import { conecta, destaques, historia, linkContato, INSTAGRAM, numeros } from './content';
+import { Equipe, IphoneReels, Mosaico, Musica } from './ds/blocos';
+import { Logo3D } from './ds/Logo3D';
+import './sections/home-blocos.css';
+
+const LOGOS = [
+  { nome: 'Marcelo Manhães', arquivo: 'marcelo-manhaes.svg' },
+  { nome: 'Gabi Automóveis', arquivo: 'gabi.svg' },
+  { nome: 'Bela Automóveis', arquivo: 'bela-automoveis.svg' },
+  { nome: 'Lual', arquivo: 'lual.svg' },
+  { nome: "Kida's Car", arquivo: 'kidas-car.svg' },
+];
 
 const CHAVE_POPUP = 'marketins-conecta-visto';
-const CASES_INICIAIS = 10;
 
 function lerVisto() {
   try { return sessionStorage.getItem(CHAVE_POPUP) === '1'; } catch { return false; }
@@ -17,7 +26,6 @@ function lerVisto() {
 
 export default function App() {
   const [popup, setPopup] = useState(false);
-  const [todosCases, setTodosCases] = useState(false);
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -45,8 +53,14 @@ export default function App() {
 
   useEffect(() => {
     if (lerVisto()) return;
-    const id = window.setTimeout(() => setPopup(true), 8000);
-    return () => window.clearTimeout(id);
+    // o pop-up do Conecta só aparece depois da abertura, 3s após passar por ela
+    let t = 0;
+    const id = window.setInterval(() => {
+      if (!document.body.classList.contains('passou-abertura')) return;
+      window.clearInterval(id);
+      t = window.setTimeout(() => setPopup(true), 3000);
+    }, 500);
+    return () => { window.clearInterval(id); window.clearTimeout(t); };
   }, []);
 
   const fecharPopup = () => {
@@ -96,99 +110,75 @@ export default function App() {
         </section>
 
         <section className="historia" aria-labelledby="historia-titulo" data-revela>
+          <p className="eyebrow">Quem somos</p>
           <h2 id="historia-titulo">{historia.titulo}</h2>
           <div className="historia__texto">
             {historia.texto.map((t) => <p key={t}>{t}</p>)}
           </div>
         </section>
 
-        <section className="destaques" aria-labelledby="destaques-titulo">
-          <h2 id="destaques-titulo" className="titulo">Quem confia na Marketins</h2>
-          <ul className="destaques__grade" data-revela>
-            {destaques.map((d, i) => (
-              <li key={d.nome} className={`destaque destaque--${i + 1}`}>
-                {d.img && <img src={d.img} alt={`Case ${d.nome}`} width="800" height="568" loading="lazy" decoding="async" />}
-                <div className="destaque__texto">
-                  <h3>{d.nome}</h3>
-                  <p>{d.texto}</p>
-                  {d.link && <a href={d.link} target="_blank" rel="noopener">Visitar o site</a>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="servicos" aria-labelledby="servicos-titulo">
-          <h2 id="servicos-titulo" className="titulo">O que a gente faz pelo seu negócio</h2>
-          <ul className="bento" data-revela>
-            {servicos.map((s, i) => (
-              <li key={s.nome} className={`bento__item bento__item--${i + 1}`}>
-                {(i === 0 || i === 2) && (
-                  <img src={s.img} alt="" width="800" height="568" loading="lazy" decoding="async" />
-                )}
-                <div className="bento__texto">
-                  <h3>{s.nome}</h3>
-                  <p>{s.texto}</p>
-                  <ul>{s.itens.map((it) => <li key={it}>{it}</li>)}</ul>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="portfolio" aria-labelledby="portfolio-titulo">
-          <h2 id="portfolio-titulo" className="titulo">Empresas que já decolaram com a gente</h2>
-          <ul id="cases" className={`cases${todosCases ? ' is-aberto' : ''}`} data-revela>
-            {cases.map((c, i) => (
-              <li key={c.nome} className={i >= CASES_INICIAIS ? 'cases__extra' : undefined}>
-                <img src={c.img} alt={`Case ${c.nome}`} width="800" height="568" loading="lazy" decoding="async" />
-              </li>
-            ))}
-          </ul>
-          {!todosCases && (
-            <button className="btn btn--ghost cases__mais" aria-controls="cases" aria-expanded="false" onClick={() => setTodosCases(true)}>
-              Ver os {cases.length} cases
-            </button>
-          )}
-        </section>
-
-        <section className="time" aria-labelledby="time-titulo">
-          <div className="lider" data-revela>
-            <img className="lider__foto" src={sergio.foto} alt={sergio.nome} width="440" height="500" loading="lazy" />
-            <div className="lider__texto">
-              <h2 id="time-titulo" className="titulo">O time que cuida de você</h2>
-              <p className="lider__nome">{sergio.nome}<span>{sergio.cargo}</span></p>
-              <p>{sergio.texto}</p>
+        <section className="vitrine" aria-labelledby="vitrine-titulo">
+          <h2 id="vitrine-titulo" className="titulo" data-revela>Quem confia na Marketins</h2>
+          <article className="vitrine__item" data-revela>
+            <img src={destaques[0].img} alt="Case Marcelo Manhães" width="800" height="568" loading="lazy" />
+            <div>
+              <p className="eyebrow">A maior assessoria previdenciária do país</p>
+              <h3>Marcelo Manhães</h3>
+              <p>{destaques[0].texto.replace('A maior assessoria previdenciária do país. ', '')}</p>
+              <a className="b-seta" href={linkContato('case Marcelo Manhães')} target="_blank" rel="noopener"><span>Quero um case assim</span><i aria-hidden="true">↗</i></a>
             </div>
-          </div>
-          <ul className="equipe" data-revela>
-            {time.map((t) => (
-              <li key={t.nome}>
-                <img src={t.foto} alt="" width="440" height="500" loading="lazy" />
-                <span>{t.nome}</span>
-              </li>
-            ))}
-          </ul>
+          </article>
+          <article className="vitrine__item vitrine__item--inverso" data-revela>
+            <img src={destaques[1].img} alt="Case Locagora Baixada" width="800" height="568" loading="lazy" />
+            <div>
+              <p className="eyebrow">Somos suspeitos pra falar</p>
+              <h3>Locafácil + Locagora</h3>
+              <p>Aluguel de motos na Baixada Fluminense. Social media, campanhas e o resultado falando por nós.</p>
+              <a className="b-seta" href={linkContato('case Locagora')} target="_blank" rel="noopener"><span>Quero um case assim</span><i aria-hidden="true">↗</i></a>
+            </div>
+          </article>
         </section>
 
-        {depoimentos.map((d) => (
-          <figure key={d.nome} className="depoimento" data-revela>
-            <blockquote>“{d.texto}”</blockquote>
-            <figcaption>{d.nome}, {d.empresa}</figcaption>
-          </figure>
-        ))}
+        <section className="logos" aria-label="Alguns clientes">
+          <div className="logos__trilho">
+            {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((l, i) => (
+              <img key={i} src={`/logos/${l.arquivo}`} alt={i < LOGOS.length ? l.nome : ''} aria-hidden={i >= LOGOS.length} />
+            ))}
+          </div>
+        </section>
 
-        <section id="conecta" className="conecta" aria-labelledby="conecta-titulo" data-revela>
-          <p className="eyebrow">{conecta.data}</p>
-          <h2 id="conecta-titulo">{conecta.nome}</h2>
-          <p>{conecta.chamada} Com {conecta.parceiros.join(' e ')}.</p>
-          <a className="btn btn--light" href={conecta.link} target="_blank" rel="noopener">Ver o anúncio</a>
+        <section className="bloco" aria-labelledby="trabalhos-titulo">
+          <h2 id="trabalhos-titulo" className="titulo" data-revela>Empresas que já decolaram com a gente</h2>
+          <Mosaico />
+        </section>
+
+        <section className="bloco" aria-labelledby="insta-titulo">
+          <h2 id="insta-titulo" className="titulo" data-revela>A gente vive no feed</h2>
+          <IphoneReels />
+        </section>
+
+        <section className="bloco" aria-labelledby="time-titulo">
+          <h2 id="time-titulo" className="titulo" data-revela>O time que cuida de você</h2>
+          <Equipe />
+        </section>
+
+        <section id="conecta" className="conecta2" aria-labelledby="conecta-titulo" data-revela>
+          <Logo3D tipo="conecta" />
+          <div>
+            <p className="eyebrow">{conecta.data}</p>
+            <h2 id="conecta-titulo">{conecta.chamada}</h2>
+            <p>Influenciadores, marcas e empresários da Baixada no mesmo lugar.</p>
+            <a className="b-seta" href={conecta.link} target="_blank" rel="noopener"><span>Ver o anúncio</span><i aria-hidden="true">↗</i></a>
+          </div>
         </section>
 
         <section className="fim" aria-labelledby="fim-titulo" data-revela>
           <h2 id="fim-titulo">Bora conversar sobre o seu negócio?</h2>
           <p>Na consultoria a gente olha onde você está hoje e mostra o caminho.</p>
-          <a className="btn btn--brand" href={linkContato('fim da página')} target="_blank" rel="noopener">Agendar consultoria</a>
+          <a className="b-transicao" href={linkContato('fim da página')} target="_blank" rel="noopener">
+            <span className="b-transicao__a">Agendar reunião</span>
+            <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
+          </a>
         </section>
       </main>
 
