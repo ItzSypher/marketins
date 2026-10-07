@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       // Prévia do design system como página separada; o site continua em index.html.
-      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html') },
+      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html'), teste: resolve(__dirname, 'teste.html') },
     },
   },
   server: { port: 5173, host: true },
