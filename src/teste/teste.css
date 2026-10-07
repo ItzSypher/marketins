@@ -15,7 +15,7 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 .t-falta small { font: 700 0.62rem/1 var(--display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--laranja); }
 
 /* Capa + índice */
-.t-capa { min-height: 100svh; display: grid; align-content: end; gap: 2rem; padding: 6rem 16px 3rem; max-width: 1240px; margin-inline: auto; }
+.t-capa { display: grid; align-content: end; gap: 2rem; padding: 6rem 16px 3rem; max-width: 1240px; margin-inline: auto; }
 .t-capa__eyebrow { color: var(--laranja); }
 .t-capa__titulo { font: 800 clamp(2.3rem, 10vw, 7rem)/0.95 var(--display); text-transform: uppercase; letter-spacing: -0.02em; max-width: 14ch; }
 .t-capa__titulo em { font-style: normal; background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -110,3 +110,10 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 @media (prefers-reduced-motion: reduce) {
   .pilha__card { position: relative; top: 0; }
 }
+
+.unidade__foto { position: relative; aspect-ratio: 4 / 3; }
+.unidade__foto img { width: 100%; height: 100%; object-fit: cover; }
+.unidade__foto small { position: absolute; right: 10px; bottom: 8px; font-size: 0.65rem; color: rgb(255 255 255 / 0.7); }
+.time-foto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; aspect-ratio: auto; }
+.time-foto img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center 20%; }
+@media (min-width: 768px) { .time-foto { grid-template-columns: repeat(6, 1fr); } }

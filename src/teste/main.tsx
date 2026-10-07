@@ -5,7 +5,9 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { equipe, linkContato, INSTAGRAM, numeros, sergio } from '../content';
-import { IphoneReels } from '../ds/blocos';
+import { IphoneReels, Musica } from '../ds/blocos';
+import { GTA } from '../sections/Gta';
+import { Stage } from '../sections/Stage';
 import { clientes, conexoes, grandes, pontos, segmentos, unidades } from './dados';
 import '../styles.css';
 import '../sections/abertura-home.css';
@@ -33,16 +35,10 @@ function Cabeca({ n, titulo, texto }: { n: string; titulo: string; texto?: strin
   );
 }
 
-/** Espaço reservado para material que ainda não veio: deixa claro o que mandar. */
-function Falta({ o }: { o: string }) {
-  return <div className="t-falta"><img src="/icone-contorno.svg" alt="" /><span>{o}</span><small>enviar</small></div>;
-}
-
 function Capa() {
   return (
     <section className="t-capa">
-      <p className="eyebrow t-capa__eyebrow">Marketins · Baixada Fluminense</p>
-      <h1 className="t-capa__titulo">Poucas agências têm o que a <em>Marketins</em> tem.</h1>
+      <h2 className="t-capa__titulo">Poucas agências têm o que a <em>Marketins</em> tem.</h2>
       <ol className="t-indice">
         {pontos.map((p, i) => (
           <li key={p.id}><a href={`#${p.id}`}><span>0{i + 1}</span>{p.titulo}<i aria-hidden="true">↓</i></a></li>
@@ -61,7 +57,7 @@ function Grandes() {
         {grandes.map((c, i) => (
           <article className="pilha__card" key={c.nome} style={{ '--i': i } as React.CSSProperties}>
             <div className="pilha__midia">
-              {c.img ? <img src={c.img} alt={`Case ${c.nome}`} loading="lazy" /> : <Falta o={`peças de ${c.nome}`} />}
+              <img src={c.img} alt={`Case ${c.nome}`} loading="lazy" />
             </div>
             <div className="pilha__info">
               <span className="t-num">0{i + 1}</span>
@@ -100,7 +96,7 @@ function Estrutura() {
       <div className="unidades">
         {unidades.map((u) => (
           <article className="unidade" key={u.cidade} data-revela>
-            <Falta o={`foto da unidade ${u.cidade}`} />
+            <div className="unidade__foto"><img src={u.img} alt="" loading="lazy" /><small>imagem ilustrativa</small></div>
             <div className="unidade__info">
               <h3>{u.cidade}</h3>
               <p>{u.local}</p>
@@ -137,7 +133,7 @@ function Time() {
   return (
     <section id="time" className="t-sec" ref={sec}>
       <Cabeca n="04" titulo="Um time grande e qualificado" texto="Tráfego, design, vídeo, social e desenvolvimento dentro de casa. Gente formada e com estrada." />
-      <div className="time-foto"><Falta o="foto do time completo" /></div>
+      <div className="time-foto">{equipe.map((p) => <img key={p.nome} src={p.foto} alt="" loading="lazy" />)}</div>
       <div className="cruza">
         <div className="cruza__trilho">
           {equipe.map((p) => (
@@ -220,7 +216,7 @@ function App() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.from('.t-capa > *, .t-indice li', { autoAlpha: 0, y: 40, duration: 1.1, stagger: 0.08, ease: 'expo.out', delay: 0.2 });
+      gsap.from('.t-capa > *, .t-indice li', { autoAlpha: 0, y: 40, duration: 1.1, stagger: 0.08, ease: 'expo.out', scrollTrigger: { trigger: '.t-capa', start: 'top 80%', once: true } });
       gsap.utils.toArray<HTMLElement>('[data-revela]').forEach((el) => {
         gsap.fromTo(el.children, { autoAlpha: 0, y: 32 }, {
           autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out',
@@ -230,8 +226,8 @@ function App() {
       // letreiros andam com o scroll
       gsap.utils.toArray<HTMLElement>('[data-anda]').forEach((l) => {
         const dir = Number(l.dataset.anda);
-        gsap.fromTo(l.firstElementChild, { xPercent: dir > 0 ? -30 : 0 }, {
-          xPercent: dir > 0 ? 0 : -30, ease: 'none',
+        gsap.fromTo(l.firstElementChild, { xPercent: dir > 0 ? -10 : 0 }, {
+          xPercent: dir > 0 ? 0 : -10, ease: 'none',
           scrollTrigger: { trigger: l, start: 'top bottom', end: 'bottom top', scrub: true },
         });
       });
@@ -250,6 +246,13 @@ function App() {
 
   return (
     <main className="t">
+      <GTA />
+      <Stage cta={
+        <a className="b-transicao" href={linkContato(`${ORIGEM} · hero`)} target="_blank" rel="noopener">
+          <span className="b-transicao__a">Agendar reunião</span>
+          <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
+        </a>
+      } />
       <Capa />
       <Grandes />
       <Segmentos />
@@ -258,6 +261,7 @@ function App() {
       <Conexoes />
       <section className="t-sec"><Cabeca n="+" titulo="A gente vive no feed" /><IphoneReels /></section>
       <Fecho />
+      <Musica comToque />
     </main>
   );
 }

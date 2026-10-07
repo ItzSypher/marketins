@@ -13,11 +13,9 @@ export const pontos = [
 /** Prova social: os clientes grandes, na ordem do Sérgio. */
 export const grandes: { nome: string; segmento?: string; img?: string }[] = [
   { nome: 'Marcelo Manhães', segmento: 'Assessoria previdenciária', img: '/cases/marcelo-manhaes.webp' },
-  { nome: 'Pelo Zero', segmento: 'Depilação' },
-  { nome: 'Locafácil', segmento: 'Locação' },
+  { nome: 'Pelo Zero', segmento: 'Depilação', img: '/ilustra/pelo-zero.webp' },
   { nome: 'Locagora', segmento: 'Locação de veículos', img: '/cases/locagora-baixada.webp' },
-  { nome: 'Ademicon', segmento: 'Consórcio' },
-  { nome: 'Mozi' },
+  { nome: 'Mozi', img: '/ilustra/mozi.webp' },
 ];
 
 /** Clientes em vários segmentos (Sérgio: "e mais uns 20..."). */
@@ -28,13 +26,13 @@ export const clientes = [
 ];
 
 export const segmentos = [
-  'Previdenciário', 'Estética', 'Locação', 'Consórcio', 'Materiais elétricos', 'Construção',
+  'Previdenciário', 'Estética', 'Locação', 'Materiais elétricos', 'Construção',
   'Saúde', 'Automóveis', 'Contabilidade', 'Ótica', 'Móveis', 'Bem-estar', 'Networking',
 ];
 
 export const unidades = [
-  { cidade: 'Nova Iguaçu', local: 'Le Monde', mapa: 'Le Monde Nova Iguaçu' },
-  { cidade: 'São João de Meriti', local: 'Unidade São João', mapa: 'Marketins São João de Meriti' },
+  { cidade: 'Nova Iguaçu', local: 'Le Monde', mapa: 'Le Monde Nova Iguaçu', img: '/ilustra/unidade-ni.webp' },
+  { cidade: 'São João de Meriti', local: 'Unidade São João', mapa: 'Marketins São João de Meriti', img: '/ilustra/unidade-sjm.webp' },
 ];
 
 /** Rede do Sérgio: quem o empresário alcança chegando pela Marketins. */
