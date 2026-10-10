@@ -1,0 +1,50 @@
+/* Espiral de trabalhos (imagens em cascata no scroll) */
+main > section.esp { padding: 0 !important; }
+.esp { position: relative; width: 100%; background: var(--chao); }
+.esp-palco { position: relative; padding: 4.5rem 16px; }
+.esp-clip { position: relative; }
+.esp-copy { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto 2rem; text-align: center; display: grid; gap: 0.9rem; justify-items: center; }
+.esp-copy h2 { font: 800 clamp(1.7rem, 4.6vw, 3.4rem)/1.05 var(--display); text-transform: uppercase; letter-spacing: -0.01em; max-width: 16ch; }
+
+/* grade estática: movimento reduzido ou tela baixa demais */
+.esp-grade { list-style: none; padding: 0; margin: 0 auto; max-width: 1120px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.esp-grade img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; }
+@media (min-width: 760px) { .esp-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
+
+.esp-cena { display: none; }
+.esp-ativa .esp-palco { position: sticky; top: 0; height: var(--esp-altura); padding: 0; }
+.esp-ativa.esp-js .esp-palco { position: relative; top: 0; }
+.esp-ativa .esp-clip { height: 100%; overflow: clip; }
+.esp-ativa .esp-grade { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+.esp-ativa .esp-copy { position: absolute; left: 50%; top: clamp(32px, 9%, 96px); width: calc(100% - 32px); transform: translateX(-50%); margin: 0; }
+.esp-ativa .esp-cena { display: block; position: absolute; inset: 0; perspective: var(--perspectiva, 1300px); perspective-origin: 50% 50%; pointer-events: none; --fatias: 12; }
+
+.esp-eixo { position: absolute; left: 50%; top: 62%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+.esp-mobile .esp-eixo { top: 58%; }
+.esp-cartas { position: absolute; list-style: none; margin: 0; padding: 0; transform-style: preserve-3d; }
+.esp-carta {
+  --altura: var(--card-altura, 300px);
+  --largura: calc(var(--altura) * 16 / 10);
+  --fatia: calc(var(--largura) / var(--fatias));
+  /* cover: a imagem cobre a carta inteira, sobra cortada pelos lados ou em cima/embaixo */
+  --bw: max(var(--largura), calc(var(--altura) * var(--r, 1.6)));
+  --bh: max(var(--altura), calc(var(--largura) / var(--r, 1.6)));
+  position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d;
+}
+.esp-tira {
+  position: absolute; left: calc(var(--fatia) / -2); top: calc(var(--altura) / -2);
+  width: calc(var(--fatia) + 1px); height: var(--altura);
+  background-color: var(--chao-2); background-repeat: no-repeat;
+  background-size: var(--bw) var(--bh);
+  background-position: calc((var(--largura) - var(--bw)) / 2 - var(--indice, 0) * var(--fatia)) var(--foco, center);
+  backface-visibility: visible;
+}
+.esp-tira[data-ponta='esquerda'] { border-top-left-radius: calc(var(--largura) * 0.028); border-bottom-left-radius: calc(var(--largura) * 0.028); }
+.esp-tira[data-ponta='direita'] { width: var(--fatia); border-top-right-radius: calc(var(--largura) * 0.028); border-bottom-right-radius: calc(var(--largura) * 0.028); }
+.esp-tira::after { content: ''; position: absolute; inset: 0; background: var(--chao); opacity: var(--sombra, 0); pointer-events: none; }
+
+/* degradês que somem com a espiral em cima e embaixo */
+.esp-ativa .esp-clip::before, .esp-ativa .esp-clip::after { content: ''; position: absolute; left: 0; right: 0; pointer-events: none; z-index: 1; }
+.esp-ativa .esp-clip::before { top: 0; height: clamp(145px, 26%, 320px); background: linear-gradient(to bottom, var(--chao) 0%, var(--chao) 40%, transparent 100%); }
+.esp-ativa .esp-clip::after { bottom: 0; height: clamp(80px, 14%, 176px); background: linear-gradient(to top, var(--chao), transparent); }
+@media (max-width: 619px) { .esp-ativa .esp-clip::before { height: clamp(176px, 32%, 320px); } }

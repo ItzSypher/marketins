@@ -40,3 +40,19 @@ export const conexoes = [
   { nome: 'Oba Oba', papel: 'O dono' },
   { nome: 'Forneria Original', papel: 'Conexão direta' },
 ];
+
+// Artes que a Marketins criou para clientes (grupo do Figma, nó 5029:5571).
+// w/h = tamanho do arquivo; o CSS usa a proporção para encaixar em "cover".
+// foco = posição vertical do recorte (padrão: center).
+export const trabalhos: { src: string; alt: string; w: number; h: number; foco?: string }[] = [
+  { src: '/trabalhos/01.webp', alt: 'Arte para a Mozi: caixa de salgados', w: 960, h: 1200 },
+  { src: '/trabalhos/02.webp', alt: 'Arte para o BNI: "Existe uma reunião que empresários estratégicos não ignoram"', w: 960, h: 1200 },
+  { src: '/trabalhos/03.webp', alt: 'Arte para a Locafácil: frota para empresas', w: 960, h: 1200 },
+  { src: '/trabalhos/04.webp', alt: 'Post da Marketins: "Quem é a Marketins?"', w: 960, h: 1200 },
+  { src: '/trabalhos/05.webp', alt: 'Arte para a 3J Service: serviço terceirizado', w: 960, h: 1200 },
+  { src: '/trabalhos/06.webp', alt: 'Arte para o BNI Baixada RJ: "Por que o BNI se reúne toda semana?"', w: 960, h: 1200 },
+  { src: '/trabalhos/07.webp', alt: 'Arte para a Locafácil: "Tem uma semana corrida pela frente e está sem carro?"', w: 960, h: 1200 },
+  { src: '/trabalhos/08.webp', alt: 'Post da Marketins: "Onde estamos?" com as unidades', w: 960, h: 1200 },
+  { src: '/trabalhos/09.webp', alt: 'Arte para o BNI: "Se até no futebol, ninguém ganha sozinho"', w: 960, h: 1280 },
+  { src: '/trabalhos/10.webp', alt: 'Arte para o BNI: "As melhores oportunidades começam quando alguém lembra do seu nome"', w: 960, h: 1202 },
+];

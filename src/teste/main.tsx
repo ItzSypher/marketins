@@ -8,11 +8,13 @@ import { equipe, linkContato, INSTAGRAM, LOGOS, sergio } from '../content';
 import { IphoneReels, Musica } from '../ds/blocos';
 import { GTA } from '../sections/Gta';
 import { Stage } from '../sections/Stage';
+import { Espiral } from './Espiral';
 import { clientes, conexoes, grandes, pontos, segmentos, unidades } from './dados';
 import '../styles.css';
 import '../sections/abertura-home.css';
 import '../sections/home-blocos.css';
 import './teste.css';
+import './espiral.css';
 
 gsap.registerPlugin(ScrollTrigger);
 const ORIGEM = 'página teste';
@@ -260,6 +262,7 @@ function App() {
           ))}
         </div>
       </section>
+      <Espiral />
       <Estrutura />
       <Time />
       <Conexoes />

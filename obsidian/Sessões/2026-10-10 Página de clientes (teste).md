@@ -27,3 +27,9 @@ previa: https://marketins-cuvhgcnem-sypherbeasts-projects.vercel.app/teste
 
 ## Ligações
 - [[Preferências do cliente]]
+
+## Espiral de trabalhos (efeito do Zeph)
+- Seção nova `#trabalhos` depois da faixa de logos: as artes giram numa espiral 3D presa ao scroll ("Feito na Marketins / Ideias que ganham vida.").
+- 10 artes reais do grupo do Figma (nó 5029:5571): Mozi, BNI, Locafácil, 3J Service e posts da própria Marketins. Arquivos em `public/trabalhos/`, lista em `src/teste/dados.ts` (`trabalhos`).
+- Imagens em "cover" via CSS (`--r` = proporção da arte); `foco` opcional ajusta o recorte vertical.
+- Com movimento reduzido ou tela baixa, vira grade estática. Código: `src/teste/Espiral.tsx` + `espiral.css`.
