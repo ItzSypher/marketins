@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { equipe, linkContato, INSTAGRAM, numeros, sergio } from '../content';
+import { equipe, linkContato, INSTAGRAM, LOGOS, numeros, sergio } from '../content';
 import { IphoneReels, Musica } from '../ds/blocos';
 import { GTA } from '../sections/Gta';
 import { Stage } from '../sections/Stage';
@@ -57,7 +57,9 @@ function Grandes() {
         {grandes.map((c, i) => (
           <article className="pilha__card" key={c.nome} style={{ '--i': i } as React.CSSProperties}>
             <div className="pilha__midia">
-              <img src={c.img} alt={`Case ${c.nome}`} loading="lazy" />
+              {c.logo
+                ? <img className="pilha__logo" src={c.logo} alt={`Logo ${c.nome}`} loading="lazy" />
+                : <span className="pilha__marca" aria-hidden="true">{c.nome}</span>}
             </div>
             <div className="pilha__info">
               <span className="t-num">0{i + 1}</span>
@@ -96,7 +98,11 @@ function Estrutura() {
       <div className="unidades">
         {unidades.map((u) => (
           <article className="unidade" key={u.cidade} data-revela>
-            <div className="unidade__foto"><img src={u.img} alt="" loading="lazy" /><small>imagem ilustrativa</small></div>
+            <div className="unidade__foto">
+              {u.img
+                ? <img src={u.img} alt={u.alt} loading="lazy" />
+                : <span className="unidade__marca" aria-hidden="true">{u.cidade}</span>}
+            </div>
             <div className="unidade__info">
               <h3>{u.cidade}</h3>
               <p>{u.local}</p>
@@ -235,7 +241,7 @@ function App() {
       gsap.utils.toArray<HTMLElement>('.pilha__card').forEach((c, i, todos) => {
         const prox = todos[i + 1];
         if (!prox) return;
-        gsap.to(c, { scale: 0.94, filter: 'brightness(0.7)', ease: 'none', scrollTrigger: { trigger: prox, start: 'top 70%', end: 'top 20%', scrub: true } });
+        gsap.fromTo(c, { scale: 1, filter: 'brightness(1)' }, { scale: 0.94, filter: 'brightness(0.7)', ease: 'none', scrollTrigger: { trigger: prox, start: 'top 70%', end: 'top 20%', scrub: true } });
       });
     });
     const recalcular = () => ScrollTrigger.refresh();
@@ -255,6 +261,13 @@ function App() {
       } />
       <Capa />
       <Grandes />
+      <section className="logos" aria-label="Alguns clientes">
+        <div className="logos__trilho">
+          {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((l, i) => (
+            <img key={i} src={`/logos/${l.arquivo}`} alt={i < LOGOS.length ? l.nome : ''} aria-hidden={i >= LOGOS.length} />
+          ))}
+        </div>
+      </section>
       <Segmentos />
       <Estrutura />
       <Time />

@@ -133,10 +133,6 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 .rodape img { width: 150px; height: auto; }
 
 /* Pop-up do Conecta */
-.popup { position: fixed; inset: 0; z-index: 50; display: grid; align-items: end; padding: 16px; background: rgb(11 7 9 / 0.7); animation: aparecer 0.3s ease; }
-.popup__card { position: relative; width: 100%; padding: 2rem 1.5rem 1.5rem; border-radius: 14px; background: var(--gradiente-texto); display: grid; gap: 1rem; justify-items: start; }
-.popup__card h2 { font-weight: 800; font-size: 1.9rem; line-height: 1; text-transform: uppercase; padding-right: 3rem; }
-.popup__x { position: absolute; top: 0.75rem; right: 0.75rem; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgb(0 0 0 / 0.25); color: #fff; font-size: 1.4rem; cursor: pointer; }
 @keyframes aparecer { from { opacity: 0; } }
 
 /* ---------- Tablet ---------- */
@@ -175,11 +171,9 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 
   .conecta { margin: 0 var(--gutter); padding: 4rem 3rem !important; }
   .rodape { grid-template-columns: auto 1fr auto auto; align-items: center; gap: 2rem; padding: 2.5rem var(--gutter); }
-  .popup { place-items: center; }
-  .popup__card { width: min(100%, 440px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .faixa__track { animation: none; }
-  .btn, .cases img, .popup { transition: none; animation: none; }
+  .btn, .cases img { transition: none; animation: none; }
 }

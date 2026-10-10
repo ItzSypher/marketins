@@ -29,14 +29,16 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 .pilha { display: grid; gap: 1.5rem; }
 .pilha__card { position: sticky; top: calc(72px + var(--i) * 14px); display: grid; overflow: hidden; border-radius: 28px; background: var(--chao-2); border: 1px solid var(--linha); transform-origin: center top; box-shadow: 0 -20px 60px rgb(0 0 0 / 0.5); }
 .pilha__midia { aspect-ratio: 16 / 10; border-radius: 0; }
-.pilha__midia img { width: 100%; height: 100%; object-fit: cover; }
+.pilha__midia { display: grid; place-items: center; background: var(--gradiente-texto); padding: 1.5rem; }
+.pilha__logo { width: min(60%, 320px); height: auto; max-height: 55%; object-fit: contain; filter: brightness(0) invert(1); }
+.pilha__marca { font: 800 clamp(2.2rem, 9vw, 4.6rem)/1 var(--display); text-transform: uppercase; text-align: center; color: #fff; }
 .pilha__midia .t-falta { border: 0; border-radius: 0; }
 .pilha__info { display: grid; gap: 0.8rem; justify-items: start; padding: 1.5rem; }
 .pilha__nome { font: 800 clamp(1.6rem, 6vw, 3.2rem)/1.05 var(--display); text-transform: uppercase; }
-.pilha__troca { display: grid; overflow: hidden; height: 1.05em; }
+.pilha__troca { display: grid; overflow: hidden; line-height: 1.12; }
 .pilha__troca b { grid-area: 1 / 1; font-weight: inherit; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
-.pilha__troca b + b { transform: translateY(100%); color: var(--laranja); }
-.pilha__card:hover .pilha__troca b:first-child { transform: translateY(-100%); }
+.pilha__troca b + b { transform: translateY(110%); color: var(--laranja); }
+.pilha__card:hover .pilha__troca b:first-child { transform: translateY(-110%); }
 .pilha__card:hover .pilha__troca b + b { transform: none; }
 .pilha__seg { color: var(--texto-2); }
 
@@ -113,7 +115,8 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 
 .unidade__foto { position: relative; aspect-ratio: 4 / 3; }
 .unidade__foto img { width: 100%; height: 100%; object-fit: cover; }
-.unidade__foto small { position: absolute; right: 10px; bottom: 8px; font-size: 0.65rem; color: rgb(255 255 255 / 0.7); }
+.unidade__foto { display: grid; }
+.unidade__marca { display: grid; place-items: center; background: var(--gradiente-texto); font: 800 clamp(1.8rem, 7vw, 3rem)/1 var(--display); text-transform: uppercase; text-align: center; color: #fff; padding: 1.5rem; }
 .time-foto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; aspect-ratio: auto; }
 .time-foto img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center 20%; }
 @media (min-width: 768px) { .time-foto { grid-template-columns: repeat(6, 1fr); } }

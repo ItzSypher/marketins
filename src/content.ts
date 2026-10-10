@@ -128,3 +128,12 @@ export const equipe = [
   { nome: 'Guilherme', foto: '/time2/guilherme.webp', texto: 'Formado em design gráfico e pós-graduado em design digital. Faz ilustração e motion design.' },
   { nome: 'Henrique', foto: '/time2/henrique.webp', texto: 'Atuava na comunicação social da Força Aérea Brasileira.' },
 ];
+
+/** Logos reais dos clientes (SVG em /public/logos). */
+export const LOGOS = [
+  { nome: 'Marcelo Manhães', arquivo: 'marcelo-manhaes.svg' },
+  { nome: 'Gabi Automóveis', arquivo: 'gabi.svg' },
+  { nome: 'Bela Automóveis', arquivo: 'bela-automoveis.svg' },
+  { nome: 'Lual', arquivo: 'lual.svg' },
+  { nome: "Kida's Car", arquivo: 'kidas-car.svg' },
+];

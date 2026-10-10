@@ -1,32 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Stage } from './sections/Stage';
 import { GTA } from './sections/Gta';
 import './sections/abertura-home.css';
-import { conecta, destaques, historia, linkContato, INSTAGRAM, numeros } from './content';
+import { conecta, destaques, historia, linkContato, INSTAGRAM, LOGOS, numeros } from './content';
 import { Equipe, IphoneReels, Mosaico, Musica } from './ds/blocos';
 import { Logo3D } from './ds/Logo3D';
 import './sections/home-blocos.css';
 
-const LOGOS = [
-  { nome: 'Marcelo Manhães', arquivo: 'marcelo-manhaes.svg' },
-  { nome: 'Gabi Automóveis', arquivo: 'gabi.svg' },
-  { nome: 'Bela Automóveis', arquivo: 'bela-automoveis.svg' },
-  { nome: 'Lual', arquivo: 'lual.svg' },
-  { nome: "Kida's Car", arquivo: 'kidas-car.svg' },
-];
-
-const CHAVE_POPUP = 'marketins-conecta-visto';
-
-function lerVisto() {
-  try { return sessionStorage.getItem(CHAVE_POPUP) === '1'; } catch { return false; }
-}
-
 export default function App() {
-  const [popup, setPopup] = useState(false);
-
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const lenis = new Lenis();
@@ -50,30 +34,6 @@ export default function App() {
     });
     return () => mm.revert();
   }, []);
-
-  useEffect(() => {
-    if (lerVisto()) return;
-    // o pop-up do Conecta só aparece depois da abertura, 3s após passar por ela
-    let t = 0;
-    const id = window.setInterval(() => {
-      if (!document.body.classList.contains('passou-abertura')) return;
-      window.clearInterval(id);
-      t = window.setTimeout(() => setPopup(true), 3000);
-    }, 500);
-    return () => { window.clearInterval(id); window.clearTimeout(t); };
-  }, []);
-
-  const fecharPopup = () => {
-    setPopup(false);
-    try { sessionStorage.setItem(CHAVE_POPUP, '1'); } catch { /* sem armazenamento, só não lembra */ }
-  };
-
-  useEffect(() => {
-    if (!popup) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && fecharPopup();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [popup]);
 
   return (
     <>
@@ -190,17 +150,6 @@ export default function App() {
       </footer>
 
       <Musica comToque />
-
-      {popup && (
-        <div className="popup" role="dialog" aria-modal="true" aria-labelledby="popup-titulo" onClick={fecharPopup}>
-          <div className="popup__card" onClick={(e) => e.stopPropagation()}>
-            <button className="popup__x" onClick={fecharPopup} aria-label="Fechar" autoFocus>×</button>
-            <h2 id="popup-titulo">{conecta.nome}</h2>
-            <p>{conecta.chamada}</p>
-            <a className="btn btn--light" href={conecta.link} target="_blank" rel="noopener" onClick={fecharPopup}>Ver o anúncio</a>
-          </div>
-        </div>
-      )}
     </>
   );
 }
