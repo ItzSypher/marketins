@@ -1,0 +1,59 @@
+/* Palco e rótulos do globo 3D (copiado de presenca.css) */
+.pr-globo__palco { position: relative; justify-self: center; width: min(100%, 640px); aspect-ratio: 1; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); }
+.pr-globo__palco:active { cursor: grabbing; }
+.pr-globo__palco::before { content: ''; position: absolute; inset: 14%; border-radius: 50%; border: 1px solid var(--linha); background: radial-gradient(circle at 38% 32%, rgb(208 0 77 / 0.2), transparent 65%), var(--chao-2); transition: opacity 0.8s; }
+.pr-globo__palco.is-pronto::before { opacity: 0; }
+.pr-globo__palco canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s; }
+.pr-globo__palco.is-pronto canvas { opacity: 1; }
+.pr-globo--sem .pr-globo__palco { display: none; }
+.pr-rotulos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.pr-rotulo { position: absolute; left: 0; top: 0; padding: 0.4em 0.65em; border-radius: 8px; border: 1px solid rgb(255 255 255 / 0.14); background: rgb(11 7 9 / 0.82); color: var(--texto); font: 700 0.56rem/1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; opacity: 0; transition: opacity 0.35s, background-color 0.35s, border-color 0.35s; will-change: transform; }
+.pr-rotulo--origem { font-size: 0.62rem; }
+.pr-rotulo.is-foco { border-color: transparent; background: var(--magenta); color: #fff; }
+
+@keyframes pr-entra { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pr-pulso { 70% { box-shadow: 0 0 0 18px rgb(254 82 35 / 0); } 100% { box-shadow: 0 0 0 0 rgb(254 82 35 / 0); } }
+
+@media (min-width: 640px) {
+  .pr-mapa { aspect-ratio: 16 / 10; }
+}
+
+@media (min-width: 1000px) {
+  /* trilho alto + palco sticky: cada aba ganha um trecho de rolagem */
+  .pr-trilho { height: calc(100svh + var(--n, 2) * 55svh); }
+  .pr-palco { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; padding-block: 2.5rem; }
+  .pr-abas { display: flex; gap: 3rem; margin: 0; padding-bottom: 1.1rem; }
+  .pr-aba, .pr-aba[aria-selected="true"] { padding: 0; border: 0; border-radius: 0; background: none; }
+  .pr-aba { opacity: 0.42; }
+  .pr-aba[aria-selected="true"], .pr-aba:hover { opacity: 1; }
+  .pr-aba__cidade { font-size: clamp(1.3rem, 2.3vw, 2.1rem); }
+  .pr-aba__local { font-size: 0.9rem; }
+  .pr-abas__barra { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--linha); }
+  .pr-abas__barra i { display: block; height: 100%; background: var(--gradiente); transform-origin: left; transform: scaleX(var(--p, 0)); }
+
+  .pr-paineis { flex: 1; min-height: 0; max-height: 620px; }
+  .pr-painel { grid-area: 1 / 1; height: 100%; min-height: 0; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "foto mapa" "info mapa"; gap: 1.5rem 1.75rem; }
+  .pr-foto { grid-area: foto; aspect-ratio: auto; min-height: 0; }
+  .pr-painel__info { grid-area: info; padding: 0; }
+  .pr-painel__cidade { font-size: clamp(1.2rem, 1.8vw, 1.6rem); }
+  .pr-painel__local { margin-bottom: 0.4rem; }
+  .pr-mapa { grid-area: mapa; aspect-ratio: auto; max-height: none; height: 100%; }
+
+  .pr-globo { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); grid-template-areas: "texto palco" "etapas palco"; column-gap: 3rem; row-gap: 2rem; align-content: center; margin-top: 2rem; }
+  .pr-globo__texto { grid-area: texto; align-self: end; }
+  .pr-globo__palco { grid-area: palco; }
+  .pr-etapas { grid-area: etapas; align-self: start; }
+  .pr-globo--sem { grid-template-columns: 1fr; grid-template-areas: "texto" "etapas"; }
+  .pr-globo__frase { font-size: clamp(2rem, 3.3vw, 3rem); max-width: none; }
+  .pr-globo__frase span { display: block; }
+  .pr-rotulo { font-size: 0.64rem; }
+  .pr-rotulo--origem { font-size: 0.74rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-painel:not([hidden]) { animation: none; }
+  .pr-mapa__pino { animation: none; }
+  .pr-mapa iframe, .pr-globo__palco canvas, .pr-rotulo { transition: none; }
+}
+

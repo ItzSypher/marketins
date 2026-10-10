@@ -4,14 +4,18 @@ import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { equipe, linkContato, INSTAGRAM, LOGOS } from '../content';
-import { IphoneReels, Musica } from '../ds/blocos';
-import { GTA } from '../sections/Gta';
-import { Stage } from '../sections/Stage';
+import { linkContato, INSTAGRAM, LOGOS } from '../content';
+import { Entrada } from './Entrada';
+import { Hero } from './Hero';
+import { Time } from './Time';
+import { Feed } from './Feed';
+import { Rodape } from './Rodape';
+import { Assistente } from './Assistente';
+import { Conecta } from './Conecta';
 import { Espiral } from './Espiral';
 import { Presenca } from './Presenca';
 import { Checklist } from './Checklist';
-import { clientes, grandes, pontos, segmentos } from './dados';
+import { clientes, grandes, segmentos } from './dados';
 import '../styles.css';
 import '../sections/abertura-home.css';
 import '../sections/home-blocos.css';
@@ -37,24 +41,11 @@ function Cabeca({ titulo }: { titulo: string }) {
   );
 }
 
-function Capa() {
-  return (
-    <section className="t-capa">
-      <h2 className="t-capa__titulo">Poucas agências têm o que a <em>Marketins</em> tem.</h2>
-      <ol className="t-indice">
-        {pontos.map((p) => (
-          <li key={p.id}><a href={`#${p.id}`}>{p.titulo}<i aria-hidden="true">↓</i></a></li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
 /* 01: cards que empilham no scroll; cada um gruda sobre o anterior */
 function Grandes() {
   return (
     <section id="grandes" className="t-sec">
-      <Cabeca titulo="Clientes grandes confiam na gente" />
+      <Cabeca titulo="Quem já trabalha com a gente" />
       <div className="pilha">
         {grandes.map((c, i) => (
           <article className="pilha__card" key={c.nome} style={{ '--i': i } as React.CSSProperties}>
@@ -83,45 +74,6 @@ function Faixa() {
     <section className="faixa-clientes" aria-label="Clientes e segmentos">
       <div className="letreiro" data-anda="-1"><div className="letreiro__trilho">{[...clientes, ...clientes].map((c, i) => <span key={i}>{c}<i>✦</i></span>)}</div></div>
       <div className="letreiro letreiro--seg" data-anda="1"><div className="letreiro__trilho">{[...segmentos, ...segmentos].map((c, i) => <span key={i}>{c}<i>✦</i></span>)}</div></div>
-    </section>
-  );
-}
-
-/* 04: foto do time abre com o scroll; depois os cards cruzam a tela inclinados */
-function Time() {
-  const sec = useRef<HTMLElement>(null);
-  useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add('(min-width: 1000px) and (prefers-reduced-motion: no-preference)', () => {
-      const el = sec.current!;
-      const trilho = el.querySelector<HTMLElement>('.cruza__trilho')!;
-      gsap.fromTo(el.querySelector('.time-foto'), { clipPath: 'inset(22% 18% 22% 18% round 28px)' }, {
-        clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none',
-        scrollTrigger: { trigger: el.querySelector('.time-foto'), start: 'top 85%', end: 'center center', scrub: true },
-      });
-      const cards = gsap.utils.toArray<HTMLElement>('.cruza__card', el);
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: el.querySelector('.cruza'), start: 'top top', end: () => `+=${trilho.scrollWidth}`, pin: true, scrub: 1, invalidateOnRefresh: true },
-      });
-      tl.fromTo(trilho, { x: () => innerWidth * 0.6 }, { x: () => -(trilho.scrollWidth - innerWidth * 0.4), ease: 'none' }, 0);
-      cards.forEach((c, i) => tl.fromTo(c, { rotate: i % 2 ? 8 : -8, y: i % 2 ? 60 : -40 }, { rotate: i % 2 ? -4 : 4, y: 0, ease: 'none' }, 0));
-    });
-    return () => mm.revert();
-  }, []);
-  return (
-    <section id="time" className="t-sec" ref={sec}>
-      <Cabeca titulo="Um time grande e qualificado" />
-      <div className="time-foto">{equipe.map((p) => <img key={p.nome} src={p.foto} alt="" loading="lazy" />)}</div>
-      <div className="cruza">
-        <div className="cruza__trilho">
-          {equipe.map((p) => (
-            <figure className="cruza__card" key={p.nome}>
-              <img src={p.foto} alt={p.nome} loading="lazy" />
-              <figcaption><b>{p.nome}</b><span>{p.texto}</span></figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
@@ -171,7 +123,6 @@ function App() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.from('.t-capa > *, .t-indice li', { autoAlpha: 0, y: 40, duration: 1.1, stagger: 0.08, ease: 'expo.out', scrollTrigger: { trigger: '.t-capa', start: 'top 80%', once: true } });
       gsap.utils.toArray<HTMLElement>('[data-revela]').forEach((el) => {
         gsap.fromTo(el.children, { autoAlpha: 0, y: 32 }, {
           autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out',
@@ -201,15 +152,9 @@ function App() {
 
   return (
     <main className="t">
-      <GTA />
-      <Stage cta={
-        <a className="b-transicao" href={linkContato(`${ORIGEM} · hero`)} target="_blank" rel="noopener">
-          <span className="b-transicao__a">Agendar reunião</span>
-          <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
-        </a>
-      } />
+      <Entrada />
+      <Hero />
       <Faixa />
-      <Capa />
       <Grandes />
       <section className="logos" aria-label="Alguns clientes">
         <div className="logos__trilho">
@@ -221,10 +166,12 @@ function App() {
       <Espiral />
       <Presenca />
       <Time />
-      <section className="t-sec"><Cabeca titulo="A gente vive no feed" /><IphoneReels /></section>
+      <Feed />
       <Checklist />
       <Fecho />
-      <Musica comToque />
+      <Rodape />
+      <Assistente />
+      <Conecta />
     </main>
   );
 }
