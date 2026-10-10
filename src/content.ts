@@ -64,20 +64,18 @@ export const cases = [
   ['martins-certificacao', 'Martins Certificação'],
 ].map(([slug, nome]) => ({ nome, img: `/cases/${slug}.webp` }));
 
-// Fotos do Figma (frames "JULYANE 1" etc.); a de destaque é o Sergio.
-export const sergio = {
-  nome: 'Sergio Martins',
-  cargo: 'CEO',
-  foto: '/time/sergio.webp',
-  texto: 'Mais de dez anos de mercado. Juntou marketing, audiovisual, design, tráfego e desenvolvimento num time só.',
-};
-export const time = [
-  { nome: 'Julyane', foto: '/time/julyane.webp' },
-  { nome: 'Gabriella', foto: '/time/gabriella.webp' },
-  { nome: 'Elaine', foto: '/time/elaine.webp' },
-  { nome: 'Henrique', foto: '/time/henrique.webp' },
-  { nome: 'Rafael', foto: '/time/rafael.webp' },
-  { nome: 'Lucas', foto: '/time/lucas.webp' },
+// Time do carrossel (frame "EQUIPE MARKETINS" do Figma). `card` é a foto original,
+// `tira` o recorte vertical da versão fechada. `video` entra quando o Veo gerar o clipe.
+// O texto só existe para o Sérgio: o Figma traz lorem ipsum nos outros, e não inventamos cargo.
+export type Membro = { slug: string; nome: string; cargo?: string; texto?: string; video?: string };
+export const membros: Membro[] = [
+  { slug: 'sergio', nome: 'SÉRGIO JR', cargo: 'CEO', texto: 'Gestor de Tráfego há 15 anos, Mercadólogo e Fundador da Agencia Marketins.' },
+  { slug: 'julyane', nome: 'JULYANE' },
+  { slug: 'gabriella', nome: 'GABRIELLA' },
+  { slug: 'elaine', nome: 'ELAINE' },
+  { slug: 'henrique', nome: 'HENRIQUE' },
+  { slug: 'rafael', nome: 'RAFAEL' },
+  { slug: 'lucas', nome: 'LUCAS' },
 ];
 
 export const depoimentos = [

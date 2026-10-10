@@ -4,9 +4,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Stage } from './sections/Stage';
 import { GTA } from './sections/Gta';
+import { Equipe } from './sections/Equipe';
 import { Musica } from './ds/blocos';
 import './sections/abertura-home.css';
-import { cases, conecta, destaques, historia, depoimentos, linkContato, INSTAGRAM, numeros, sergio, servicos, time } from './content';
+import { cases, conecta, destaques, historia, depoimentos, linkContato, INSTAGRAM, numeros, servicos } from './content';
 
 const CHAVE_POPUP = 'marketins-conecta-visto';
 const CASES_INICIAIS = 10;
@@ -153,22 +154,8 @@ export default function App() {
         </section>
 
         <section className="time" aria-labelledby="time-titulo">
-          <div className="lider" data-revela>
-            <img className="lider__foto" src={sergio.foto} alt={sergio.nome} width="440" height="500" loading="lazy" />
-            <div className="lider__texto">
-              <h2 id="time-titulo" className="titulo">O time que cuida de você</h2>
-              <p className="lider__nome">{sergio.nome}<span>{sergio.cargo}</span></p>
-              <p>{sergio.texto}</p>
-            </div>
-          </div>
-          <ul className="equipe" data-revela>
-            {time.map((t) => (
-              <li key={t.nome}>
-                <img src={t.foto} alt="" width="440" height="500" loading="lazy" />
-                <span>{t.nome}</span>
-              </li>
-            ))}
-          </ul>
+          <h2 id="time-titulo" className="titulo" data-revela>O time que cuida de você</h2>
+          <Equipe />
         </section>
 
         {depoimentos.map((d) => (

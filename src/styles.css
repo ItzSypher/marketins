@@ -106,16 +106,22 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 .cases li:hover img { transform: scale(1.03); }
 .cases__mais { display: none; margin-top: 1.5rem; }
 
-/* Time: o Sergio em destaque e a equipe em grade. */
-.lider { display: grid; gap: 1.5rem; }
-.lider__foto { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; }
-.lider__texto { display: grid; gap: 1rem; align-content: end; }
-.lider__texto p:last-child { color: var(--texto-2); max-width: 40ch; }
-.lider__nome { font: 800 1.3rem/1.1 var(--display); text-transform: uppercase; }
-.lider__nome span { display: block; margin-top: 0.4rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; color: var(--laranja); }
-.equipe { margin-top: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px; }
-.equipe img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; }
-.equipe span { display: block; margin-top: 0.5rem; font: 700 0.72rem/1.2 var(--display); text-transform: uppercase; }
+/* Time: carrossel acordeão. Celular na vertical (aberto 500px, tiras 140px), desktop na horizontal. */
+.equipe { margin: 2rem auto 0; display: flex; flex-direction: column; gap: 12px; max-width: 460px; }
+.equipe__item { position: relative; height: 140px; flex: none; transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.equipe__item.is-aberto { height: min(500px, 118vw); }
+.equipe__item button { position: absolute; inset: 0; width: 100%; overflow: hidden; border: 0; padding: 0; border-radius: 25px; background: var(--chao-2); color: #fff; cursor: pointer; text-align: left; }
+.equipe__tira { display: none; }
+.equipe__foto, .equipe__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.equipe__item:not(.is-aberto) .equipe__foto { left: 30%; width: 100%; object-position: 50% 14%; }
+.equipe__sombra { position: absolute; inset: 0; background: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 70%); }
+.equipe__item:not(.is-aberto) .equipe__sombra { background: linear-gradient(to right, #000 25%, rgb(0 0 0 / 0.1) 90%); }
+.equipe__nome { position: absolute; left: 24px; top: 50%; translate: 0 -50%; font: 800 1.3rem/1 var(--display); }
+.equipe__texto { position: absolute; left: 24px; right: 24px; bottom: 24px; font: 500 1rem/1.15 'Montserrat Variable', var(--corpo); letter-spacing: -0.02em; text-align: center; opacity: 0; }
+.equipe__item.is-aberto .equipe__nome { top: auto; bottom: 24px; left: 0; right: 0; translate: none; text-align: center; font-size: 1.6rem; }
+.equipe__item.is-aberto .equipe__nome:not(:last-child) { bottom: 84px; }
+.equipe__item.is-aberto .equipe__texto { opacity: 1; transition: opacity 0.5s 0.25s; }
+.equipe__item button:focus-visible { outline: 3px solid var(--laranja); outline-offset: 3px; }
 
 .depoimento { border-top: 1px solid var(--linha); }
 .depoimento blockquote { font: 700 clamp(1.4rem, 5.5vw, 2.6rem)/1.2 var(--display); max-width: 24ch; }
@@ -170,8 +176,13 @@ main > section, .depoimento { padding: 4.5rem 16px; }
   .cases:not(.is-aberto) .cases__extra { display: none; }
   .cases__mais { display: inline-flex; }
 
-  .lider { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3rem; align-items: end; }
-  .equipe { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .equipe { margin-top: 3rem; flex-direction: row; align-items: center; justify-content: center; gap: 20px; max-width: 1400px; height: 500px; }
+  .equipe__item { height: 450px; width: 140px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), height 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .equipe__item.is-aberto { height: 500px; width: 440px; }
+  .equipe__tira { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .equipe__item:not(.is-aberto) .equipe__foto { opacity: 0; }
+  .equipe__item:not(.is-aberto) .equipe__sombra { background: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 70%); }
+  .equipe__item:not(.is-aberto) .equipe__nome { left: calc(50% - 18px); top: auto; bottom: 28px; translate: none; writing-mode: vertical-rl; rotate: 180deg; text-align: left; font-size: 1.9rem; }
 
   .conecta { margin: 0 var(--gutter); padding: 4rem 3rem !important; }
   .rodape { grid-template-columns: auto 1fr auto auto; align-items: center; gap: 2rem; padding: 2.5rem var(--gutter); }
@@ -181,5 +192,5 @@ main > section, .depoimento { padding: 4.5rem 16px; }
 
 @media (prefers-reduced-motion: reduce) {
   .faixa__track { animation: none; }
-  .btn, .cases img, .popup { transition: none; animation: none; }
+  .btn, .cases img, .popup, .equipe__item { transition: none; animation: none; }
 }
