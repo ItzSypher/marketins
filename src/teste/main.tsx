@@ -4,12 +4,14 @@ import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { equipe, linkContato, INSTAGRAM, LOGOS, sergio } from '../content';
+import { equipe, linkContato, INSTAGRAM, LOGOS } from '../content';
 import { IphoneReels, Musica } from '../ds/blocos';
 import { GTA } from '../sections/Gta';
 import { Stage } from '../sections/Stage';
 import { Espiral } from './Espiral';
-import { clientes, conexoes, grandes, pontos, segmentos, unidades } from './dados';
+import { Presenca } from './Presenca';
+import { Checklist } from './Checklist';
+import { clientes, grandes, pontos, segmentos } from './dados';
 import '../styles.css';
 import '../sections/abertura-home.css';
 import '../sections/home-blocos.css';
@@ -85,30 +87,6 @@ function Faixa() {
   );
 }
 
-function Estrutura() {
-  return (
-    <section id="estrutura" className="t-sec">
-      <Cabeca titulo="Presença de verdade na Baixada" />
-      <div className="unidades">
-        {unidades.map((u) => (
-          <article className="unidade" key={u.cidade} data-revela>
-            <div className="unidade__foto">
-              {u.img
-                ? <img src={u.img} alt={u.alt} loading="lazy" />
-                : <span className="unidade__marca" aria-hidden="true">{u.cidade}</span>}
-            </div>
-            <div className="unidade__info">
-              <h3>{u.cidade}</h3>
-              <p>{u.local}</p>
-              <Seta escuro href={`https://www.google.com/maps/search/${encodeURIComponent(u.mapa)}`}>Como chegar</Seta>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* 04: foto do time abre com o scroll; depois os cards cruzam a tela inclinados */
 function Time() {
   const sec = useRef<HTMLElement>(null);
@@ -143,28 +121,6 @@ function Time() {
             </figure>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Conexoes() {
-  return (
-    <section id="conexoes" className="t-sec">
-      <Cabeca titulo="Quem chega na Marketins chega bem conectado" />
-      <div className="rede">
-        <figure className="rede__sergio" data-revela>
-          <img src={sergio.foto} alt={sergio.nome} loading="lazy" />
-          <figcaption><b>{sergio.nome}</b><span>Fundador · a ponte entre você e quem move a Baixada</span></figcaption>
-        </figure>
-        <ul className="rede__lista">
-          {conexoes.map((c, i) => (
-            <li key={c.nome} className="rede__card" style={{ '--r': `${i % 2 ? 2 : -2}deg` } as React.CSSProperties} data-revela>
-              <span className="t-num">{c.papel}</span>
-              <b>{c.nome}</b>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
@@ -263,10 +219,10 @@ function App() {
         </div>
       </section>
       <Espiral />
-      <Estrutura />
+      <Presenca />
       <Time />
-      <Conexoes />
       <section className="t-sec"><Cabeca titulo="A gente vive no feed" /><IphoneReels /></section>
+      <Checklist />
       <Fecho />
       <Musica comToque />
     </main>

@@ -8,7 +8,7 @@ main > section.esp { padding: 0 !important; }
 
 /* grade estática: movimento reduzido ou tela baixa demais */
 .esp-grade { list-style: none; padding: 0; margin: 0 auto; max-width: 1120px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.esp-grade img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; }
+.esp-grade img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; }
 @media (min-width: 760px) { .esp-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
 
 .esp-cena { display: none; }
@@ -19,16 +19,17 @@ main > section.esp { padding: 0 !important; }
 .esp-ativa .esp-copy { position: absolute; left: 50%; top: clamp(32px, 9%, 96px); width: calc(100% - 32px); transform: translateX(-50%); margin: 0; }
 .esp-ativa .esp-cena { display: block; position: absolute; inset: 0; perspective: var(--perspectiva, 1300px); perspective-origin: 50% 50%; pointer-events: none; --fatias: 12; }
 
-.esp-eixo { position: absolute; left: 50%; top: 62%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+.esp-eixo { position: absolute; left: 50%; top: 64%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
 .esp-mobile .esp-eixo { top: 58%; }
 .esp-cartas { position: absolute; list-style: none; margin: 0; padding: 0; transform-style: preserve-3d; }
 .esp-carta {
   --altura: var(--card-altura, 300px);
-  --largura: calc(var(--altura) * 16 / 10);
+  /* 4:5, igual a PROPORCAO em Espiral.tsx */
+  --largura: calc(var(--altura) * 4 / 5);
   --fatia: calc(var(--largura) / var(--fatias));
   /* cover: a imagem cobre a carta inteira, sobra cortada pelos lados ou em cima/embaixo */
-  --bw: max(var(--largura), calc(var(--altura) * var(--r, 1.6)));
-  --bh: max(var(--altura), calc(var(--largura) / var(--r, 1.6)));
+  --bw: max(var(--largura), calc(var(--altura) * var(--r, 0.8)));
+  --bh: max(var(--altura), calc(var(--largura) / var(--r, 0.8)));
   position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d;
 }
 .esp-tira {
@@ -39,12 +40,12 @@ main > section.esp { padding: 0 !important; }
   background-position: calc((var(--largura) - var(--bw)) / 2 - var(--indice, 0) * var(--fatia)) var(--foco, center);
   backface-visibility: visible;
 }
-.esp-tira[data-ponta='esquerda'] { border-top-left-radius: calc(var(--largura) * 0.028); border-bottom-left-radius: calc(var(--largura) * 0.028); }
-.esp-tira[data-ponta='direita'] { width: var(--fatia); border-top-right-radius: calc(var(--largura) * 0.028); border-bottom-right-radius: calc(var(--largura) * 0.028); }
+.esp-tira[data-ponta='esquerda'] { border-top-left-radius: calc(var(--largura) * 0.04); border-bottom-left-radius: calc(var(--largura) * 0.04); }
+.esp-tira[data-ponta='direita'] { width: var(--fatia); border-top-right-radius: calc(var(--largura) * 0.04); border-bottom-right-radius: calc(var(--largura) * 0.04); }
 .esp-tira::after { content: ''; position: absolute; inset: 0; background: var(--chao); opacity: var(--sombra, 0); pointer-events: none; }
 
 /* degradês que somem com a espiral em cima e embaixo */
 .esp-ativa .esp-clip::before, .esp-ativa .esp-clip::after { content: ''; position: absolute; left: 0; right: 0; pointer-events: none; z-index: 1; }
-.esp-ativa .esp-clip::before { top: 0; height: clamp(145px, 26%, 320px); background: linear-gradient(to bottom, var(--chao) 0%, var(--chao) 40%, transparent 100%); }
+.esp-ativa .esp-clip::before { top: 0; height: clamp(150px, 34%, 360px); background: linear-gradient(to bottom, var(--chao) 0%, var(--chao) 60%, transparent 100%); }
 .esp-ativa .esp-clip::after { bottom: 0; height: clamp(80px, 14%, 176px); background: linear-gradient(to top, var(--chao), transparent); }
-@media (max-width: 619px) { .esp-ativa .esp-clip::before { height: clamp(176px, 32%, 320px); } }
+@media (max-width: 619px) { .esp-ativa .esp-clip::before { height: clamp(200px, 31%, 320px); background: linear-gradient(to bottom, var(--chao) 0%, var(--chao) 64%, transparent 100%); } }

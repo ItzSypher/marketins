@@ -6,7 +6,6 @@ export const pontos = [
   { id: 'grandes', titulo: 'Clientes grandes' },
   { id: 'estrutura', titulo: 'Estrutura física' },
   { id: 'time', titulo: 'Time completo' },
-  { id: 'conexoes', titulo: 'Conexões' },
 ];
 
 /** Prova social: os clientes grandes, na ordem do Sérgio. */
@@ -32,13 +31,6 @@ export const segmentos = [
 export const unidades: { cidade: string; local: string; mapa: string; img?: string; alt?: string }[] = [
   { cidade: 'Nova Iguaçu', local: 'Le Monde Office', mapa: 'Le Monde Office Nova Iguaçu', img: '/unidades/le-monde-nova-iguacu.webp', alt: 'Fachada do Le Monde Office, em Nova Iguaçu' },
   { cidade: 'São João de Meriti', local: 'Unidade São João', mapa: 'Marketins São João de Meriti' },
-];
-
-/** Rede do Sérgio: quem o empresário alcança chegando pela Marketins. */
-export const conexoes = [
-  { nome: 'Le Monde', papel: 'O síndico' },
-  { nome: 'Oba Oba', papel: 'O dono' },
-  { nome: 'Forneria Original', papel: 'Conexão direta' },
 ];
 
 // Artes que a Marketins criou para clientes (grupo do Figma, nó 5029:5571).

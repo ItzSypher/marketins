@@ -1,0 +1,154 @@
+/* Checklist: micro-jornada com o símbolo que cresce. Mobile first (390×844). */
+.t-sec.ck { padding-block: 4.5rem 5rem; }
+.ck__grade { display: grid; grid-template-areas: 'cab' 'palco' 'lista' 'fim'; }
+.ck__cab { grid-area: cab; display: grid; gap: 0.9rem; margin-bottom: 1.25rem; }
+.ck .ck__titulo { font-size: clamp(1.75rem, 7.4vw, 3.4rem); line-height: 1.05; max-width: 16ch; }
+
+/* Palco: símbolo + mostrador + status. Gruda no topo enquanto a lista passa. */
+.ck-palco {
+  --p: 0;
+  grid-area: palco; position: sticky; top: 0; z-index: 2;
+  display: grid; justify-items: center; gap: 0.5rem;
+  margin-inline: -16px; padding: 0.75rem 16px 1.4rem;
+  background: linear-gradient(var(--chao) calc(100% - 1.1rem), rgb(11 7 9 / 0));
+}
+.ck-palco__visor { position: relative; width: min(60vw, 236px, 30svh); aspect-ratio: 1; }
+
+.ck-palco__halo {
+  position: absolute; inset: 6%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(254 82 35 / 0.6), rgb(208 0 77 / 0.38) 55%, transparent);
+  filter: blur(22px);
+  opacity: calc(var(--p) * 0.85);
+  transform: scale(calc(0.45 + var(--p) * 0.7));
+  transition: opacity 0.8s ease, transform 1s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.ck-dial { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ck-dial path { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.ck-dial__base { stroke: var(--linha); }
+.ck-dial__luz { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 0.7s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.1s linear 0.6s; }
+.ck-dial__luz.is-on { stroke-dashoffset: 0; opacity: 1; transition-delay: 0s; }
+/* opacidade esconde o ponto que a ponta redonda deixa com o traço recolhido */
+
+.ck-simbolo {
+  position: absolute; inset: 15%;
+  transform: scale(calc(0.58 + var(--p) * 0.42));
+  transition: transform 1s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+.ck-simbolo__voo { width: 100%; height: 100%; }
+.ck-simbolo svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.ck-peca__contorno { fill: none; stroke: rgb(246 239 241 / 0.42); stroke-width: 0.55; }
+.ck-peca {
+  fill-opacity: 0; stroke-width: 0.8; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.75s cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0s), fill-opacity 0.5s ease calc(var(--d, 0s) + 0.3s);
+}
+.ck-peca.is-on { fill-opacity: 1; stroke-dashoffset: 0; }
+
+/* Tudo marcado: brilho, ondas e o foguete flutuando */
+.ck-palco.is-cheio .ck-simbolo svg { filter: drop-shadow(0 0 18px rgb(254 82 35 / 0.45)); }
+.ck-palco.is-cheio .ck-simbolo__voo { animation: ck-voo 3.2s ease-in-out 0.9s infinite; }
+.ck-palco__visor::before, .ck-palco__visor::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 2px solid var(--laranja); opacity: 0; pointer-events: none;
+}
+.ck-palco.is-cheio .ck-palco__visor::before { animation: ck-onda 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; }
+.ck-palco.is-cheio .ck-palco__visor::after { border-color: var(--magenta); animation: ck-onda 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s; }
+@keyframes ck-onda { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.55); } }
+@keyframes ck-voo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+
+.ck-status { display: grid; justify-items: center; gap: 0.45rem; text-align: center; min-height: 4.4rem; }
+.ck .ck-status__conta { color: var(--texto-2); }
+.ck .is-cheio .ck-status__conta { color: var(--laranja); }
+.ck-status__frase {
+  font: 700 clamp(0.95rem, 4.3vw, 1.35rem)/1.2 var(--display); text-transform: uppercase; letter-spacing: -0.005em;
+  max-width: 22ch; text-wrap: balance;
+  animation: ck-frase 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.is-cheio .ck-status__frase {
+  font-size: clamp(1.15rem, 5.4vw, 1.75rem);
+  background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+@keyframes ck-frase { from { opacity: 0; transform: translateY(8px); } }
+
+/* Lista: checkbox real cobrindo o cartão inteiro (alvo de toque grande) */
+.ck__lista { grid-area: lista; border: 0; margin: 0; padding: 0; min-width: 0; }
+.ck__lista ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.ck-item {
+  position: relative; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.9rem;
+  min-height: 60px; padding: 0.8rem 1rem;
+  border: 1px solid var(--linha); border-radius: 18px;
+  background: linear-gradient(var(--chao-2), var(--chao-2)) padding-box, linear-gradient(var(--linha), var(--linha)) border-box;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.35s ease, border-color 0.35s;
+}
+.ck-item:active { transform: scale(0.975); }
+.ck-item.is-on {
+  border-color: transparent;
+  background:
+    radial-gradient(120% 140% at 0% 50%, rgb(208 0 77 / 0.2), transparent 60%) padding-box,
+    linear-gradient(var(--chao-2), var(--chao-2)) padding-box,
+    var(--gradiente) border-box;
+}
+.ck-item__input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ck-item:has(.ck-item__input:focus-visible) { outline: 2px solid var(--laranja); outline-offset: 3px; }
+
+.ck-item__caixa {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px;
+  border: 1.5px solid rgb(246 239 241 / 0.32); background: transparent;
+  transition: background 0.3s ease, border-color 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ck-item__caixa svg { width: 18px; height: 18px; }
+.ck-item__caixa path {
+  fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 0.35s cubic-bezier(0.65, 0, 0.35, 1) 0.08s, opacity 0s linear 0.4s;
+}
+.ck-item.is-on .ck-item__caixa { background: var(--gradiente); border-color: transparent; transform: scale(1.08); }
+.ck-item.is-on .ck-item__caixa path { stroke-dashoffset: 0; opacity: 1; transition-delay: 0.08s, 0s; }
+.ck-item__input:focus-visible ~ .ck-item__caixa { box-shadow: 0 0 0 3px rgb(254 82 35 / 0.45); }
+
+.ck-item__texto { font-size: 0.97rem; line-height: 1.35; color: var(--texto-2); transition: color 0.3s; }
+.ck-item.is-on .ck-item__texto { color: var(--texto); }
+
+.ck__fim { grid-area: fim; display: grid; gap: 0.8rem; justify-items: stretch; margin-top: 1.6rem; }
+.ck__fim .b-transicao { width: 100%; }
+.ck__nota { color: var(--texto-2); font-size: 0.88rem; text-align: center; }
+
+@media (hover: hover) {
+  .ck-item:hover { border-color: rgb(246 239 241 / 0.22); }
+  .ck-item:hover .ck-item__caixa { border-color: var(--laranja); }
+}
+
+/* Desktop: lista à esquerda, símbolo grudado à direita */
+@media (min-width: 1000px) {
+  .t-sec.ck { padding-block: 7rem; }
+  .ck__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); column-gap: clamp(3rem, 6vw, 6rem);
+    grid-template-areas: 'cab palco' 'lista palco' 'fim palco'; grid-template-rows: auto auto 1fr;
+  }
+  .ck__cab { margin-bottom: 2.2rem; }
+  .ck .ck__titulo { font-size: clamp(2.2rem, 3.2vw, 3.1rem); max-width: 16ch; }
+  .ck-palco {
+    align-self: start; top: max(40px, calc(50vh - 290px));
+    margin: 0; padding: 0; background: none; gap: 1.6rem;
+  }
+  .ck-palco__visor { width: min(36vw, 440px); }
+  .ck-palco__halo { filter: blur(40px); }
+  .ck-status { min-height: 6rem; }
+  .ck-status__frase { font-size: 1.5rem; }
+  .is-cheio .ck-status__frase { font-size: 2.1rem; }
+  .ck-item { min-height: 68px; padding: 1rem 1.3rem; }
+  .ck-item__texto { font-size: 1.05rem; }
+  .ck__fim { justify-items: start; }
+  .ck__fim .b-transicao { width: auto; min-width: 280px; }
+  .ck__nota { text-align: left; }
+}
+
+/* Movimento reduzido: só troca de estado, sem escala nem desenho animado */
+@media (prefers-reduced-motion: reduce) {
+  .ck-palco__halo, .ck-simbolo, .ck-dial__luz, .ck-peca, .ck-item, .ck-item__caixa, .ck-item__caixa path, .ck-item__texto { transition: none; }
+  .ck-item:active, .ck-item.is-on .ck-item__caixa { transform: none; }
+  .ck-status__frase, .ck-palco.is-cheio .ck-simbolo__voo,
+  .ck-palco.is-cheio .ck-palco__visor::before, .ck-palco.is-cheio .ck-palco__visor::after { animation: none; }
+}

@@ -15,28 +15,37 @@ const REPETICOES = 3;
 const DISTANCIA = 1.35; // percurso em alturas úteis de tela
 const SUAVIDADE = 0.13; // suaviza só a espiral; a fixação é imediata
 
-const PROPORCAO = 16 / 10;
-const VAO = 0.15;
-const RAIO_FATOR = 0.82;
-const VOLTAS = 3.55;
-const PASSO_BASE = 9.76;
-const ALT_VH = 0.24;
-const ALT_VW = 0.21;
-const ALT_MAX = 264;
+// A carta tem a proporção do post (960×1200, 4:5): a arte aparece inteira.
+// Igual a --largura em espiral.css.
+const PROPORCAO = 4 / 5;
+const VAO = 0.09; // folga entre cartas vizinhas, em alturas de carta
+// desktop: cilindro largo, ~9 cartas por volta
+const VOLTAS = 3.3;
+const PASSO_BASE = 5.6; // altura da hélice em alturas de carta (1,7 por volta: voltas não se tocam)
+const ALT_VH = 0.3;
+const ALT_VW = 0.26;
+const ALT_MAX = 300;
 const ALT_MIN = 64;
-const PERSP_DESKTOP = 2.216;
-const INCLINA_X = 12.6;
+const PERSP_DESKTOP = 2.5;
+const INCLINA_X = 13;
 const INCLINA_Z = -3.4;
 const PARALLAX = 0.13;
 const INICIO = -7;
 const FIM = 7;
-const FATIAS_DESKTOP = 12;
+const FATIAS_DESKTOP = 9;
+const SOMBRA = 0.6; // escurecimento máximo, nas cartas de costas
+const SOMBRA_MOBILE = 0.78;
+// mobile: coluna da largura da tela, 5 cartas por volta, uma carta grande de frente por vez
 const FATIAS_MOBILE = 7;
 const BREAKPOINT = 620;
-const ALT_MOBILE_VW = 0.37;
-const ALT_MOBILE_MAX = 180;
-const PERSP_MOBILE = 3.2;
-const PASSO_MOBILE = 0.9;
+const VOLTAS_MOBILE = 6;
+const PASSO_MOBILE = 9.9;
+const ALT_MOBILE_VW = 0.6;
+const ALT_MOBILE_VH = 0.3;
+const ALT_MOBILE_MAX = 300;
+const PERSP_MOBILE = 3.4;
+const INCLINA_X_MOBILE = 11;
+const INCLINA_Z_MOBILE = -2;
 
 export function Espiral() {
   const raiz = useRef<HTMLElement>(null);
@@ -74,7 +83,7 @@ export function Espiral() {
       if (cacheTransform[ci][ti] !== transform) { el.style.transform = transform; cacheTransform[ci][ti] = transform; }
       const a = Math.round(ang);
       if (cacheAng[ci][ti] !== a) {
-        el.style.setProperty('--sombra', ((1 - Math.cos(a * Math.PI / 180)) / 2 * 0.42).toFixed(3));
+        el.style.setProperty('--sombra', ((1 - Math.cos(a * Math.PI / 180)) / 2 * sombra).toFixed(3));
         cacheAng[ci][ti] = a;
       }
     }
@@ -102,7 +111,8 @@ export function Espiral() {
     }
 
     let raio = 0, perspectiva = 0, passo = 0, comprimento = 0, alturaHelice = 0;
-    let passoVoltas = PASSO_BASE, alturaCena = 0, topoEixo = 0, atual = INICIO;
+    let passoVoltas = PASSO_BASE, voltas = VOLTAS, inclinaX = INCLINA_X, sombra = SOMBRA;
+    let alturaCena = 0, topoEixo = 0, atual = INICIO;
 
     function medirGeometria() {
       const mobile = cena.clientWidth < BREAKPOINT;
@@ -112,17 +122,22 @@ export function Espiral() {
       alturaCena = cena.clientHeight;
       topoEixo = eixo.offsetTop;
       const alt = mobile
-        ? Math.min(Math.max(cena.clientWidth * ALT_MOBILE_VW, ALT_MIN), ALT_MOBILE_MAX)
+        ? Math.min(Math.max(Math.min(cena.clientWidth * ALT_MOBILE_VW, cena.clientHeight * ALT_MOBILE_VH), ALT_MIN), ALT_MOBILE_MAX)
         : Math.min(Math.max(Math.min(cena.clientHeight * ALT_VH, cena.clientWidth * ALT_VW), ALT_MIN), ALT_MAX);
-      passoVoltas = mobile ? Math.max(PASSO_BASE, PASSO_MOBILE * alturaCena * VOLTAS / alt) : PASSO_BASE;
-      raio = alt * PROPORCAO / RAIO_FATOR;
+      passoVoltas = mobile ? PASSO_MOBILE : PASSO_BASE;
+      voltas = mobile ? VOLTAS_MOBILE : VOLTAS;
+      inclinaX = mobile ? INCLINA_X_MOBILE : INCLINA_X;
+      const novaSombra = mobile ? SOMBRA_MOBILE : SOMBRA;
+      if (novaSombra !== sombra) { sombra = novaSombra; cacheAng = cartas.map(() => new Array(fatias).fill(NaN)); }
       passo = (PROPORCAO + VAO) * alt;
       comprimento = passo * cartas.length;
+      // o raio sai do espaçamento: cada carta ocupa exatamente o seu arco + VAO
+      raio = comprimento / (2 * Math.PI * voltas);
       alturaHelice = passoVoltas * alt;
       cena.style.setProperty('--card-altura', alt.toFixed(0) + 'px');
       perspectiva = raio * (mobile ? PERSP_MOBILE : PERSP_DESKTOP);
       cena.style.setProperty('--perspectiva', perspectiva.toFixed(0) + 'px');
-      eixo.style.transform = `rotateX(${INCLINA_X}deg) rotateZ(${INCLINA_Z}deg)`;
+      eixo.style.transform = `rotateX(${inclinaX}deg) rotateZ(${mobile ? INCLINA_Z_MOBILE : INCLINA_Z}deg)`;
     }
 
     function esconder(carta: HTMLElement) {
@@ -136,17 +151,17 @@ export function Espiral() {
       const altCarta = alturaHelice / passoVoltas;
       const largCarta = altCarta * PROPORCAO;
       const largFatia = largCarta / fatias;
-      const subidaPorRad = alturaHelice / (2 * Math.PI * VOLTAS);
+      const subidaPorRad = alturaHelice / (2 * Math.PI * voltas);
       const inclinacao = Math.atan(subidaPorRad / raio) * 180 / Math.PI;
-      const senX = Math.sin(INCLINA_X * Math.PI / 180);
-      const cosX = Math.cos(INCLINA_X * Math.PI / 180);
+      const senX = Math.sin(inclinaX * Math.PI / 180);
+      const cosX = Math.cos(inclinaX * Math.PI / 180);
       const meio = alturaCena / 2;
 
       cartas.forEach((carta, ci) => {
         const ordem = cartas.length - 1 - ci;
         const t = (ordem * passo + largCarta / 2 + atual * passo) / comprimento;
         if (t < 0 || t > 1) return esconder(carta);
-        const angulo = (t - 0.5) * 360 * VOLTAS;
+        const angulo = (t - 0.5) * 360 * voltas;
         const r = raio * (1 - (t - 0.5) * 0.1);
         const y = (t - 0.5) * alturaHelice;
         const meiaAbertura = largCarta / 2 / r * 180 / Math.PI;
