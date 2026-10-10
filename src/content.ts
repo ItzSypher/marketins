@@ -65,17 +65,17 @@ export const cases = [
 ].map(([slug, nome]) => ({ nome, img: `/cases/${slug}.webp` }));
 
 // Time do carrossel (frame "EQUIPE MARKETINS" do Figma). `card` é a foto original,
-// `tira` o recorte vertical da versão fechada. `video` entra quando o Veo gerar o clipe.
-// O texto só existe para o Sérgio: o Figma traz lorem ipsum nos outros, e não inventamos cargo.
+// `tira` o recorte vertical da versão fechada. `video` é o clipe do Veo 3.1 Fast, gerado da foto original e cortado na faixa da foto.
+// `texto` é o cargo (ou a bio do Sérgio). O Rafael ainda está sem cargo: o Figma traz lorem ipsum.
 export type Membro = { slug: string; nome: string; cargo?: string; texto?: string; video?: string };
 export const membros: Membro[] = [
-  { slug: 'sergio', nome: 'SÉRGIO JR', cargo: 'CEO', texto: 'Gestor de Tráfego há 15 anos, Mercadólogo e Fundador da Agencia Marketins.' },
-  { slug: 'julyane', nome: 'JULYANE' },
-  { slug: 'gabriella', nome: 'GABRIELLA' },
-  { slug: 'elaine', nome: 'ELAINE' },
-  { slug: 'henrique', nome: 'HENRIQUE' },
-  { slug: 'rafael', nome: 'RAFAEL' },
-  { slug: 'lucas', nome: 'LUCAS' },
+  { slug: 'sergio', nome: 'SÉRGIO JR', cargo: 'CEO', texto: 'Gestor de Tráfego há 15 anos, Mercadólogo e Fundador da Agencia Marketins.', video: '/equipe/sergio.mp4' },
+  { slug: 'julyane', nome: 'JULYANE', texto: 'Coord. de Marketing', video: '/equipe/julyane.mp4' },
+  { slug: 'gabriella', nome: 'GABRIELLA', texto: 'Coord. de Design', video: '/equipe/gabriella.mp4' },
+  { slug: 'elaine', nome: 'ELAINE', texto: 'Audiovisual', video: '/equipe/elaine.mp4' },
+  { slug: 'henrique', nome: 'HENRIQUE', texto: 'Videomaker', video: '/equipe/henrique.mp4' },
+  { slug: 'rafael', nome: 'RAFAEL', video: '/equipe/rafael.mp4' },
+  { slug: 'lucas', nome: 'LUCAS', texto: 'Tráfego', video: '/equipe/lucas.mp4' },
 ];
 
 export const depoimentos = [

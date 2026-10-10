@@ -44,8 +44,10 @@ export function Equipe() {
                 <video className="equipe__video" src={m.video} poster={`/equipe/${m.slug}-card.webp`} autoPlay muted loop playsInline />
               )}
               <span className="equipe__sombra" aria-hidden="true" />
-              <span className="equipe__nome">{m.nome}</span>
-              {m.texto && <span className="equipe__texto">{m.texto}</span>}
+              <span className="equipe__legenda">
+                <span className="equipe__nome">{m.nome}</span>
+                {m.texto && <span className="equipe__texto">{m.texto}</span>}
+              </span>
             </button>
           </li>
         );

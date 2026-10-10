@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { linkContato } from '../content';
@@ -33,6 +33,11 @@ function openWidth(vw: number, vh: number) {
  */
 export function Stage({ cta }: { cta?: ReactNode } = {}) {
   const stage = useRef<HTMLDivElement>(null);
+  // O vídeo é só efeito de movimento: não carrega com "reduzir movimento" nem com economia de dados.
+  const [movimento] = useState(() => {
+    const conexao = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    return !matchMedia('(prefers-reduced-motion: reduce)').matches && !conexao?.saveData;
+  });
 
   useLayoutEffect(() => {
     const el = stage.current!;
@@ -122,6 +127,7 @@ export function Stage({ cta }: { cta?: ReactNode } = {}) {
           <source media="(max-width: 767px)" srcSet="/hero-mobile.webp" />
           <img src="/hero-desktop.webp" alt="" fetchPriority="high" />
         </picture>
+        {movimento && <video className="hero__video" src="/media/hero-movimento.mp4" autoPlay muted loop playsInline preload="auto" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('is-tocando')} />}
         <div className="hero__tela" aria-hidden="true" />
         <div className="hero__sombra" aria-hidden="true" />
         <div className="hero__copy">
