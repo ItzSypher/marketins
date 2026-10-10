@@ -12,7 +12,7 @@ Site da Agência Marketins (Baixada Fluminense). Produto, público e provas: `PR
   - coreografia GSAP/ScrollTrigger complexa (pins encadeados, timelines sincronizadas);
   - revisão final de design antes de pedir aprovação para a `main`.
 - Diga em uma linha quando escalar para o Opus e por quê. Não use o Opus para buscas, leitura de arquivos ou edições mecânicas.
-- Haiku serve para varreduras simples em subagentes (achar arquivos, listar usos).
+- Subagentes do projeto (`.claude/agents/`): `explorador` (Haiku, busca no repo), `verificador` (Sonnet, build + navegador + capturas antes do push), `opus` (trabalho pesado). Use-os para poupar contexto da conversa principal: delegue busca e verificação, mantenha as decisões aqui.
 
 ## Como trabalhar: engenheiro de software com referências
 
