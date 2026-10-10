@@ -4,7 +4,6 @@
 
 export const pontos = [
   { id: 'grandes', titulo: 'Clientes grandes' },
-  { id: 'segmentos', titulo: 'Muitos segmentos' },
   { id: 'estrutura', titulo: 'Estrutura física' },
   { id: 'time', titulo: 'Time completo' },
   { id: 'conexoes', titulo: 'Conexões' },

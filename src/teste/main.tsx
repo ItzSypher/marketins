@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { equipe, linkContato, INSTAGRAM, LOGOS, numeros, sergio } from '../content';
+import { equipe, linkContato, INSTAGRAM, LOGOS, sergio } from '../content';
 import { IphoneReels, Musica } from '../ds/blocos';
 import { GTA } from '../sections/Gta';
 import { Stage } from '../sections/Stage';
@@ -25,12 +25,10 @@ function Seta({ href, children, escuro }: { href: string; children: string; escu
   );
 }
 
-function Cabeca({ n, titulo, texto }: { n: string; titulo: string; texto?: string }) {
+function Cabeca({ titulo }: { titulo: string }) {
   return (
     <header className="t-cabeca" data-revela>
-      <span className="t-num">({n})</span>
       <h2 className="t-titulo">{titulo}</h2>
-      {texto && <p className="t-texto">{texto}</p>}
     </header>
   );
 }
@@ -40,8 +38,8 @@ function Capa() {
     <section className="t-capa">
       <h2 className="t-capa__titulo">Poucas agências têm o que a <em>Marketins</em> tem.</h2>
       <ol className="t-indice">
-        {pontos.map((p, i) => (
-          <li key={p.id}><a href={`#${p.id}`}><span>0{i + 1}</span>{p.titulo}<i aria-hidden="true">↓</i></a></li>
+        {pontos.map((p) => (
+          <li key={p.id}><a href={`#${p.id}`}>{p.titulo}<i aria-hidden="true">↓</i></a></li>
         ))}
       </ol>
     </section>
@@ -52,7 +50,7 @@ function Capa() {
 function Grandes() {
   return (
     <section id="grandes" className="t-sec">
-      <Cabeca n="01" titulo="Clientes grandes confiam na gente" texto="Marcas que são referência no que fazem escolheram a Marketins para cuidar do marketing." />
+      <Cabeca titulo="Clientes grandes confiam na gente" />
       <div className="pilha">
         {grandes.map((c, i) => (
           <article className="pilha__card" key={c.nome} style={{ '--i': i } as React.CSSProperties}>
@@ -62,7 +60,6 @@ function Grandes() {
                 : <span className="pilha__marca" aria-hidden="true">{c.nome}</span>}
             </div>
             <div className="pilha__info">
-              <span className="t-num">0{i + 1}</span>
               <h3 className="pilha__nome">
                 <span className="pilha__troca"><b>{c.nome}</b><b aria-hidden="true">{c.nome}</b></span>
               </h3>
@@ -76,17 +73,12 @@ function Grandes() {
   );
 }
 
-/* 02: dois letreiros que andam com o scroll, em sentidos opostos; cada nome acende ao passar */
-function Segmentos() {
-  const total = numeros.find((n) => n.rotulo.includes('clientes'));
+/* Faixa logo abaixo da hero: clientes e segmentos andando com o scroll, em sentidos opostos */
+function Faixa() {
   return (
-    <section id="segmentos" className="t-sec t-sec--cheia">
-      <Cabeca n="02" titulo="Muitos clientes. Em muitos segmentos." />
+    <section className="faixa-clientes" aria-label="Clientes e segmentos">
       <div className="letreiro" data-anda="-1"><div className="letreiro__trilho">{[...clientes, ...clientes].map((c, i) => <span key={i}>{c}<i>✦</i></span>)}</div></div>
       <div className="letreiro letreiro--seg" data-anda="1"><div className="letreiro__trilho">{[...segmentos, ...segmentos].map((c, i) => <span key={i}>{c}<i>✦</i></span>)}</div></div>
-      {total && (
-        <p className="contador" data-revela><strong>{total.valor}</strong><span>{total.rotulo}, do previdenciário à construção.</span></p>
-      )}
     </section>
   );
 }
@@ -94,7 +86,7 @@ function Segmentos() {
 function Estrutura() {
   return (
     <section id="estrutura" className="t-sec">
-      <Cabeca n="03" titulo="Presença de verdade na Baixada" texto="Duas unidades, estrutura própria e bem localizada. Você vem tomar um café com a gente." />
+      <Cabeca titulo="Presença de verdade na Baixada" />
       <div className="unidades">
         {unidades.map((u) => (
           <article className="unidade" key={u.cidade} data-revela>
@@ -138,7 +130,7 @@ function Time() {
   }, []);
   return (
     <section id="time" className="t-sec" ref={sec}>
-      <Cabeca n="04" titulo="Um time grande e qualificado" texto="Tráfego, design, vídeo, social e desenvolvimento dentro de casa. Gente formada e com estrada." />
+      <Cabeca titulo="Um time grande e qualificado" />
       <div className="time-foto">{equipe.map((p) => <img key={p.nome} src={p.foto} alt="" loading="lazy" />)}</div>
       <div className="cruza">
         <div className="cruza__trilho">
@@ -157,7 +149,7 @@ function Time() {
 function Conexoes() {
   return (
     <section id="conexoes" className="t-sec">
-      <Cabeca n="05" titulo="Quem chega na Marketins chega bem conectado" />
+      <Cabeca titulo="Quem chega na Marketins chega bem conectado" />
       <div className="rede">
         <figure className="rede__sergio" data-revela>
           <img src={sergio.foto} alt={sergio.nome} loading="lazy" />
@@ -195,7 +187,6 @@ function Fecho() {
   return (
     <section className="t-sec">
       <div className="cartao" data-revela>
-        <p className="eyebrow">Próximo case</p>
         <h2 className="t-titulo">Bora conversar sobre o seu negócio?</h2>
         <p className="t-texto">Consultoria sem compromisso, em Nova Iguaçu, em São João de Meriti ou pelo WhatsApp.</p>
         <a ref={ima} className="b-transicao" href={linkContato(`${ORIGEM} · fim`)} target="_blank" rel="noopener">
@@ -259,6 +250,7 @@ function App() {
           <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
         </a>
       } />
+      <Faixa />
       <Capa />
       <Grandes />
       <section className="logos" aria-label="Alguns clientes">
@@ -268,11 +260,10 @@ function App() {
           ))}
         </div>
       </section>
-      <Segmentos />
       <Estrutura />
       <Time />
       <Conexoes />
-      <section className="t-sec"><Cabeca n="+" titulo="A gente vive no feed" /><IphoneReels /></section>
+      <section className="t-sec"><Cabeca titulo="A gente vive no feed" /><IphoneReels /></section>
       <Fecho />
       <Musica comToque />
     </main>
