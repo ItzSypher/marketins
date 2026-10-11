@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { Botao } from '../ds/Botao';
 import { linkContato } from '../content';
 import { ENTRADA_FECHOU, entradaAberta } from './Entrada';
@@ -7,6 +8,8 @@ import './hero.css';
 /*
   Hero da página teste: o globo no centro, sobre a foto apagada, com o símbolo grande ao fundo e o título embaixo.
   (Versão única; as variações 2 e 3 foram descartadas pelo cliente.)
+  Abaixo de 1000px não há foto (nem download dela): só o globo, com o contorno do símbolo grande atrás
+  dando profundidade, que desce e gira um pouco com a rolagem (parado com prefers-reduced-motion).
 
   h1: uma frase só para busca e leitura. O trecho pequeno ("Agência de marketing na Baixada Fluminense") leva
   o termo local que as pessoas pesquisam; a frase do cliente é o título grande. Os dois ficam dentro do mesmo h1.
@@ -86,19 +89,52 @@ function Texto() {
   );
 }
 
+// GIF transparente de 1px: no celular o <picture> escolhe este e a foto do desktop não é baixada
+const VAZIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 function Foto() {
   return (
     <picture className="hr-foto">
-      <source media="(max-width: 999px)" srcSet="/hero-mobile.webp" width={1080} height={1080} />
+      <source media="(max-width: 999px)" srcSet={VAZIO} />
       <img src="/hero-desktop.webp" alt="" width={1920} height={1080} fetchPriority="high" decoding="async" />
     </picture>
   );
+}
+
+/* ───────── celular: o símbolo do fundo acompanha a rolagem (parallax leve) ───────── */
+function useParallaxCelular(ref: RefObject<HTMLElement>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const celular = matchMedia('(max-width: 999px)');
+    const reduzido = matchMedia('(prefers-reduced-motion: reduce)');
+    let raf = 0;
+    const aplicar = () => {
+      raf = 0;
+      if (!celular.matches || reduzido.matches) { el.style.removeProperty('--hr-p'); return; }
+      const p = Math.min(1.2, Math.max(0, scrollY / Math.max(1, el.offsetHeight)));
+      el.style.setProperty('--hr-p', p.toFixed(4));
+    };
+    const pedir = () => { if (!raf) raf = requestAnimationFrame(aplicar); };
+    addEventListener('scroll', pedir, { passive: true });
+    celular.addEventListener('change', pedir);
+    reduzido.addEventListener('change', pedir);
+    aplicar();
+    return () => {
+      cancelAnimationFrame(raf);
+      removeEventListener('scroll', pedir);
+      celular.removeEventListener('change', pedir);
+      reduzido.removeEventListener('change', pedir);
+    };
+  }, [ref]);
 }
 
 /* ───────── hero ───────── */
 export function Hero() {
   const livre = usePaginaAVista();
   const [vivo, setVivo] = useState(false);
+  const secao = useRef<HTMLElement>(null);
+  useParallaxCelular(secao);
   useEffect(() => {
     if (!livre) return;
     const r = requestAnimationFrame(() => setVivo(true));
@@ -107,6 +143,7 @@ export function Hero() {
 
   return (
     <section
+      ref={secao}
       id="hero"
       className={`hr${vivo ? ' is-vivo' : ''}`}
       aria-labelledby="hr-h1"
@@ -114,7 +151,9 @@ export function Hero() {
       <Foto />
       <div className="hr-veu" aria-hidden="true" />
       <div className="hr-palco">
-        <img className="hr-simbolo" src="/icone-contorno.svg" alt="" aria-hidden="true" />
+        <div className="hr-fundo" aria-hidden="true">
+          <img className="hr-simbolo" src="/icone-contorno.svg" alt="" aria-hidden="true" />
+        </div>
         <Globo className="hr-globo--centro" ativo={livre} />
       </div>
       <Texto />

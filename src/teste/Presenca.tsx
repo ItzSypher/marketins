@@ -1,180 +1,233 @@
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
-import { INSTAGRAM } from '../content';
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { Botao } from '../ds/Botao';
-import { unidades } from './dados';
+import { empresa, unidades } from './dados';
 import './presenca.css';
 
 /*
-  Estrutura física: "Duas unidades na Baixada".
-  Mapa do Google de borda a borda, com as abas das unidades flutuando no canto esquerdo
-  (no celular, o cartão com as abas fica logo abaixo do mapa). Trocar de aba troca o iframe.
-  Sem sticky e sem troca de aba pelo scroll: a página rola normal.
-  O iframe nasce com pointer-events: none, então a roda e o dedo rolam a página; o botão
-  "Mexer no mapa" libera o toque, e ele trava de novo ao sair da seção, em "Fechar mapa" ou no Esc.
+  Estrutura física: "Duas unidades na Baixada". Simples e legível para o Google:
+  print fixo do mapa (clica e abre a rota), endereço escrito em <address>, foto pequena e "Como chegar".
+  Sem iframe. Três versões para comparar, por ?mapa=1|2|3 (padrão 1):
+  1. abas na lateral esquerda + conteúdo à direita (no celular as abas viram linha em cima);
+  2. abas em pílula no topo + mapa largo com cartão flutuando no canto;
+  3. sem abas: as duas unidades em cards lado a lado (empilhadas no celular).
+  Os painéis inativos ficam no HTML (hidden), então os dois endereços estão sempre na página.
 */
 
-const mapaEmbed = (q: string) => `https://www.google.com/maps?q=${encodeURIComponent(q)}&z=16&output=embed`;
+type U = (typeof unidades)[number];
+type Var = 1 | 2 | 3;
+const N = unidades.length;
 const dois = (n: number) => String(n).padStart(2, '0');
+const lerVar = (): Var => {
+  const v = Number(new URLSearchParams(location.search).get('mapa'));
+  return v === 2 || v === 3 ? v : 1;
+};
 
+/* SEO local: a empresa e as duas unidades com endereço completo (só dados do cliente) */
+const telefone = '+55 21 99237-2689';
 const JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Marketins',
-  alternateName: 'Agência Marketins',
-  sameAs: [INSTAGRAM],
+  name: empresa.marca,
+  legalName: empresa.nome,
+  taxID: empresa.cnpj,
+  email: empresa.email,
+  telephone: telefone,
+  sameAs: [empresa.instagram],
   areaServed: [
     { '@type': 'City', name: 'Nova Iguaçu' },
     { '@type': 'City', name: 'São João de Meriti' },
     { '@type': 'Place', name: 'Baixada Fluminense' },
-    { '@type': 'State', name: 'Rio de Janeiro' },
   ],
   location: unidades.map((u) => ({
-    '@type': 'Place',
-    name: `Marketins ${u.cidade}`,
-    address: { '@type': 'PostalAddress', addressLocality: u.cidade, addressRegion: 'RJ', addressCountry: 'BR' },
+    '@type': 'ProfessionalService',
+    name: `${empresa.marca} ${u.cidade}`,
+    description: `Agência de marketing em ${u.cidade}, RJ (${u.local}).`,
+    telephone: telefone,
+    email: empresa.email,
+    hasMap: u.rota,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: u.endereco,
+      addressLocality: u.cidade,
+      addressRegion: 'RJ',
+      postalCode: u.cep,
+      addressCountry: 'BR',
+    },
   })),
 };
 
 export function Presenca() {
+  const [v, setV] = useState<Var>(lerVar);
+
+  const trocarVar = (n: Var) => {
+    setV(n);
+    const url = new URL(location.href);
+    url.searchParams.set('mapa', String(n));
+    history.replaceState(history.state, '', url);
+  };
+
   return (
-    <section id="estrutura" className="t-sec pr" aria-labelledby="pr-titulo">
-      <header className="t-cabeca" data-revela>
-        <p className="t-num">Estrutura física · Nova Iguaçu e São João de Meriti</p>
-        <h2 className="t-titulo" id="pr-titulo">Duas unidades na Baixada</h2>
-        <p className="t-texto">
-          Nova Iguaçu, no Le Monde Office, e São João de Meriti. Daqui a gente cuida do marketing de empresas da
-          Baixada e do resto do Rio. Passa aqui pra tomar um café com o time.
-        </p>
-      </header>
-      <Unidades />
+    <section id="estrutura" className="t-sec un" aria-labelledby="un-titulo">
+      <div className="un-topo">
+        <header className="t-cabeca un-cabeca" data-revela>
+          <p className="t-num">Estrutura física</p>
+          <h2 className="t-titulo" id="un-titulo">Duas unidades na Baixada</h2>
+          <p className="t-texto">
+            Nova Iguaçu, no Le Monde Office, e São João de Meriti, na nossa sede. Passa aqui pra tomar um café com o time.
+          </p>
+        </header>
+        <div className="un-var" role="group" aria-label="Comparar versões da seção de unidades">
+          <span aria-hidden="true">Mapa</span>
+          {([1, 2, 3] as Var[]).map((n) => (
+            <button key={n} type="button" aria-pressed={v === n} aria-label={`Versão ${n}`} onClick={() => trocarVar(n)}>{n}</button>
+          ))}
+        </div>
+      </div>
+      {v === 1 && <Lateral />}
+      {v === 2 && <Pilulas />}
+      {v === 3 && <Cards />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
     </section>
   );
 }
 
-/* ───────────── Mapa grande + abas flutuantes ───────────── */
+/* ───────────── Peças comuns ───────────── */
 
-function Unidades() {
-  const n = unidades.length;
-  const [ativa, setAtiva] = useState(0);
-  const [perto, setPerto] = useState(false);
-  const [mexendo, setMexendo] = useState(false);
-  const [pronto, setPronto] = useState(false);
-  const raiz = useRef<HTMLDivElement>(null);
-  const abas = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // só baixa o mapa perto da tela (poupa o 4G); ao sair da seção, o mapa volta a travar
-  useEffect(() => {
-    const el = raiz.current!;
-    if (!('IntersectionObserver' in window)) { setPerto(true); return; }
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setPerto(true); io.disconnect(); }
-    }, { rootMargin: '400px 0px' });
-    io.observe(el);
-    const fora = new IntersectionObserver(([e]) => { if (!e.isIntersecting) setMexendo(false); });
-    fora.observe(el);
-    return () => { io.disconnect(); fora.disconnect(); };
-  }, []);
-
-  // Esc trava o mapa de novo
-  useEffect(() => {
-    if (!mexendo) return;
-    const esc = (e: globalThis.KeyboardEvent) => { if (e.key === 'Escape') setMexendo(false); };
-    addEventListener('keydown', esc);
-    return () => removeEventListener('keydown', esc);
-  }, [mexendo]);
-
-  const selecionar = (i: number, focar = false) => {
-    if (i !== ativa) { setAtiva(i); setPronto(false); setMexendo(false); }
-    if (focar) abas.current[i]?.focus({ preventScroll: true });
-  };
-
-  const teclas = (e: KeyboardEvent<HTMLDivElement>) => {
-    let i = ativa;
-    switch (e.key) {
-      case 'ArrowRight': case 'ArrowDown': i = (ativa + 1) % n; break;
-      case 'ArrowLeft': case 'ArrowUp': i = (ativa - 1 + n) % n; break;
-      case 'Home': i = 0; break;
-      case 'End': i = n - 1; break;
-      default: return;
-    }
-    e.preventDefault();
-    selecionar(i, true);
-  };
-
-  const u = unidades[ativa];
-
+function Mapa({ u, className = '' }: { u: U; className?: string }) {
   return (
-    <div className="pr-palco" ref={raiz}>
-      <div className={`pr-mapa${mexendo ? ' is-mexendo' : ''}`}>
-        <div className="pr-mapa__espera" aria-hidden="true">
-          <i className="pr-mapa__pino" />
-          <span>Mapa · {u.cidade}</span>
-        </div>
-        {perto && (
-          <iframe
-            key={ativa}
-            className={pronto ? 'is-pronto' : undefined}
-            src={mapaEmbed(u.mapa)}
-            title={`Mapa da unidade Marketins em ${u.cidade}`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            onLoad={() => setPronto(true)}
-          />
-        )}
-        <button
-          type="button"
-          className="pr-trava"
-          aria-pressed={mexendo}
-          onClick={() => setMexendo((v) => !v)}
-        >
-          {mexendo ? 'Fechar mapa' : 'Mexer no mapa'}
-        </button>
-      </div>
+    <a className={`un-mapa ${className}`} href={u.rota} target="_blank" rel="noopener" aria-label={`Abrir a rota até a unidade de ${u.cidade} no Google Maps`}>
+      <img src={u.mapaImg} alt={u.mapaAlt} width={u.mapaW} height={u.mapaH} loading="lazy" decoding="async" style={{ '--pino': u.pino } as CSSProperties} />
+      <span className="un-mapa__chip" aria-hidden="true">Abrir no Maps</span>
+    </a>
+  );
+}
 
-      <div className="pr-cartao">
-        <div className="pr-abas" role="tablist" aria-label="Unidades da Marketins" onKeyDown={teclas} style={{ '--n': n } as CSSProperties}>
-          {unidades.map((un, i) => (
-            <button
-              key={un.cidade}
-              ref={(b) => { abas.current[i] = b; }}
-              type="button"
-              role="tab"
-              id={`pr-aba-${i}`}
-              aria-selected={i === ativa}
-              aria-controls={`pr-painel-${i}`}
-              tabIndex={i === ativa ? 0 : -1}
-              className="pr-aba"
-              onClick={() => selecionar(i)}
-            >
-              <span className="pr-aba__n">{dois(i + 1)}</span>
-              <span className="pr-aba__cidade">{un.cidade}</span>
-              <span className="pr-aba__local">{un.local}</span>
-            </button>
-          ))}
-        </div>
+function Foto({ u, className = '' }: { u: U; className?: string }) {
+  if (!u.img) return null;
+  return (
+    <img className={`un-foto ${className}`} src={u.img} alt={u.alt ?? `Unidade Marketins em ${u.cidade}`} width={u.imgW} height={u.imgH} loading="lazy" decoding="async" />
+  );
+}
 
-        {unidades.map((un, i) => (
-          <div
-            key={un.cidade}
-            role="tabpanel"
-            id={`pr-painel-${i}`}
-            aria-labelledby={`pr-aba-${i}`}
-            hidden={i !== ativa}
-            className="pr-painel"
-          >
-            <figure className="pr-foto">
-              {un.img
-                ? <img src={un.img} alt={un.alt ?? `Unidade Marketins em ${un.cidade}`} loading="lazy" decoding="async" />
-                : <div className="t-falta"><span>{un.cidade}</span></div>}
-            </figure>
-            <div className="pr-painel__info">
-              <p className="pr-painel__local"><b>{un.local}</b>{un.cidade}, RJ</p>
-              <Botao variante="seta" href={un.rota}>Como chegar</Botao>
-            </div>
-          </div>
+function Endereco({ u }: { u: U }) {
+  return (
+    <address className="un-end">
+      <b>{u.local}</b>
+      <span>{u.endereco}</span>
+      <span>{u.bairro}, {u.cidade}, RJ</span>
+      <span>CEP {u.cep}</span>
+    </address>
+  );
+}
+
+const ComoChegar = ({ u }: { u: U }) => <Botao variante="seta" href={u.rota} novaAba>Como chegar</Botao>;
+
+/* abas com ativação automática: setas, Home e End */
+function useAbas() {
+  const [ativa, setAtiva] = useState(0);
+  const abas = useRef<(HTMLButtonElement | null)[]>([]);
+  const teclas = (e: KeyboardEvent<HTMLDivElement>) => {
+    const alvo: Record<string, number> = {
+      ArrowRight: ativa + 1, ArrowDown: ativa + 1, ArrowLeft: ativa - 1, ArrowUp: ativa - 1, Home: 0, End: N - 1,
+    };
+    if (!(e.key in alvo)) return;
+    e.preventDefault();
+    const j = (alvo[e.key] + N) % N;
+    setAtiva(j);
+    abas.current[j]?.focus({ preventScroll: true });
+  };
+  const aba = (i: number, id: string) => ({
+    ref: (b: HTMLButtonElement | null) => { abas.current[i] = b; },
+    type: 'button' as const,
+    role: 'tab',
+    id: `${id}-aba-${i}`,
+    'aria-selected': i === ativa,
+    'aria-controls': `${id}-painel-${i}`,
+    tabIndex: i === ativa ? 0 : -1,
+    onClick: () => setAtiva(i),
+  });
+  const painel = (i: number, id: string) => ({
+    role: 'tabpanel',
+    id: `${id}-painel-${i}`,
+    'aria-labelledby': `${id}-aba-${i}`,
+    hidden: i !== ativa,
+  });
+  return { teclas, aba, painel };
+}
+
+/* ───────────── 1. Abas na lateral ───────────── */
+
+function Lateral() {
+  const { teclas, aba, painel } = useAbas();
+  return (
+    <div className="un1">
+      <div className="un1__abas" role="tablist" aria-label="Unidades da Marketins" onKeyDown={teclas}>
+        {unidades.map((u, i) => (
+          <button key={u.cidade} className="un1__aba" {...aba(i, 'un1')}>
+            <span className="un1__n">{dois(i + 1)}</span>
+            <span className="un1__cidade">{u.cidade}</span>
+            <span className="un1__local">{u.local}</span>
+          </button>
         ))}
       </div>
+      {unidades.map((u, i) => (
+        <div key={u.cidade} className="un1__painel" {...painel(i, 'un1')}>
+          <Mapa u={u} className="un1__mapa" />
+          <div className="un1__info">
+            <Foto u={u} className="un1__foto" />
+            <Endereco u={u} />
+            <ComoChegar u={u} />
+          </div>
+        </div>
+      ))}
     </div>
+  );
+}
+
+/* ───────────── 2. Pílulas no topo + cartão flutuante ───────────── */
+
+function Pilulas() {
+  const { teclas, aba, painel } = useAbas();
+  return (
+    <div className="un2">
+      <div className="un2__abas" role="tablist" aria-label="Unidades da Marketins" onKeyDown={teclas}>
+        {unidades.map((u, i) => (
+          <button key={u.cidade} className="un2__aba" {...aba(i, 'un2')}>{u.cidade}</button>
+        ))}
+      </div>
+      {unidades.map((u, i) => (
+        <div key={u.cidade} className="un2__painel" {...painel(i, 'un2')}>
+          <Mapa u={u} className="un2__mapa" />
+          <div className="un2__cartao">
+            <Foto u={u} className="un2__foto" />
+            <div className="un2__texto">
+              <h3 className="un-cidade">{u.cidade}</h3>
+              <Endereco u={u} />
+            </div>
+            <ComoChegar u={u} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ───────────── 3. Cards lado a lado ───────────── */
+
+function Cards() {
+  return (
+    <ul className="un3" role="list">
+      {unidades.map((u) => (
+        <li key={u.cidade} className="un3__card">
+          <Mapa u={u} className="un3__mapa" />
+          <div className="un3__corpo">
+            <Foto u={u} className="un3__foto" />
+            <h3 className="un-cidade">{u.cidade}</h3>
+            <Endereco u={u} />
+            <ComoChegar u={u} />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }

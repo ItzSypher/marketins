@@ -41,6 +41,45 @@
 
 @keyframes hr-gira { to { rotate: 360deg; } }
 
+/* o invólucro do símbolo só ganha caixa no celular (no desktop o símbolo se posiciona pelo palco, como antes) */
+.hr-fundo { display: contents; }
+
+/* ───────── celular e tablet (até 999px): sem foto, só o globo com o símbolo grande atrás ───────── */
+@media (max-width: 999px) {
+  .hr { height: 100svh; min-height: 560px; padding: max(20px, env(safe-area-inset-top)) 16px 88px; gap: 1.1rem;
+    background:
+      radial-gradient(70% 42% at 50% 32%, rgb(208 0 77 / 0.26), transparent 72%),
+      radial-gradient(60% 30% at 100% 62%, rgb(254 82 35 / 0.14), transparent 70%),
+      radial-gradient(50% 26% at 0% 8%, rgb(254 82 35 / 0.08), transparent 70%),
+      var(--chao); }
+  .hr-foto { display: none; }
+  .hr .hr-veu { background: linear-gradient(180deg, transparent 0%, transparent 46%, rgb(11 7 9 / 0.72) 66%, var(--chao) 92%); z-index: 3; }
+
+  /* o palco mede o espaço que sobra acima do texto; o globo é o maior quadrado que cabe ali */
+  .hr-palco { container-type: size; margin-inline: -16px; }
+  .hr-globo--centro { --lado: min(100cqw - 20px, 100cqh, 620px); width: var(--lado);
+    -webkit-mask-image: none; mask-image: none; }
+  .hr-globo--centro canvas { -webkit-mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); }
+
+  /* símbolo branco: bem maior que o globo, um pouco à esquerda e acima, girando devagar e descendo com a rolagem */
+  .hr-fundo { display: block; position: absolute; z-index: 2; inset: -10% 0 0; pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+    transform: translate3d(0, calc(var(--hr-p, 0) * 22%), 0) scale(calc(1 + var(--hr-p, 0) * 0.12)); will-change: transform; }
+  .hr .hr-simbolo { width: calc(min(100cqw - 20px, 100cqh, 620px) * 1.85); left: 40%; top: 57%; opacity: 0.42;
+    filter: drop-shadow(0 0 0.5px #fff) drop-shadow(0 0 10px rgb(208 0 77 / 0.55));
+    transform: rotate(calc(var(--hr-p, 0) * 50deg)); animation-duration: 160s; }
+  .hr-txt { gap: 0.9rem; }
+  .hr-h1 { gap: 0.6rem; }
+  .hr-h1__local { text-wrap: balance; }
+  .hr-h1__frase { font-size: min(2.4rem, (100vw - 32px) / 13); }
+  .hr-h1__frase > span { display: block; }
+}
+@media (max-width: 999px) and (min-width: 600px) {
+  .hr { padding-bottom: 96px; }
+  .hr-h1__frase { font-size: clamp(2.2rem, 5.6vw, 3rem); }
+  .hr-apoio { font-size: 1.05rem; max-width: 44ch; }
+}
+
 /* ───────── desktop ───────── */
 @media (min-width: 1000px) {
   .hr { min-height: max(100svh, 640px); padding: 48px 64px 40px; gap: 1.25rem; }

@@ -22,10 +22,27 @@ export const segmentos = [
   'Saúde', 'Automóveis', 'Contabilidade', 'Ótica', 'Móveis', 'Bem-estar', 'Networking',
 ];
 
-export const unidades: { cidade: string; local: string; mapa: string; rota: string; img?: string; alt?: string }[] = [
-  // mapa = nome do lugar como o Google conhece (vem dos links que o cliente mandou); rota = link do cliente
-  { cidade: 'Nova Iguaçu', local: 'Le Monde Office', mapa: 'Marketins - Sala de Reunião, Nova Iguaçu - RJ', rota: 'https://share.google/Z4vO9Ba6gi9ZY8Z9p', img: '/unidades/le-monde-nova-iguacu.webp', alt: 'Fachada do Le Monde Office, em Nova Iguaçu' },
-  { cidade: 'São João de Meriti', local: 'Sede da Marketins', mapa: 'Marketins - Agencia de Marketing, São João de Meriti - RJ', rota: 'https://share.google/ODIZBc0PZoSxEfMUI', img: '/unidades/sao-joao-de-meriti.webp', alt: 'Recepção da Marketins em São João de Meriti, com o tapete do logo' },
+// Endereços, links de rota (rota) e prints do mapa enviados pelo cliente.
+// mapaImg = print do Google Maps em public/unidades; pino = posição do pin no print (x y), usada no recorte.
+export const unidades: {
+  cidade: string; local: string; endereco: string; bairro: string; cep: string; rota: string;
+  mapaImg: string; mapaW: number; mapaH: number; mapaAlt: string; pino: string;
+  img?: string; imgW?: number; imgH?: number; alt?: string;
+}[] = [
+  {
+    cidade: 'Nova Iguaçu', local: 'Le Monde Office', endereco: 'Av. Dr. Mario Guimarães, 428, Sala 201', bairro: 'Centro', cep: '26255-230',
+    rota: 'https://share.google/Z4vO9Ba6gi9ZY8Z9p',
+    mapaImg: '/unidades/mapa-nova-iguacu.webp', mapaW: 1336, mapaH: 743, pino: '40% 48%',
+    mapaAlt: 'Mapa do Centro de Nova Iguaçu com o pin na Sala 201, Av. Dr. Mario Guimarães, 428, perto da R. Comendador Soares',
+    img: '/unidades/le-monde-nova-iguacu.webp', imgW: 1600, imgH: 723, alt: 'Fachada do Le Monde Office, em Nova Iguaçu',
+  },
+  {
+    cidade: 'São João de Meriti', local: 'Sede da Marketins', endereco: 'R. Antônio Teles de Menezes, 37, Sala 202', bairro: 'Centro', cep: '25520-630',
+    rota: 'https://share.google/ODIZBc0PZoSxEfMUI',
+    mapaImg: '/unidades/mapa-sao-joao-de-meriti.webp', mapaW: 1381, mapaH: 701, pino: '43% 56%',
+    mapaAlt: 'Mapa do Centro de São João de Meriti com o pin da Marketins, perto da Praça da Matriz',
+    img: '/unidades/sao-joao-de-meriti.webp', imgW: 510, imgH: 510, alt: 'Recepção da Marketins em São João de Meriti, com o tapete do logo',
+  },
 ];
 
 // Artes que a Marketins criou para clientes (grupo do Figma, nó 5029:5571).

@@ -84,6 +84,12 @@
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.35s ease, border-color 0.35s;
 }
 .ck-item:active { transform: scale(0.975); }
+.ck-item { overflow: hidden; isolation: isolate; }
+/* faixa de luz que passa uma vez quando o scroll marca o item (animada no TSX) */
+.ck-item__brilho {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none; visibility: hidden;
+  background: linear-gradient(100deg, transparent 25%, rgb(254 82 35 / 0.16) 45%, rgb(208 0 77 / 0.22) 55%, transparent 75%);
+}
 .ck-item.is-on {
   border-color: transparent;
   background:
@@ -113,7 +119,7 @@
 
 .ck__fim { grid-area: fim; display: grid; gap: 0.8rem; justify-items: stretch; margin-top: 1.6rem; }
 .ck__fim .b-transicao { width: 100%; }
-.ck__nota { color: var(--texto-2); font-size: 0.88rem; text-align: center; }
+.ck__nota { color: var(--texto-2); font-size: 0.88rem; line-height: 1.45; text-align: center; min-height: 2.9em; text-wrap: balance; } /* 2 linhas reservadas: o texto muda sem empurrar a página */
 
 @media (hover: hover) {
   .ck-item:hover { border-color: rgb(246 239 241 / 0.22); }
@@ -135,14 +141,14 @@
   }
   .ck-palco__visor { width: min(36vw, 440px); }
   .ck-palco__halo { filter: blur(40px); }
-  .ck-status { min-height: 6rem; }
+  .ck-status { min-height: 6.8rem; align-content: start; }
   .ck-status__frase { font-size: 1.5rem; }
   .is-cheio .ck-status__frase { font-size: 2.1rem; }
   .ck-item { min-height: 68px; padding: 1rem 1.3rem; }
   .ck-item__texto { font-size: 1.05rem; }
   .ck__fim { justify-items: start; }
   .ck__fim .b-transicao { width: auto; min-width: 280px; }
-  .ck__nota { text-align: left; }
+  .ck__nota { text-align: left; min-height: 0; }
 }
 
 /* Movimento reduzido: só troca de estado, sem escala nem desenho animado */

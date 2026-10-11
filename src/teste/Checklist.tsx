@@ -1,6 +1,7 @@
-// Micro-jornada: o visitante marca as dores do negócio e o símbolo da Marketins cresce e acende.
-import { useEffect, useId, useRef, useState } from 'react';
+// Micro-jornada: as dores do negócio vão se marcando com o scroll (ou no toque) e o símbolo da Marketins cresce e acende.
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { linkContato } from '../content';
 import { Botao } from '../ds/Botao';
 import './checklist.css';
@@ -54,6 +55,10 @@ const ARCOS = Array.from({ length: TOTAL }, (_, i) => {
 
 const semMovimento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Linha da tela (de cima para baixo) que o centro do item cruza para se marcar sozinho: abaixo do símbolo grudado */
+const LINHA = '68%';
+const PASSO = 320; // ms entre uma marca e a próxima quando várias chegam juntas
+
 export function Checklist() {
   const [marcado, setMarcado] = useState<boolean[]>(() => ITENS.map(() => false));
   const n = marcado.filter(Boolean).length;
@@ -61,6 +66,69 @@ export function Checklist() {
   const uid = useId().replace(/:/g, '');
   const svg = useRef<SVGSVGElement>(null);
   const antes = useRef(n);
+  const secao = useRef<HTMLElement>(null);
+  const itens = useRef<(HTMLLIElement | null)[]>([]);
+  const atual = useRef(marcado);
+  atual.current = marcado;
+  const tocado = useRef(new Set<number>()); // itens que a pessoa mexeu: o scroll não mexe mais neles
+  const [aviso, setAviso] = useState('');
+
+  // aviso para leitor de tela: só o resultado, depois que as marcas assentam
+  const falou = useRef(false);
+  useEffect(() => {
+    if (n === 0 && !falou.current) return;
+    falou.current = true;
+    const t = setTimeout(() => setAviso(`${n} de ${TOTAL} marcados.${cheio ? ' Você precisa da Marketins.' : ''}`), 900);
+    return () => clearTimeout(t);
+  }, [n, cheio]);
+
+  // scroll marca os itens em sequência; nunca desmarca
+  useLayoutEffect(() => {
+    const raiz = secao.current;
+    if (!raiz) return;
+    const fila: number[] = [];
+    let timer = 0;
+    let andando = false;
+
+    const marcar = (lista: number[]) => {
+      const livres = lista.filter((i) => !tocado.current.has(i) && !atual.current[i]);
+      if (!livres.length) return false;
+      setMarcado((m) => m.map((v, j) => v || livres.includes(j)));
+      return true;
+    };
+    const brilhar = (i: number) => {
+      const b = itens.current[i]?.querySelector('.ck-item__brilho');
+      if (b) gsap.fromTo(b, { xPercent: -100, autoAlpha: 1 }, { xPercent: 100, autoAlpha: 0.2, duration: 0.9, ease: 'power2.inOut' });
+    };
+    const andar = () => {
+      if (andando) return;
+      const i = fila.shift();
+      if (i === undefined) return;
+      if (!marcar([i])) { andar(); return; }
+      brilhar(i);
+      andando = true;
+      timer = window.setTimeout(() => { andando = false; andar(); }, PASSO);
+    };
+
+    const ctx = gsap.context(() => {
+      if (semMovimento()) {
+        // sem animação: tudo marcado de uma vez quando a seção aparece
+        ScrollTrigger.create({
+          trigger: raiz, start: 'top 75%', end: 'max',
+          onEnter: (st) => { marcar(ITENS.map((_, i) => i)); st.kill(); },
+        });
+        return;
+      }
+      itens.current.forEach((li, i) => {
+        if (!li) return;
+        ScrollTrigger.create({
+          trigger: li, start: `center ${LINHA}`, end: 'max',
+          onEnter: (st) => { if (!fila.includes(i)) fila.push(i); fila.sort((a, b) => a - b); andar(); st.kill(); },
+        });
+      });
+    }, raiz);
+    return () => { clearTimeout(timer); ctx.revert(); };
+  }, []);
 
   // "pulo" tátil do símbolo a cada mudança (o tamanho em si é CSS)
   useEffect(() => {
@@ -74,6 +142,7 @@ export function Checklist() {
   }, [n]);
 
   const alternar = (i: number) => {
+    tocado.current.add(i);
     setMarcado((m) => m.map((v, j) => (j === i ? !v : v)));
     navigator.vibrate?.(8);
   };
@@ -84,7 +153,7 @@ export function Checklist() {
   const ordem = new Map<number, number>();
 
   return (
-    <section id="checklist" className="t-sec ck" aria-labelledby={`${uid}-t`}>
+    <section id="checklist" ref={secao} className="t-sec ck" aria-labelledby={`${uid}-t`}>
       <div className="ck__grade">
         <header className="ck__cab" data-revela>
           <span className="t-num">Checklist rápido</span>
@@ -129,9 +198,10 @@ export function Checklist() {
               </div>
             </div>
           </div>
-          <div className="ck-status" aria-live="polite" aria-atomic="true">
+          <div className="ck-status">
             <span className="t-num ck-status__conta">{n} de {TOTAL}</span>
             <p className="ck-status__frase" key={n}>{FRASES[n]}</p>
+            <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">{aviso}</span>
           </div>
         </div>
 
@@ -139,13 +209,14 @@ export function Checklist() {
           <legend className="sr-only">O que acontece no seu negócio hoje</legend>
           <ul>
             {ITENS.map((it, i) => (
-              <li key={it.resumo}>
+              <li key={it.resumo} ref={(el) => { itens.current[i] = el; }}>
                 <label className={`ck-item${marcado[i] ? ' is-on' : ''}`}>
                   <input type="checkbox" className="ck-item__input" checked={marcado[i]} onChange={() => alternar(i)} />
                   <span className="ck-item__caixa" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" pathLength={1} /></svg>
                   </span>
                   <span className="ck-item__texto">{it.texto}</span>
+                  <span className="ck-item__brilho" aria-hidden="true" />
                 </label>
               </li>
             ))}

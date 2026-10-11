@@ -1,57 +1,163 @@
-/* Pop-up do Marketins Conecta + pílula. Camadas: pílula 51 · assistente 52 · pop-up 53.
-   Celular: o pop-up ocupa a base da tela e o botão do assistente sai de cena enquanto ele está aberto.
-   Desktop: cartão no canto inferior esquerdo, longe do assistente (direita). */
+/* Aviso do Marketins Conecta: grande (modal) → canto → selo.
+   Camadas: selo 51 · assistente 52 · canto 53 · grande (véu) 55. A Entrada fica acima de tudo.
+   Celular: o grande ocupa quase a tela toda; o canto fica na base da tela (o botão do assistente sai de cena).
+   Desktop: o grande é um card centralizado; o canto fica no canto inferior esquerdo, longe do assistente. */
 
-.cpop {
-  --c-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  position: fixed; z-index: 53;
-  left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right));
-  bottom: max(12px, env(safe-area-inset-bottom));
-  max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain;
-  padding: 16px 18px 14px; border-radius: 24px;
-  /* borda fina em degradê da marca */
+.cgr-veu, .cpop, .cselo { --c-ease: cubic-bezier(0.16, 1, 0.3, 1); }
+.cpop__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* borda fina em degradê da marca, usada pelo grande e pelo canto */
+.cgr, .cpop {
   border: 1px solid transparent;
   background:
     radial-gradient(120% 80% at 100% 0%, rgb(208 0 77 / 0.16), transparent 60%) padding-box,
     linear-gradient(#100a0d, #100a0d) padding-box,
     linear-gradient(135deg, rgb(208 0 77 / 0.7), rgb(254 82 35 / 0.35) 40%, rgb(255 255 255 / 0.08)) border-box;
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 30px 80px rgb(0 0 0 / 0.55);
   color: var(--texto); font-family: var(--corpo);
+}
+
+/* botões: rótulo sempre numa linha só */
+.cgr__cta > span, .cpop__cta > span { white-space: nowrap; text-wrap: nowrap; }
+
+.cgr__x, .cpop__x {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--texto-2); cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.cgr__x:hover, .cpop__x:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
+.cgr__x svg, .cpop__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cgr__x:focus-visible, .cgr__depois:focus-visible, .cpop__x:focus-visible, .cpop__depois:focus-visible, .cselo:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+
+.cgr__depois, .cpop__depois {
+  flex: none; min-height: 44px; padding: 0 0.75rem; border: 0; border-radius: 999px; background: transparent;
+  color: var(--texto-2); font: 600 0.86rem/1 var(--corpo); white-space: nowrap; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgb(255 255 255 / 0.25);
+  transition: color 0.2s;
+}
+.cgr__depois:hover, .cpop__depois:hover { color: #fff; }
+
+/* ================= grande ================= */
+.cgr-veu {
+  position: fixed; inset: 0; z-index: 55;
+  display: grid; place-items: center;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  overflow-y: auto; overscroll-behavior: contain;
+  background: rgb(6 3 5 / 0.76);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s, visibility 0s linear 0.35s;
+}
+.cgr-veu.is-aberto { opacity: 1; visibility: visible; transition: opacity 0.4s, visibility 0s; }
+
+.cgr {
+  position: relative; isolation: isolate;
+  width: 100%; min-height: calc(100dvh - 24px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 2.4dvh, 22px);
+  padding: 18px 18px 16px; border-radius: 28px; overflow: hidden;
+  text-align: center;
+  transform: translateY(28px) scale(0.97); opacity: 0;
+  transition: transform 0.35s var(--c-ease), opacity 0.25s;
+}
+/* brilho da marca atrás do logo */
+.cgr::before {
+  content: ''; position: absolute; z-index: -1; inset: -20% -10% auto; height: 70%;
+  background: radial-gradient(50% 50% at 30% 50%, rgb(208 0 77 / 0.28), transparent 70%), radial-gradient(45% 45% at 72% 55%, rgb(254 82 35 / 0.2), transparent 70%);
+  filter: blur(10px); pointer-events: none;
+}
+.cgr-veu.is-aberto .cgr { transform: none; opacity: 1; transition: transform 0.7s var(--c-ease), opacity 0.4s; }
+
+.cgr__x { position: absolute; z-index: 2; top: 8px; right: 8px; }
+
+/* logo: o espaço cresce com a tela; o 3D se ajusta ao tamanho da caixa */
+.cgr__logo { flex: none; width: calc(100% + 24px); margin-inline: -12px; height: clamp(130px, 48vw, 340px); margin-top: 24px; }
+.clogo3d { position: relative; display: grid; place-items: center; }
+.clogo3d > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
+.clogo3d__plano { display: block; width: 100%; max-width: 760px; height: auto; filter: drop-shadow(0 10px 28px rgb(208 0 77 / 0.3)); }
+.clogo3d.is-3d .clogo3d__plano { visibility: hidden; }
+
+.cgr__texto { display: grid; justify-items: center; gap: 10px; }
+.cgr__data {
+  margin: 0; outline: none;
+  font: 700 clamp(0.74rem, 2.6vw, 0.9rem)/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase;
+  background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.cgr__chamada { margin: 0; max-width: 26ch; font-size: clamp(1.1rem, 4.6vw, 1.5rem); font-weight: 600; line-height: 1.3; text-wrap: balance; }
+
+/* contagem enorme */
+.cgr__conta { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.6vw, 14px); }
+.cgr__cel {
+  display: grid; justify-items: center; gap: clamp(6px, 1.2vw, 12px); padding: clamp(14px, 3dvh, 24px) 0 clamp(10px, 2dvh, 18px);
+  border-radius: clamp(14px, 2.4vw, 22px); background: rgb(255 255 255 / 0.04); border: 1px solid var(--linha);
+}
+.cgr__cel b {
+  font: 800 clamp(1.7rem, min(8.6vw, 10dvh), 6rem)/0.9 var(--display);
+  font-variant-numeric: tabular-nums; letter-spacing: 0;
+  background: linear-gradient(180deg, #fff 55%, #ffd9cc); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.cgr__cel span { font: 600 clamp(0.62rem, 2vw, 0.8rem)/1 var(--corpo); letter-spacing: 0.16em; text-transform: uppercase; color: var(--texto-2); }
+.cgr__hoje {
+  width: 100%; margin: 0; padding: clamp(18px, 4dvh, 32px) 0; border-radius: 22px;
+  background: var(--gradiente-texto); color: #fff;
+  font: 800 clamp(2.4rem, 12vw, 6rem)/1 var(--display); text-transform: uppercase;
+}
+
+.cgr__acoes { width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; }
+.cgr__cta { flex: 1 1 100%; }
+.cgr__depois { flex: 1 1 100%; }
+.cgr__apoio { margin: 0; font-size: 0.78rem; color: var(--texto-2); letter-spacing: 0.02em; }
+
+@media (min-width: 760px) {
+  .cgr-veu { padding: 24px; }
+  .cgr {
+    width: min(920px, 90vw); min-height: 0; max-height: none;
+    padding: 28px clamp(28px, 4vw, 48px) 24px; border-radius: 32px;
+  }
+  .cgr__x { top: 14px; right: 14px; }
+  .cgr__logo { width: 100%; margin-inline: 0; height: clamp(150px, 24dvh, 240px); margin-top: 6px; }
+  .cgr__acoes { flex-wrap: nowrap; }
+  .cgr__cta, .cgr__depois { flex: none; }
+  .cgr__cta { min-width: 300px; }
+}
+/* tela baixa (celular deitado, notebook pequeno): logo menor */
+@media (max-height: 640px) {
+  .cgr { min-height: 0; }
+  .cgr__logo { height: 26dvh; min-height: 90px; margin-top: 20px; }
+}
+
+/* ================= canto ================= */
+.cpop {
+  position: fixed; z-index: 53;
+  left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 14px 16px 6px; border-radius: 24px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   opacity: 0; visibility: hidden; transform: translateY(24px) scale(0.98); transform-origin: 0 100%;
   transition: opacity 0.25s, transform 0.35s var(--c-ease), visibility 0s linear 0.35s;
 }
 .cpop.is-aberto {
   opacity: 1; visibility: visible; transform: none;
-  transition: opacity 0.4s, transform 0.6s var(--c-ease), visibility 0s;
+  transition: opacity 0.4s 0.1s, transform 0.6s 0.1s var(--c-ease), visibility 0s;
 }
 
 .cpop__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.cpop__logo { display: block; width: 172px; height: auto; margin: 2px 0 0 -6px; filter: drop-shadow(0 6px 18px rgb(208 0 77 / 0.25)); }
-.cpop__x {
-  flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -6px -8px 0 0; padding: 0;
-  border: 0; border-radius: 50%; background: transparent; color: var(--texto-2); cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-.cpop__x:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
-.cpop__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-.cpop__x:focus-visible, .cpop__depois:focus-visible, .cpop-pilula:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+.cpop__logo { display: block; width: min(196px, 58%); height: auto; margin: 4px 0 0; filter: drop-shadow(0 6px 18px rgb(208 0 77 / 0.25)); }
+.cpop__x { margin: -6px -8px 0 0; }
 
 .cpop__titulo {
-  margin: 10px 0 0; outline: none;
+  margin: 12px 0 0; outline: none;
   font: 700 0.66rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase;
   background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.cpop__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .cpop__chamada { margin: 8px 0 0; max-width: 34ch; font-size: 0.95rem; font-weight: 600; line-height: 1.35; color: var(--texto); }
 
-/* contagem */
-.cpop__conta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 14px; }
+.cpop__conta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 14px; }
 .cpop__cel {
   display: grid; justify-items: center; gap: 5px; padding: 10px 0 8px; border-radius: 14px;
   background: rgb(255 255 255 / 0.04); border: 1px solid var(--linha);
 }
-.cpop__cel b { font: 800 1.45rem/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.cpop__cel b { font: 800 1.4rem/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
 .cpop__cel span { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-2); }
 .cpop__hoje {
   margin: 14px 0 0; padding: 14px 0 12px; border-radius: 14px; text-align: center;
@@ -59,44 +165,57 @@
   font: 800 1.6rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.02em;
 }
 
-.cpop__acoes { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
-.cpop__cta { flex: 1; min-width: 0; }
-.cpop__cta.b-transicao > span { padding: 0 1rem; }
-.cpop__depois {
-  flex: none; min-height: 44px; padding: 0 0.6rem; border: 0; border-radius: 999px; background: transparent;
-  color: var(--texto-2); font: 600 0.82rem/1 var(--corpo); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgb(255 255 255 / 0.25);
-  transition: color 0.2s;
-}
-.cpop__depois:hover { color: #fff; }
-.cpop__apoio { margin: 12px 0 0; font-size: 0.72rem; color: var(--texto-2); letter-spacing: 0.02em; }
-
-/* pílula: lembra o evento depois de fechar */
-.cpop-pilula {
-  position: fixed; z-index: 51;
-  left: max(16px, env(safe-area-inset-left)); bottom: max(22px, calc(env(safe-area-inset-bottom) + 6px));
-  max-width: calc(100vw - 32px - 56px - 12px);
-  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px;
-  border: 1px solid rgb(255 255 255 / 0.14); border-radius: 999px;
-  background: rgb(22 16 19 / 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
-  color: var(--texto); font: 700 0.6rem/1.1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; text-align: left;
-  cursor: pointer;
-  opacity: 0; visibility: hidden; transform: translateY(10px);
-  transition: opacity 0.25s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.4s, border-color 0.25s;
-}
-.cpop-pilula.is-visivel { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s 0.15s, transform 0.5s 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s, border-color 0.25s; }
-.cpop-pilula:hover { border-color: rgb(254 82 35 / 0.6); }
-.cpop-pilula i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--gradiente); box-shadow: 0 0 0 3px rgb(208 0 77 / 0.2); animation: cpop-pulso 2.4s ease-in-out infinite; }
-.cpop-pilula span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cpop__cta { display: grid; width: 100%; margin-top: 14px; }
+.cpop__rodape { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+.cpop__apoio { flex: 1; min-width: 0; margin: 0; font-size: 0.72rem; line-height: 1.35; color: var(--texto-2); letter-spacing: 0.02em; }
+.cpop__depois { margin-right: -0.5rem; font-size: 0.8rem; }
 
 @media (min-width: 640px) {
-  .cpop { left: 24px; right: auto; bottom: 24px; width: 380px; padding: 18px 20px 16px; }
-  .cpop-pilula { left: 24px; bottom: 22px; }
+  .cpop { left: 24px; right: auto; bottom: 24px; width: min(400px, calc(100vw - 48px)); padding: 16px 20px 8px; }
 }
 
-@keyframes cpop-pulso { 50% { box-shadow: 0 0 0 6px rgb(208 0 77 / 0); } }
+/* ================= selo ================= */
+.cselo {
+  position: fixed; z-index: 51;
+  left: max(16px, env(safe-area-inset-left)); bottom: max(16px, env(safe-area-inset-bottom));
+  display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px 0 5px;
+  border: 1px solid rgb(255 255 255 / 0.14); border-radius: 999px;
+  background: #161013;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+  color: var(--texto); text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.9);
+  transition: opacity 0.25s, transform 0.4s var(--c-ease), visibility 0s linear 0.4s, border-color 0.25s;
+}
+.cselo.is-visivel { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s 0.15s, transform 0.5s 0.15s var(--c-ease), visibility 0s, border-color 0.25s; }
+.cselo:hover { border-color: rgb(254 82 35 / 0.6); }
+
+.cselo__disco {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1.5px solid transparent;
+  background: radial-gradient(circle at 50% 40%, #241519, #0b0709 70%) padding-box, var(--gradiente) border-box;
+  perspective: 240px;
+}
+/* símbolo em 9 camadas: frente e verso coloridos, miolo escurecido = espessura ao girar */
+.cselo__giro { position: relative; width: 30px; height: 30px; transform-style: preserve-3d; animation: cselo-giro 5.5s linear infinite; }
+.cselo__giro img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateZ(calc((var(--k) - 4) * 0.6px));
+  filter: brightness(0.42) saturate(1.3);
+}
+.cselo__giro img:first-child, .cselo__giro img:last-child { filter: none; }
+
+.cselo__txt { display: grid; gap: 4px; font: 700 0.6rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
+.cselo__txt b { font-weight: 800; background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.cselo__txt span { color: var(--texto); font-size: 0.72rem; letter-spacing: 0.04em; }
+
+@media (min-width: 640px) {
+  .cselo { left: 24px; bottom: 24px; }
+}
+
+@keyframes cselo-giro { to { transform: rotateY(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .cpop, .cpop-pilula, .cpop-pilula i { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
-  .cpop { transform: none; }
+  .cgr-veu, .cgr, .cpop, .cselo { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+  .cgr, .cpop { transform: none !important; }
+  .cselo__giro { animation: none; }
 }

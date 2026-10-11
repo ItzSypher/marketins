@@ -1,74 +1,118 @@
-/* Estrutura física: mapa grande de borda a borda + cartão de abas. Mobile first, sem sticky. */
-.t-sec.pr { position: relative; max-width: none; padding-inline: 0; }
-.pr > .t-cabeca { max-width: 1240px; margin-inline: auto; padding-inline: 16px; }
+/* Estrutura física: print fixo do mapa + endereço escrito. Três versões (?mapa=1|2|3). Mobile first. */
+.un-topo { display: grid; gap: 0; }
+.un .un-cabeca { margin-bottom: 0; }
 
-.pr-palco { position: relative; display: grid; }
+/* seletor discreto de versão (mesmo visual do "Time 1 · 2 · 3") */
+.un-var { display: inline-flex; align-items: center; justify-self: start; margin: 0.6rem 0 1.75rem; color: var(--texto-2); font: 700 0.62rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; }
+.un-var span { margin-right: 0.2rem; }
+.un-var button { position: relative; min-width: 44px; min-height: 44px; padding: 0 0.3rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.un-var button + button::before { content: '·'; position: absolute; left: -2px; color: var(--linha); }
+.un-var button[aria-pressed='true'] { color: var(--laranja); }
+.un-var button:hover { color: var(--texto); }
+.un-var button:focus-visible { outline: 2px solid var(--laranja); outline-offset: -6px; border-radius: 8px; }
 
-/* ── Mapa ── */
-.pr-mapa { position: relative; height: 60svh; min-height: 340px; overflow: hidden; border-block: 1px solid var(--linha); background: var(--chao-2); }
-.pr-mapa__espera { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 0.9rem; background:
-  radial-gradient(55% 55% at 50% 50%, rgb(208 0 77 / 0.22), transparent 70%),
-  repeating-linear-gradient(0deg, transparent 0 39px, rgb(255 255 255 / 0.045) 39px 40px),
-  repeating-linear-gradient(90deg, transparent 0 39px, rgb(255 255 255 / 0.045) 39px 40px),
-  linear-gradient(28deg, transparent 46%, rgb(254 82 35 / 0.16) 46.5% 48%, transparent 48.5%),
-  var(--chao-2); }
-.pr-mapa__pino { width: 16px; height: 16px; border-radius: 50%; background: var(--gradiente); box-shadow: 0 0 0 0 rgb(254 82 35 / 0.5); animation: pr-pulso 2s ease-out infinite; }
-.pr-mapa__espera span { font: 700 0.66rem/1.3 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--texto-2); }
-/* travado por padrão: a roda e o dedo rolam a página em vez de ficarem presos no mapa */
-.pr-mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; pointer-events: none; transition: opacity 0.6s; filter: invert(0.9) hue-rotate(180deg) saturate(0.7) brightness(0.95); }
-.pr-mapa iframe.is-pronto { opacity: 1; }
-.pr-mapa.is-mexendo iframe { pointer-events: auto; }
-.pr-mapa.is-mexendo { box-shadow: inset 0 0 0 2px var(--laranja); }
+/* ── Peças comuns ── */
+/* mapa: print claro do Google, um pouco apagado para sentar no fundo escuro; acende no hover */
+.un-mapa { position: relative; display: block; overflow: hidden; border-radius: 20px; background: var(--chao-2); isolation: isolate; -webkit-tap-highlight-color: transparent; }
+/* --zoom aproxima o print em volta do pin (--pino) quando o quadro é pequeno, para os nomes das ruas ficarem legíveis */
+.un-mapa { --zoom: 1.45; }
+.un-mapa img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--pino, 50% 50%); transform-origin: var(--pino, 50% 50%); transform: scale(var(--zoom)); filter: brightness(0.9) saturate(0.8) contrast(1.03); transition: filter 0.5s, scale 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.un-mapa::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 0 60px rgb(11 7 9 / 0.4); }
+.un-mapa__chip { position: absolute; z-index: 1; right: 10px; top: 10px; padding: 0.45rem 0.7rem; border-radius: 999px; background: rgb(11 7 9 / 0.82); color: var(--texto); font: 700 0.56rem/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.un-mapa__chip::after { content: ' ↗'; color: var(--laranja); }
+.un-mapa:hover img { filter: none; scale: 1.02; }
+.un-mapa:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
 
-.pr-trava { position: absolute; right: 12px; bottom: 12px; z-index: 2; min-height: 44px; padding: 0 1.15rem; border: 1px solid rgb(255 255 255 / 0.22); border-radius: 999px; background: rgb(11 7 9 / 0.86); color: var(--texto); font: 700 0.68rem/1 var(--display); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background-color 0.3s, border-color 0.3s; }
-.pr-trava:hover { border-color: var(--laranja); }
-.pr-trava[aria-pressed="true"] { border-color: transparent; background: var(--magenta); color: #fff; }
-.pr-trava:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+.un-foto { display: block; object-fit: cover; background: var(--chao-2); }
 
-/* ── Cartão (celular: logo abaixo do mapa) ── */
-.pr-cartao { position: relative; display: grid; gap: 0.75rem; padding: 14px 16px 0; }
-.pr-abas { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 0.5rem; }
-.pr-aba { display: grid; gap: 0.35rem; align-content: start; justify-items: start; min-height: 44px; padding: 0.8rem 0.9rem; border: 1.5px solid var(--linha); border-radius: 16px; background: var(--chao-2); color: var(--texto-2); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s, color 0.3s; }
-.pr-aba__n { font: 700 0.6rem/1 var(--display); letter-spacing: 0.18em; color: var(--laranja); }
-.pr-aba__cidade { font: 800 clamp(0.8rem, 3.5vw, 1rem)/1.1 var(--display); text-transform: uppercase; color: var(--texto); overflow-wrap: anywhere; }
-.pr-aba__local { font-size: 0.78rem; line-height: 1.3; }
-.pr-aba[aria-selected="true"] { border-color: transparent; background: linear-gradient(var(--chao-2), var(--chao-2)) padding-box, var(--gradiente) border-box; color: var(--texto); }
-.pr-aba:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+.un-end { display: grid; gap: 0.15rem; font-style: normal; color: var(--texto-2); font-size: 0.92rem; line-height: 1.4; }
+.un-end b { color: var(--texto); font-weight: 600; font-size: 1rem; margin-bottom: 0.15rem; }
 
-.pr-painel { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 0.9rem; align-items: center; }
-.pr-painel[hidden] { display: none; }
-.pr-painel:not([hidden]) { animation: pr-entra 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.pr-foto { margin: 0; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: var(--chao-2); }
-.pr-foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.pr-foto .t-falta { min-height: 0; padding: 0.5rem; }
-.pr-foto .t-falta span { font-size: 0.6rem; }
-.pr-painel__info { display: grid; gap: 0.6rem; justify-items: start; }
-.pr-painel__local { display: grid; gap: 0.15rem; color: var(--texto-2); font-size: 0.85rem; line-height: 1.3; }
-.pr-painel__local b { color: var(--texto); font-weight: 700; }
+.un-cidade { margin: 0; font: 800 clamp(1rem, 4.4vw, 1.2rem)/1.1 var(--display); text-transform: uppercase; color: var(--texto); }
 
-@keyframes pr-entra { from { opacity: 0; transform: translateY(8px); } }
-@keyframes pr-pulso { 70% { box-shadow: 0 0 0 18px rgb(254 82 35 / 0); } 100% { box-shadow: 0 0 0 0 rgb(254 82 35 / 0); } }
+[role='tabpanel'][hidden] { display: none; }
+.un1__painel:not([hidden]), .un2__painel:not([hidden]) { animation: un-entra 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes un-entra { from { opacity: 0; transform: translateY(8px); } }
+
+/* ── 1. Abas na lateral (no celular: linha em cima) ── */
+.un1 { display: grid; gap: 1rem; }
+.un1__abas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+.un1__aba { display: grid; gap: 0.3rem; align-content: start; justify-items: start; min-height: 44px; padding: 0.8rem 0.9rem; border: 1.5px solid var(--linha); border-radius: 16px; background: transparent; color: var(--texto-2); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s, color 0.3s, background-color 0.3s; -webkit-tap-highlight-color: transparent; }
+.un1__n { font: 700 0.6rem/1 var(--display); letter-spacing: 0.18em; color: var(--laranja); }
+.un1__cidade { font: 800 clamp(0.74rem, 3.4vw, 0.95rem)/1.15 var(--display); text-transform: uppercase; color: var(--texto); }
+.un1__local { font-size: 0.8rem; line-height: 1.3; }
+.un1__aba[aria-selected='true'] { border-color: transparent; background: linear-gradient(var(--chao-2), var(--chao-2)) padding-box, var(--gradiente) border-box; color: var(--texto); }
+.un1__aba:not([aria-selected='true']):hover { border-color: rgb(255 255 255 / 0.3); color: var(--texto); }
+.un1__aba:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+
+.un1__painel { display: grid; gap: 1rem; }
+.un1__mapa { aspect-ratio: 4 / 3; }
+.un1__info { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 1rem 0.9rem; align-items: center; }
+.un1__foto { width: 88px; height: 88px; border-radius: 14px; }
+.un1__info > :last-child { grid-column: 1 / -1; justify-self: start; }
+
+/* ── 2. Pílulas no topo + cartão flutuante ── */
+.un2 { display: grid; gap: 1rem; }
+.un2__abas { display: flex; justify-self: center; gap: 4px; max-width: 100%; padding: 4px; border: 1px solid var(--linha); border-radius: 999px; background: var(--chao-2); }
+.un2__aba { min-height: 44px; padding: 0 1rem; border: 0; border-radius: 999px; background: transparent; color: var(--texto-2); font: 700 clamp(0.6rem, 2.7vw, 0.72rem)/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; cursor: pointer; transition: color 0.3s, background-color 0.3s; -webkit-tap-highlight-color: transparent; }
+.un2__aba[aria-selected='true'] { background: var(--gradiente-texto); color: #fff; }
+.un2__aba:not([aria-selected='true']):hover { color: var(--texto); }
+.un2__aba:focus-visible { outline: 2px solid var(--laranja); outline-offset: 2px; }
+
+.un2__painel { position: relative; display: grid; }
+.un2__mapa { aspect-ratio: 1 / 1; }
+/* celular: o cartão sobe um pouco sobre a base do mapa */
+.un2__cartao { position: relative; z-index: 1; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 0.9rem; align-items: center; margin: -56px 10px 0; padding: 14px; border: 1px solid rgb(255 255 255 / 0.12); border-radius: 20px; background: rgb(17 12 14 / 0.94); box-shadow: 0 20px 50px rgb(0 0 0 / 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.un2__foto { width: 72px; height: 72px; border-radius: 14px; align-self: start; }
+.un2__texto { display: grid; gap: 0.5rem; }
+.un2__cartao > :last-child { grid-column: 1 / -1; justify-self: start; }
+
+/* ── 3. Cards lado a lado ── */
+.un3 { display: grid; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+.un3__card { display: grid; overflow: hidden; border: 1px solid var(--linha); border-radius: 24px; background: var(--chao-2); }
+.un3__mapa { aspect-ratio: 16 / 10; border-radius: 0; }
+.un3__mapa::after { box-shadow: inset 0 0 70px 6px rgb(11 7 9 / 0.45); }
+.un3__corpo { position: relative; display: grid; gap: 0.7rem; justify-items: start; padding: 0 18px 20px; }
+.un3__foto { width: 76px; height: 76px; margin-top: -38px; border-radius: 50%; border: 3px solid var(--chao-2); box-shadow: 0 0 0 1.5px var(--laranja); position: relative; z-index: 1; }
+.un3__corpo .un-cidade { margin-top: 0.2rem; }
+.un3__corpo > :last-child { margin-top: 0.4rem; }
 
 @media (min-width: 640px) {
-  .pr-cartao { max-width: 560px; }
+  .un2__mapa { aspect-ratio: 16 / 10; }
+  .un2__cartao { max-width: 440px; }
 }
 
-@media (min-width: 1000px) {
-  .pr-mapa { height: clamp(520px, 76svh, 800px); }
-  .pr-trava { right: 24px; bottom: 24px; }
-  /* cartão flutuando no canto esquerdo, sobre o mapa */
-  .pr-cartao { position: absolute; z-index: 2; left: max(24px, calc((100% - 1240px) / 2 + 16px)); top: 50%; translate: 0 -50%; width: 380px; max-width: none; padding: 12px; gap: 0.6rem; border: 1px solid rgb(255 255 255 / 0.14); border-radius: 22px; background: rgb(11 7 9 / 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
-  .pr-abas { grid-template-columns: 1fr; gap: 0.4rem; }
-  .pr-aba { grid-template-columns: auto 1fr; column-gap: 0.7rem; row-gap: 0.15rem; align-items: baseline; padding: 0.7rem 0.9rem; background: transparent; }
-  .pr-aba__n { grid-row: span 2; }
-  .pr-aba[aria-selected="true"] { background: linear-gradient(rgb(26 17 21 / 0.9), rgb(26 17 21 / 0.9)) padding-box, var(--gradiente) border-box; }
-  .pr-aba:not([aria-selected="true"]):hover { color: var(--texto); border-color: rgb(255 255 255 / 0.3); }
-  .pr-painel { grid-template-columns: 92px minmax(0, 1fr); padding: 4px; }
+@media (min-width: 900px) {
+  .un-topo { grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 2rem; margin-bottom: 2.5rem; }
+  .un-var { margin: 0; }
+  .un-mapa { --zoom: 1; }
+  .un3__mapa { --zoom: 1.2; }
+
+  /* 1: lista à esquerda, conteúdo à direita */
+  .un1 { grid-template-columns: 300px minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .un1__abas { grid-template-columns: 1fr; gap: 0.6rem; position: relative; }
+  .un1__aba { grid-template-columns: auto 1fr; column-gap: 0.9rem; row-gap: 0.3rem; align-items: baseline; padding: 1.1rem 1.2rem; }
+  .un1__n { grid-row: span 2; }
+  .un1__painel { grid-column: 2; grid-row: 1; gap: 1.25rem; }
+  .un1__mapa { aspect-ratio: 16 / 9; }
+  .un1__info { grid-template-columns: 132px minmax(0, 1fr) auto; gap: 1.5rem; }
+  .un1__foto { width: 132px; height: 96px; }
+  .un1__info > :last-child { grid-column: auto; }
+
+  /* 2: cartão flutuando no canto inferior esquerdo do mapa */
+  .un2 { gap: 1.5rem; }
+  .un2__mapa { aspect-ratio: 21 / 9; }
+  .un2__cartao { position: absolute; left: 24px; bottom: 24px; margin: 0; width: 400px; grid-template-columns: 96px minmax(0, 1fr); padding: 16px; }
+  .un2__foto { width: 96px; height: 96px; }
+
+  /* 3: dois cards lado a lado */
+  .un3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+  .un3__corpo { padding: 0 24px 26px; }
+  .un3__foto { width: 92px; height: 92px; margin-top: -46px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pr-painel:not([hidden]) { animation: none; }
-  .pr-mapa__pino { animation: none; }
-  .pr-mapa iframe { transition: none; }
+  .un1__painel:not([hidden]), .un2__painel:not([hidden]) { animation: none; }
+  .un-mapa img { transition: none; }
+  .un-mapa:hover img { scale: none; }
 }
-.pr-painel__info a, .pr-painel__info button { white-space: nowrap; }

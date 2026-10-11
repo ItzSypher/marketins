@@ -30,10 +30,16 @@ const DESTINOS = [
   { nome: 'Dubai', lat: 25.2, lon: 55.27 },
 ];
 // enquadramento de cada etapa: centro (lat/lon) e distância da câmera
-const VISTAS = [
+const VISTAS_DESKTOP = [
   { lat: -22.8, lon: -43.3, z: 2.75 },
   { lat: -19, lon: -46, z: 3.7 },
   { lat: 17, lon: -24, z: 5.2 },
+];
+// abaixo de 1000px a câmera fica mais longe: o globo aparece inteiro, com o símbolo atrás dando profundidade
+const VISTAS_CELULAR = [
+  { lat: -22.8, lon: -43.3, z: 3.95 },
+  { lat: -19, lon: -46, z: 4.25 },
+  { lat: 17, lon: -24, z: 5.3 },
 ];
 const DURACAO = [3.8, 3.8, 6.5]; // segundos em cada etapa
 const Z_MUNDO = 4.4; // a partir daqui os nomes das cidades do mundo aparecem
@@ -50,6 +56,7 @@ type Marcador = { anel: T3.Mesh; s: number; ph: number; tipo: Tipo };
 export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): Controle {
   const { reduzido } = opts;
   const mobile = Math.min(innerWidth, innerHeight) < 700;
+  const VISTAS = innerWidth < 1000 ? VISTAS_CELULAR : VISTAS_DESKTOP;
   const ll = (lat: number, lon: number, r: number) => {
     const a = lat * D2R, o = lon * D2R, c = Math.cos(a);
     return new THREE.Vector3(c * Math.sin(o) * r, Math.sin(a) * r, c * Math.cos(o) * r);
