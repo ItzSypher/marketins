@@ -195,6 +195,15 @@ export function Feed() {
 
   useEffect(() => () => { if (musicaPausada.current) somDoSite('retomar'); }, []);
 
+  /* seção à vista: esconde os flutuantes (Conecta e Assistente) para não cobrir a barra do celular */
+  useEffect(() => {
+    const el = sec.current; if (!el || typeof IntersectionObserver === 'undefined') return;
+    const raiz = document.documentElement;
+    const io = new IntersectionObserver(([e]) => raiz.classList.toggle('sem-flutuantes', e.isIntersecting), { threshold: 0.3 });
+    io.observe(el);
+    return () => { io.disconnect(); raiz.classList.remove('sem-flutuantes'); };
+  }, []);
+
   const aoTocar = () => {
     setTocando(true);
     if (!musicaPausada.current) { musicaPausada.current = true; somDoSite('pausar'); }

@@ -123,3 +123,10 @@
   .assist, .assist *, .assist *::after { animation: none !important; transition-duration: 0.01ms !important; }
   .assist.is-tocando .assist__eq i { height: 70%; }
 }
+
+/* Feed à vista: o botão sai de cena */
+.assist { transition: opacity 0.3s, transform 0.3s, visibility 0s; }
+:root.sem-flutuantes .assist {
+  opacity: 0; pointer-events: none; transform: translateY(16px); visibility: hidden;
+  transition: opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s;
+}

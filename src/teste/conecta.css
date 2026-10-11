@@ -219,3 +219,10 @@
   .cgr, .cpop { transform: none !important; }
   .cselo__giro { animation: none; }
 }
+
+/* Feed à vista: selo e card do canto saem de cena (o card GRANDE não) */
+:root.sem-flutuantes .cselo,
+:root.sem-flutuantes .cpop {
+  opacity: 0; pointer-events: none; transform: translateY(16px); visibility: hidden;
+  transition: opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s;
+}
