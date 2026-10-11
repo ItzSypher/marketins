@@ -2,12 +2,6 @@
 // que já está no site. Sem foto, logo ou resultado inventado: onde falta
 // material, a página mostra o espaço marcado "enviar".
 
-export const pontos = [
-  { id: 'grandes', titulo: 'Clientes grandes' },
-  { id: 'estrutura', titulo: 'Estrutura física' },
-  { id: 'time', titulo: 'Time completo' },
-];
-
 /** Prova social: os clientes grandes, na ordem do Sérgio. */
 export const grandes: { nome: string; segmento?: string; logo?: string }[] = [
   { nome: 'Marcelo Manhães', segmento: 'Assessoria previdenciária', logo: '/logos/marcelo-manhaes.svg' },

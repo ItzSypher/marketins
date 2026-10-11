@@ -1,20 +1,5 @@
-/* Blocos do design system usados na home (copiados de src/ds/ds.css) */
-.b-seta { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
-/* Botões com seta: o preenchimento sai da seta e cobre o botão inteiro; o texto troca de cor junto. */
-.b-seta, .b-agendar { --fill: #1e1e1e; --ease: cubic-bezier(0.65, 0, 0.35, 1); position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 52px; padding: 4px; border-radius: 999px; overflow: hidden; }
-.b-seta { border: 1.5px solid rgb(255 255 255 / 0.85); }
-.b-seta span, .b-agendar span { position: relative; z-index: 2; display: flex; align-items: center; height: 100%; padding: 0 1.4rem 0 1.6rem; border-radius: 999px; color: var(--chao); transition: color 0.4s 0.2s, background-color 0.4s 0.2s; }
-.b-seta span { background-color: #fff; }
-.b-seta i, .b-agendar i { position: relative; z-index: 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #fff; font-style: normal; transition: transform 0.7s var(--ease); }
-.b-seta::after, .b-agendar::after { content: ''; position: absolute; z-index: 1; inset: 0; border-radius: 999px; background: var(--fill); clip-path: inset(4px 4px 4px calc(100% - 46px) round 999px); transition: clip-path 0.7s var(--ease); }
-.b-seta:hover::after, .b-seta:focus-visible::after, .b-agendar:hover::after, .b-agendar:focus-visible::after { clip-path: inset(0 0 0 0 round 999px); }
-.b-seta:hover span, .b-seta:focus-visible span { background-color: transparent; color: #fff; }
-.b-agendar:hover span, .b-agendar:focus-visible span { color: #fff; }
-.b-seta:hover i, .b-seta:focus-visible i { transform: rotate(45deg); }
-.b-agendar:hover i, .b-agendar:focus-visible i { transform: translateX(3px); }
-.b-seta--escuro { border-color: transparent; background-image: linear-gradient(var(--chao), var(--chao)), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-agendar { height: 48px; background: #fff; }
-.b-agendar i { width: 38px; height: 38px; }
+@import '../ds/botao.css';
+/* Blocos do design system usados na home (copiados de src/ds/ds.css). Botões: src/ds/botao.css */
 .equipe2 { display: grid; grid-template-rows: var(--cols); grid-template-columns: 1fr; gap: 10px; height: 980px; transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 .pessoa { position: relative; overflow: hidden; border: 0; padding: 0; border-radius: 22px; background: #2a0a12; color: #fff; cursor: pointer; text-align: center; min-height: 0; }
 .pessoa img { position: absolute; inset: -4%; width: 108%; height: 108%; max-width: none; object-fit: cover; object-position: center 20%; filter: grayscale(1) brightness(0.7); transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s; }

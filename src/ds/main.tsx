@@ -7,6 +7,7 @@ import { Equipe, IphoneReels, Mosaico, Musica } from './blocos';
 import '@fontsource-variable/montserrat';
 import '../tokens.css';
 import { Logo3D } from './Logo3D';
+import { Botao } from './Botao';
 import { Stage } from '../sections/Stage';
 import './ds.css';
 import './stage.css';
@@ -136,8 +137,9 @@ function App() {
 
       <Secao id="logo" titulo="Logo" porque="Uma versão por situação. O logo nunca aparece duas vezes na mesma tela.">
         <div className="ds-logos">
-          <figure><div className="ds-logo-box"><img src="/logo-completo.svg" alt="" /></div><figcaption><b>Completo</b> Rodapé, contato, documentos. Largura mínima 140px.</figcaption></figure>
-          <figure><div className="ds-logo-box"><img src="/icone.svg" alt="" className="ds-icone" /></div><figcaption><b>Ícone (foguete)</b> Topo do site, botão de música, favicon, tela "toque na tela".</figcaption></figure>
+          <figure className="ds-logo-largo"><div className="ds-logo-box"><img src="/logo-completo.svg" alt="" /></div><figcaption><b>Completo</b> Rodapé, contato, documentos. Largura mínima 140px. <a className="ds-baixar" href="/logo-completo.svg" download>Baixar SVG</a></figcaption></figure>
+          <figure><div className="ds-logo-box"><img src="/icone.svg" alt="" className="ds-icone" /></div><figcaption><b>Ícone (foguete branco)</b> Sobre fundo escuro: topo do site, botão de música, favicon, tela "toque na tela". <a className="ds-baixar" href="/icone.svg" download>Baixar SVG</a></figcaption></figure>
+          <figure><div className="ds-logo-box ds-logo-box--branco"><img src="/icone-preto.svg" alt="" className="ds-icone" /></div><figcaption><b>Ícone (foguete preto)</b> Sobre fundo claro e dentro dos botões. Do Figma, sem fundo. <a className="ds-baixar" href="/icone-preto.svg" download>Baixar SVG</a></figcaption></figure>
           <figure><div className="ds-logo-box"><span className="ds-wordmark" role="img" aria-label="marketins" /></div><figcaption><b>Wordmark "marketins"</b> Só na abertura, como máscara da foto do hero.</figcaption></figure>
           <figure><div className="ds-logo-box ds-logo-box--claro"><img src="/conecta-logo.webp" alt="" /></div><figcaption><b>Marketins Conecta</b> Só no bloco e no pop-up do evento.</figcaption></figure>
         </div>
@@ -193,15 +195,68 @@ function App() {
         </div>
       </Secao>
 
-      <Secao id="botoes" titulo="Botões" porque="Os quatro modelos do Figma, com o estado inicial e o de passar o mouse. Passe o mouse ou toque para ver.">
+      <Secao id="botoes" titulo="Botões" porque="Um botão só, em duas variantes. Ao passar o mouse o fundo sobe e o texto troca; no celular o botão já mostra tudo parado. O ícone dentro do botão é sempre o preto, sobre branco.">
         <div className="ds-botoes">
-          <figure><a className="b-transicao" href={linkContato('design system')}><span className="b-transicao__a">Agendar reunião</span><span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span></a><figcaption><b>Transição</b> CTA principal do hero.</figcaption></figure>
-          <figure><a className="b-seta" href={linkContato('design system')}><span>Agendar reunião</span><i aria-hidden="true">↗</i></a><figcaption><b>Branco com seta</b> CTA das seções.</figcaption></figure>
-          <figure><a className="b-seta b-seta--escuro" href={linkContato('design system')}><span>Agendar reunião</span><i aria-hidden="true">↗</i></a><figcaption><b>Branco com seta escura</b> Sobre fundos claros e cards.</figcaption></figure>
-          <figure><a className="b-agendar" href={linkContato('design system')}><span>Agendar</span><i aria-hidden="true">→</i></a><figcaption><b>Agendar compacto</b> Topo do site e celular.</figcaption></figure>
-          <figure><a className="b-whats" href={linkContato('design system')}>Falar no WhatsApp</a><figcaption><b>WhatsApp</b> Fecho da página, como no site antigo.</figcaption></figure>
+          <div className="ds-bt-painel">
+            <p className="ds-bt-rotulo">Fundo escuro</p>
+            <div className="ds-bt-par">
+              <figure><Botao href={linkContato('design system')}>Agendar reunião</Botao><figcaption><b>Principal</b> CTA da página. Passe o mouse.</figcaption></figure>
+              <figure><Botao href={linkContato('design system')} className="is-hover">Agendar reunião</Botao><figcaption><b>Principal · hover</b> Sobe o branco, entra "Vamos decolar".</figcaption></figure>
+            </div>
+            <div className="ds-bt-par">
+              <figure><Botao variante="seta" href={linkContato('design system')}>Quero um case assim</Botao><figcaption><b>Seta</b> Ações das seções: case, mapa, Instagram.</figcaption></figure>
+              <figure><Botao variante="seta" href={linkContato('design system')} className="is-hover">Quero um case assim</Botao><figcaption><b>Seta · hover</b> Sobe o gradiente, a seta gira.</figcaption></figure>
+            </div>
+          </div>
+          <div className="ds-bt-painel ds-bt-painel--claro">
+            <p className="ds-bt-rotulo">Fundo claro</p>
+            <div className="ds-bt-par">
+              <figure><Botao href={linkContato('design system')} escuro>Agendar reunião</Botao><figcaption><b>Principal escuro</b> Em cards e seções claras.</figcaption></figure>
+              <figure><Botao href={linkContato('design system')} escuro className="is-hover">Agendar reunião</Botao><figcaption><b>Principal escuro · hover</b> Sobe o gradiente da marca.</figcaption></figure>
+            </div>
+            <div className="ds-bt-par">
+              <figure><Botao variante="seta" href={linkContato('design system')} escuro>Como chegar</Botao><figcaption><b>Seta escuro</b> Mesmo papel da seta, em fundo claro.</figcaption></figure>
+              <figure><Botao variante="seta" href={linkContato('design system')} escuro className="is-hover">Como chegar</Botao><figcaption><b>Seta escuro · hover</b></figcaption></figure>
+            </div>
+          </div>
+          <div className="ds-bt-painel">
+            <p className="ds-bt-rotulo">Tamanhos e estados</p>
+            <div className="ds-bt-par">
+              <figure><Botao href={linkContato('design system')} compacto>Agendar</Botao><figcaption><b>Compacto</b> 48px. Topo do site e lugares apertados.</figcaption></figure>
+              <figure><Botao variante="seta" href={linkContato('design system')} compacto>Seguir</Botao><figcaption><b>Seta compacta</b> 48px.</figcaption></figure>
+            </div>
+            <div className="ds-bt-par">
+              <figure><Botao desabilitado>Agendar reunião</Botao><figcaption><b>Desabilitado</b> Sem clique, 40% de opacidade.</figcaption></figure>
+              <figure><Botao variante="seta" desabilitado>Como chegar</Botao><figcaption><b>Seta desabilitada</b></figcaption></figure>
+            </div>
+          </div>
+          <div className="ds-bt-painel">
+            <p className="ds-bt-rotulo">Regras</p>
+            <ul className="ds-regras">
+              <li>Altura 56px (compacto 48px): o dedo acerta no celular.</li>
+              <li>Teclado: contorno laranja e o mesmo efeito do mouse.</li>
+              <li>Nada de ícone branco em fundo branco: dentro do botão o foguete é o preto.</li>
+              <li>Sem efeito de ímã seguindo o mouse.</li>
+              <li>Quem pede menos animação no sistema vê só a troca de cor.</li>
+            </ul>
+          </div>
         </div>
-        <p className="ds-nota">Todos têm foco visível no teclado e área de toque de 48px no celular.</p>
+        <table className="ds-tokens">
+          <thead><tr><th>Token</th><th>Valor</th><th>Muda</th></tr></thead>
+          <tbody>
+            <tr><td><code>--botao-altura</code></td><td>56px</td><td>Altura de todos os botões</td></tr>
+            <tr><td><code>--botao-altura-compacta</code></td><td>48px</td><td>Altura do compacto</td></tr>
+            <tr><td><code>--botao-raio</code></td><td>999px</td><td>Arredondamento (pílula)</td></tr>
+            <tr><td><code>--botao-claro</code> / <code>--botao-escuro</code></td><td>#FFFFFF / #161013</td><td>Fundos</td></tr>
+            <tr><td><code>--botao-destaque</code></td><td>gradiente com texto</td><td>Fundo que sobe no hover da seta</td></tr>
+            <tr><td><code>--botao-contorno</code></td><td>azul, magenta, laranja</td><td>Borda do Figma</td></tr>
+            <tr><td><code>--botao-duracao</code> / <code>--botao-curva</code></td><td>0,5s / ease in-out</td><td>Velocidade do hover</td></tr>
+          </tbody>
+        </table>
+        <pre className="ds-uso"><code>{`<Botao href={linkContato('origem')}>Agendar reunião</Botao>
+<Botao variante="seta" href={rota} escuro>Como chegar</Botao>
+<Botao hover="Bora assistir" compacto>Ver os Reels</Botao>`}</code></pre>
+        <p className="ds-nota">Tokens em src/ds/botao.css. Componente em src/ds/Botao.tsx.</p>
       </Secao>
 
       {!PARA_SERGIO && vitrine}
@@ -220,7 +275,7 @@ function App() {
           <tbody>
             <tr><td>Abertura (GTA, X, ícone 3D, máscara)</td><td>Presa na tela, segue a rolagem</td><td>~2.500px de rolagem</td></tr>
             <tr><td>Entrada das seções</td><td>Sobe 32px e aparece</td><td>0,8s</td></tr>
-            <tr><td>Botões</td><td>Transição do Figma ao passar o mouse</td><td>0,35s</td></tr>
+            <tr><td>Botões</td><td>Fundo sobe e o texto troca, só com mouse ou teclado</td><td>0,5s</td></tr>
             <tr><td>Celular com Instagram</td><td>Preso, rola o feed e abre o Reels</td><td>Segue a rolagem</td></tr>
             <tr><td>Música</td><td>Só toca depois do toque na tela; para pelo ícone</td><td>-</td></tr>
           </tbody>

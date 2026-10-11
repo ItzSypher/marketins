@@ -1,0 +1,67 @@
+/* Rodapé: escuro, limpo, empilhado no celular */
+.rd {
+  border-top: 1px solid var(--linha);
+  background: var(--chao);
+  color: var(--texto-2);
+  font: 400 0.92rem/1.5 var(--corpo);
+  padding: 3rem 16px 112px; /* espaço para o botão flutuante do assistente (~96px) */
+}
+.rd__in {
+  max-width: 1240px; margin-inline: auto;
+  display: grid; gap: 2.25rem;
+}
+.rd__logo { width: min(220px, 60vw); height: auto; display: block; margin-bottom: 1.25rem; }
+.rd__legal { margin: 0; font-size: 0.82rem; line-height: 1.6; }
+
+.rd__tit {
+  font: 700 0.72rem/1 var(--display);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--laranja);
+  margin: 0 0 0.75rem;
+}
+.rd ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.rd li > a, .rd__ig > a:first-child {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 44px;
+  color: var(--texto);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.rd li > a span { color: var(--texto-2); font-size: 0.82rem; }
+.rd li > a b { font-weight: 600; }
+.rd a:hover { color: var(--laranja); }
+.rd a:focus-visible { outline: 2px solid var(--laranja); outline-offset: 2px; border-radius: 4px; }
+
+.rd__ig { display: flex; align-items: center; gap: 8px; }
+.rd__ig > a:first-child { white-space: nowrap; }
+.rd__unid ul { gap: 8px; }
+.rd__nav ul { grid-template-columns: repeat(2, max-content); column-gap: 2rem; }
+.rd__icone {
+  flex: none;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--linha);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.rd__icone img { width: 24px; height: 24px; }
+.rd__icone:hover { border-color: var(--laranja); transform: translateY(-2px); }
+
+.rd__copy {
+  max-width: 1240px; margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--linha);
+  font-size: 0.78rem;
+}
+
+@media (min-width: 1000px) {
+  .rd { padding: 4.5rem var(--gutter) 2.5rem; }
+  .rd__in { grid-template-columns: 1.4fr 1fr 1fr 0.7fr; gap: 3rem; }
+  .rd__copy { padding-right: 96px; }
+  .rd__nav ul { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd__icone { transition: none; }
+  .rd__icone:hover { transform: none; }
+}

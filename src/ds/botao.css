@@ -1,0 +1,192 @@
+/*
+  Botão único da Marketins. Ajuste fino = mudar um token aqui em cima.
+
+  Anatomia (todas as variantes): pílula > rótulo + chip redondo à direita.
+  - .b-transicao (variante "principal"): o rótulo sobe e dá lugar ao rótulo de hover;
+    um fundo branco sobe junto. O chip leva o ícone PRETO (public/icone-preto.svg), que
+    aparece sobre branco em qualquer estado.
+  - .b-seta (variante "seta"): pílula branca com chip escuro e seta; no hover o gradiente
+    da marca sobe e a seta gira.
+  - --escuro: versão para fundo claro (o botão em si fica escuro).
+  - .botao--compacto: altura menor, ainda acima de 44px.
+  Hover só em aparelho com mouse; no celular o estado de repouso já mostra tudo.
+  Os nomes .b-transicao/.b-seta ficam porque a home (App.tsx) ainda usa a marcação antiga.
+*/
+:root {
+  --botao-altura: 56px;
+  --botao-altura-compacta: 48px;
+  --botao-respiro: 6px;                 /* folga entre a borda e o chip */
+  --botao-raio: 999px;
+  --botao-borda: 1.5px;
+  --botao-fonte: 700 0.74rem/1 var(--display);
+  --botao-espaco-letra: 0.05em;
+  --botao-icone: 30px;                  /* foguete dentro do chip */
+  --botao-seta: 18px;                   /* seta dentro do chip */
+
+  --botao-claro: #fff;
+  --botao-escuro: var(--chao-2);
+  --botao-texto-claro: #fff;
+  --botao-texto-escuro: var(--chao);
+  --botao-destaque: var(--gradiente-texto);
+  --botao-contorno: linear-gradient(90deg, #3a6bff, #c0187a 55%, #fe5223);   /* borda do Figma */
+  --botao-foco: var(--laranja);
+
+  --botao-duracao: 0.5s;
+  --botao-curva: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Base comum */
+.b-transicao, .b-seta {
+  /* cores de cada variante (trocadas abaixo) */
+  --_fundo: var(--botao-escuro);
+  --_contorno: var(--botao-contorno);
+  --_texto: var(--botao-texto-claro);
+  --_camada: var(--botao-claro);
+  --_texto-hover: var(--botao-texto-escuro);
+  --_chip: var(--botao-claro);
+  --_chip-cor: var(--botao-texto-escuro);
+  --_chip-hover: var(--botao-claro);
+  --_chip-cor-hover: var(--botao-texto-escuro);
+  --_altura: var(--botao-altura);
+
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  min-height: var(--_altura);
+  max-width: 100%;
+  padding: var(--botao-respiro);
+  padding-left: 0;
+  border: var(--botao-borda) solid transparent;
+  border-radius: var(--botao-raio);
+  overflow: hidden;
+  background: linear-gradient(var(--_fundo), var(--_fundo)) padding-box, var(--_contorno) border-box;
+  color: var(--_texto);
+  font: var(--botao-fonte);
+  letter-spacing: var(--botao-espaco-letra);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s var(--botao-curva);
+}
+button.b-transicao, button.b-seta { appearance: none; font: var(--botao-fonte); letter-spacing: var(--botao-espaco-letra); text-transform: uppercase; }
+
+/* Camada que sobe no hover */
+.b-transicao::before, .b-seta::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--_camada);
+  transform: translateY(101%);
+  transition: transform var(--botao-duracao) var(--botao-curva);
+}
+
+/* Rótulo(s) */
+.b-transicao > span, .b-seta > span {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.35rem 1.15rem 0.35rem 1.5rem;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+  transition: transform var(--botao-duracao) var(--botao-curva), opacity var(--botao-duracao), color var(--botao-duracao);
+}
+.b-transicao__b { color: var(--_texto-hover); transform: translateY(105%); }
+
+/* Chip redondo: ícone preto (principal) ou seta */
+.b-transicao > i, .b-seta > i {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 2;
+  display: grid;
+  place-items: center;
+  --_chip-lado: calc(var(--_altura) - 2 * var(--botao-respiro) - 2 * var(--botao-borda));
+  width: var(--_chip-lado);
+  height: var(--_chip-lado);
+  align-self: center;
+  border-radius: 50%;
+  background: var(--_chip);
+  color: var(--_chip-cor);
+  font-style: normal;
+  font-size: 1rem;
+  transition: background-color var(--botao-duracao), color var(--botao-duracao);
+}
+.b-transicao > i img, .b-transicao > i svg, .b-seta > i svg { display: block; width: var(--botao-icone); max-width: none; height: auto; transition: transform var(--botao-duracao) var(--botao-curva); }
+.b-seta > i svg { width: var(--botao-seta); height: var(--botao-seta); }
+
+/* Variante principal, versão para fundo claro: escura com gradiente no hover */
+.b-transicao--escuro { --_fundo: var(--chao); --_contorno: linear-gradient(transparent, transparent); --_camada: var(--botao-destaque); --_texto-hover: var(--botao-texto-claro); }
+
+/* Variante seta: branca para fundo escuro */
+.b-seta {
+  --_fundo: var(--botao-claro);
+  --_contorno: linear-gradient(transparent, transparent);   /* sem anel claro em volta do gradiente no hover */
+  --_texto: var(--botao-texto-escuro);
+  --_camada: var(--botao-destaque);
+  --_texto-hover: var(--botao-texto-claro);
+  --_chip: var(--chao);
+  --_chip-cor: var(--botao-texto-claro);
+}
+/* Seta, versão para fundo claro: escura com a borda do Figma */
+.b-seta--escuro { --_fundo: var(--chao); --_contorno: var(--botao-contorno); --_texto: var(--botao-texto-claro); --_chip: var(--botao-claro); --_chip-cor: var(--botao-texto-escuro); }
+
+/* Tamanho compacto */
+.botao--compacto { --_altura: var(--botao-altura-compacta); --botao-icone: 26px; }
+.botao--compacto > span { padding-inline: 1.2rem 0.9rem; }
+
+/* Estado ativo (hover com mouse, foco por teclado, ou .is-hover, usado na vitrine do design system) */
+.b-transicao:focus-visible::before, .b-seta:focus-visible::before,
+.is-hover:is(.b-transicao, .b-seta)::before { transform: translateY(0); }
+.b-transicao:focus-visible .b-transicao__a, .b-transicao.is-hover .b-transicao__a { transform: translateY(-105%); opacity: 0; }
+.b-transicao:focus-visible .b-transicao__b, .b-transicao.is-hover .b-transicao__b { transform: translateY(0); }
+.b-transicao:focus-visible > i img, .b-transicao.is-hover > i img { transform: translate(2px, -2px) rotate(-8deg); }
+.b-seta:focus-visible > span, .b-seta.is-hover > span { color: var(--_texto-hover); }
+.b-transicao:focus-visible > i, .b-seta:focus-visible > i,
+.is-hover:is(.b-transicao, .b-seta) > i { background-color: var(--_chip-hover); color: var(--_chip-cor-hover); }
+.b-seta:focus-visible > i svg, .b-seta.is-hover > i svg, .b-seta:focus-visible > i:not(:has(svg)), .b-seta.is-hover > i:not(:has(svg)) { transform: rotate(45deg); }
+
+@media (hover: hover) and (pointer: fine) {
+  .b-transicao:hover::before, .b-seta:hover::before { transform: translateY(0); }
+  .b-transicao:hover .b-transicao__a { transform: translateY(-105%); opacity: 0; }
+  .b-transicao:hover .b-transicao__b { transform: translateY(0); }
+  .b-transicao:hover > i img { transform: translate(2px, -2px) rotate(-8deg); }
+  .b-seta:hover > span { color: var(--_texto-hover); }
+  .b-transicao:hover > i, .b-seta:hover > i { background-color: var(--_chip-hover); color: var(--_chip-cor-hover); }
+  .b-seta:hover > i svg, .b-seta:hover > i:not(:has(svg)) { transform: rotate(45deg); }
+}
+.b-seta > i:not(:has(svg)) { transition: transform var(--botao-duracao) var(--botao-curva), background-color var(--botao-duracao), color var(--botao-duracao); }
+
+.b-transicao:focus-visible, .b-seta:focus-visible { outline: 3px solid var(--botao-foco); outline-offset: 3px; }
+.b-transicao:active, .b-seta:active { transform: scale(0.97); }
+
+/* Desabilitado */
+.b-transicao:disabled, .b-seta:disabled, .b-transicao[aria-disabled='true'], .b-seta[aria-disabled='true'] { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+/* Marcação antiga da home: ícone branco dentro do rótulo de hover vira o preto */
+.b-transicao__b > img { display: none; }
+.b-transicao__b:has(> img)::after { content: ''; width: 24px; aspect-ratio: 928 / 915; background: url('/icone-preto.svg') center / contain no-repeat; }
+.b-transicao:not(:has(> i)) { padding: 0; grid-template-columns: 1fr; }
+.b-transicao:not(:has(> i)) > span { padding-inline: 1.8rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .b-transicao::before, .b-seta::before { transform: none; opacity: 0; transition: opacity 0.2s; }
+  .b-transicao:focus-visible::before, .b-seta:focus-visible::before, .is-hover:is(.b-transicao, .b-seta)::before { opacity: 1; }
+  .b-transicao__b { transform: none; opacity: 0; }
+  .b-transicao:focus-visible .b-transicao__a, .b-transicao.is-hover .b-transicao__a { transform: none; }
+  .b-transicao:focus-visible .b-transicao__b, .b-transicao.is-hover .b-transicao__b { opacity: 1; }
+  .b-transicao > span, .b-seta > span, .b-transicao > i img, .b-seta > i svg { transition-duration: 0.2s; }
+}
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .b-transicao:hover::before, .b-seta:hover::before { opacity: 1; }
+  .b-transicao:hover .b-transicao__a { transform: none; }
+  .b-transicao:hover .b-transicao__b { opacity: 1; }
+}

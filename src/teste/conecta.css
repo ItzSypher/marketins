@@ -1,0 +1,102 @@
+/* Pop-up do Marketins Conecta + pílula. Camadas: pílula 51 · assistente 52 · pop-up 53.
+   Celular: o pop-up ocupa a base da tela e o botão do assistente sai de cena enquanto ele está aberto.
+   Desktop: cartão no canto inferior esquerdo, longe do assistente (direita). */
+
+.cpop {
+  --c-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: fixed; z-index: 53;
+  left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 16px 18px 14px; border-radius: 24px;
+  /* borda fina em degradê da marca */
+  border: 1px solid transparent;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgb(208 0 77 / 0.16), transparent 60%) padding-box,
+    linear-gradient(#100a0d, #100a0d) padding-box,
+    linear-gradient(135deg, rgb(208 0 77 / 0.7), rgb(254 82 35 / 0.35) 40%, rgb(255 255 255 / 0.08)) border-box;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.55);
+  color: var(--texto); font-family: var(--corpo);
+  opacity: 0; visibility: hidden; transform: translateY(24px) scale(0.98); transform-origin: 0 100%;
+  transition: opacity 0.25s, transform 0.35s var(--c-ease), visibility 0s linear 0.35s;
+}
+.cpop.is-aberto {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 0.4s, transform 0.6s var(--c-ease), visibility 0s;
+}
+
+.cpop__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cpop__logo { display: block; width: 172px; height: auto; margin: 2px 0 0 -6px; filter: drop-shadow(0 6px 18px rgb(208 0 77 / 0.25)); }
+.cpop__x {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -6px -8px 0 0; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--texto-2); cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.cpop__x:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
+.cpop__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.cpop__x:focus-visible, .cpop__depois:focus-visible, .cpop-pilula:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+
+.cpop__titulo {
+  margin: 10px 0 0; outline: none;
+  font: 700 0.66rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase;
+  background: var(--gradiente); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.cpop__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cpop__chamada { margin: 8px 0 0; max-width: 34ch; font-size: 0.95rem; font-weight: 600; line-height: 1.35; color: var(--texto); }
+
+/* contagem */
+.cpop__conta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 14px; }
+.cpop__cel {
+  display: grid; justify-items: center; gap: 5px; padding: 10px 0 8px; border-radius: 14px;
+  background: rgb(255 255 255 / 0.04); border: 1px solid var(--linha);
+}
+.cpop__cel b { font: 800 1.45rem/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.cpop__cel span { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-2); }
+.cpop__hoje {
+  margin: 14px 0 0; padding: 14px 0 12px; border-radius: 14px; text-align: center;
+  background: var(--gradiente-texto); color: #fff;
+  font: 800 1.6rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.02em;
+}
+
+.cpop__acoes { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.cpop__cta { flex: 1; min-width: 0; }
+.cpop__cta.b-transicao > span { padding: 0 1rem; }
+.cpop__depois {
+  flex: none; min-height: 44px; padding: 0 0.6rem; border: 0; border-radius: 999px; background: transparent;
+  color: var(--texto-2); font: 600 0.82rem/1 var(--corpo); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgb(255 255 255 / 0.25);
+  transition: color 0.2s;
+}
+.cpop__depois:hover { color: #fff; }
+.cpop__apoio { margin: 12px 0 0; font-size: 0.72rem; color: var(--texto-2); letter-spacing: 0.02em; }
+
+/* pílula: lembra o evento depois de fechar */
+.cpop-pilula {
+  position: fixed; z-index: 51;
+  left: max(16px, env(safe-area-inset-left)); bottom: max(22px, calc(env(safe-area-inset-bottom) + 6px));
+  max-width: calc(100vw - 32px - 56px - 12px);
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px;
+  border: 1px solid rgb(255 255 255 / 0.14); border-radius: 999px;
+  background: rgb(22 16 19 / 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+  color: var(--texto); font: 700 0.6rem/1.1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; text-align: left;
+  cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.25s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.4s, border-color 0.25s;
+}
+.cpop-pilula.is-visivel { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s 0.15s, transform 0.5s 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s, border-color 0.25s; }
+.cpop-pilula:hover { border-color: rgb(254 82 35 / 0.6); }
+.cpop-pilula i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--gradiente); box-shadow: 0 0 0 3px rgb(208 0 77 / 0.2); animation: cpop-pulso 2.4s ease-in-out infinite; }
+.cpop-pilula span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (min-width: 640px) {
+  .cpop { left: 24px; right: auto; bottom: 24px; width: 380px; padding: 18px 20px 16px; }
+  .cpop-pilula { left: 24px; bottom: 22px; }
+}
+
+@keyframes cpop-pulso { 50% { box-shadow: 0 0 0 6px rgb(208 0 77 / 0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cpop, .cpop-pilula, .cpop-pilula i { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+  .cpop { transform: none; }
+}

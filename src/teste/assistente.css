@@ -1,0 +1,125 @@
+/* Assistente: botão redondo da Marketins + painel de frases prontas.
+   Camadas combinadas com o Conecta (conecta.css):
+   pílula do Conecta 51 · assistente 52 · pop-up do Conecta 53. A Entrada fica acima de tudo. */
+
+.assist {
+  --assist-borda: rgb(255 255 255 / 0.12);
+  --assist-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: fixed; z-index: 52;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  font-family: var(--corpo);
+}
+
+/* ---------- botão ---------- */
+.assist__botao {
+  position: relative; display: grid; place-items: center;
+  width: 56px; height: 56px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--assist-borda);
+  background: rgb(22 16 19 / 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+  cursor: pointer; transition: transform 0.4s var(--assist-ease), border-color 0.3s, opacity 0.3s;
+}
+.assist__botao:hover { border-color: rgb(255 255 255 / 0.3); }
+.assist__botao:active { transform: scale(0.94); }
+.assist__botao:focus-visible, .assist__x:focus-visible, .assist__tocar:focus-visible, .assist__frases a:focus-visible {
+  outline: 2px solid var(--laranja); outline-offset: 3px;
+}
+.assist__botao img { width: 34px; height: 34px; transition: transform 0.5s var(--assist-ease); }
+.assist.is-tocando .assist__botao img { animation: assist-girar 6s linear infinite; }
+.assist.is-aberto .assist__botao img { transform: scale(0.86); }
+/* balãozinho de conversa: diz que o botão fala */
+.assist__fala {
+  position: absolute; right: -3px; top: -3px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--gradiente); box-shadow: 0 0 0 2px var(--chao);
+  transition: transform 0.4s var(--assist-ease);
+}
+.assist__fala svg { width: 12px; height: 12px; fill: #fff; }
+.assist.is-aberto .assist__fala { transform: scale(0); }
+/* tocando: anel suave em volta */
+.assist.is-tocando .assist__botao::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%;
+  border: 1.5px solid rgb(254 82 35 / 0.6); animation: assist-onda 1.8s ease-out infinite;
+}
+
+/* ---------- painel ---------- */
+.assist__painel {
+  position: absolute; right: 0; bottom: calc(100% + 12px);
+  width: min(330px, calc(100vw - 32px));
+  max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 14px; border-radius: 22px 22px 6px 22px;
+  border: 1px solid var(--assist-borda);
+  background: #120c0f;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.5);
+  transform-origin: 100% 100%;
+  opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.96);
+  transition: opacity 0.22s, transform 0.3s var(--assist-ease), visibility 0s linear 0.3s;
+}
+.assist.is-aberto .assist__painel {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 0.22s, transform 0.4s var(--assist-ease), visibility 0s;
+}
+
+.assist__topo { display: grid; grid-template-columns: 32px 1fr 44px; gap: 10px; align-items: start; margin-bottom: 12px; }
+.assist__avatar { width: 32px; height: 32px; margin-top: 2px; }
+.assist__oi { margin: 0; color: var(--texto); font: 700 0.78rem/1.3 var(--display); text-transform: uppercase; letter-spacing: 0.02em; }
+.assist__sub { margin: 4px 0 0; color: var(--texto-2); font-size: 0.82rem; line-height: 1.4; }
+.assist__x {
+  display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -8px 0 0; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--texto-2); cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.assist__x:hover { background: rgb(255 255 255 / 0.08); color: #fff; }
+.assist__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+/* frases prontas: respostas rápidas, como num chat */
+.assist__frases { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.assist__frases a {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 46px; padding: 0.55rem 0.7rem 0.55rem 1rem;
+  border: 1px solid var(--linha); border-radius: 14px;
+  background: rgb(255 255 255 / 0.04); color: var(--texto);
+  font-size: 0.9rem; font-weight: 600; line-height: 1.25; text-decoration: none;
+  transition: background-color 0.25s, border-color 0.25s, transform 0.25s var(--assist-ease);
+}
+.assist__frases a svg { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--laranja); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s var(--assist-ease); }
+.assist__frases a:hover, .assist__frases a:focus-visible { background: rgb(208 0 77 / 0.14); border-color: rgb(208 0 77 / 0.55); }
+.assist__frases a:hover svg { transform: translate(2px, -2px); }
+.assist__frases a:active { transform: scale(0.98); }
+.assist.is-aberto .assist__frases li { animation: assist-entra 0.45s var(--assist-ease) both; animation-delay: calc(0.04s * var(--i) + 0.05s); }
+
+/* música */
+.assist__som {
+  display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--linha); color: var(--texto-2); font-size: 0.8rem;
+}
+.assist__som-txt { flex: 1; }
+.assist__eq { display: inline-flex; align-items: flex-end; gap: 2px; width: 14px; height: 14px; }
+.assist__eq i { flex: 1; height: 30%; border-radius: 1px; background: var(--texto-2); }
+.assist.is-tocando .assist__eq i { background: var(--laranja); animation: assist-eq 0.9s ease-in-out infinite alternate; }
+.assist.is-tocando .assist__eq i:nth-child(2) { animation-delay: -0.3s; }
+.assist.is-tocando .assist__eq i:nth-child(3) { animation-delay: -0.6s; }
+.assist__tocar {
+  min-width: 84px; min-height: 44px; padding: 0 1rem; border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.22); background: transparent; color: var(--texto);
+  font: 700 0.62rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.assist__tocar:hover { background: rgb(255 255 255 / 0.08); border-color: rgb(255 255 255 / 0.4); }
+.assist__tocar[aria-pressed='true'] { border-color: rgb(254 82 35 / 0.6); }
+
+/* celular: com o pop-up do Conecta aberto, o botão sai de cena (o pop-up ocupa a base da tela) */
+@media (max-width: 639px) {
+  :root[data-conecta-aberto] .assist { opacity: 0; pointer-events: none; transform: translateY(12px); }
+  .assist { transition: opacity 0.25s, transform 0.3s; }
+}
+
+@keyframes assist-girar { to { transform: rotate(360deg); } }
+@keyframes assist-onda { from { opacity: 0.9; transform: scale(0.92); } to { opacity: 0; transform: scale(1.25); } }
+@keyframes assist-eq { from { height: 25%; } to { height: 100%; } }
+@keyframes assist-entra { from { opacity: 0; transform: translateY(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .assist, .assist *, .assist *::after { animation: none !important; transition-duration: 0.01ms !important; }
+  .assist.is-tocando .assist__eq i { height: 70%; }
+}

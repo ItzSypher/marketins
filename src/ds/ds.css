@@ -67,36 +67,24 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
 .t-corpo { max-width: 60ch; color: var(--texto-2); }
 .t-legenda { font: 600 0.72rem/1.2 var(--display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--laranja); }
 
-/* Botões (modelos do Figma) */
-.ds-botoes { display: grid; gap: 2rem; }
-.ds-botoes figure { display: grid; gap: 0.75rem; justify-items: start; }
-.b-transicao, .b-seta, .b-agendar, .b-whats { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
-
-.b-transicao { position: relative; display: grid; min-width: 200px; height: 52px; border-radius: 999px; overflow: hidden; border: 1.5px solid transparent; background-image: linear-gradient(90deg, #4a4a4a, #1e1e1e), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s; }
-.b-transicao__a { color: #fff; }
-.b-transicao__b { background: #fff; color: var(--chao); transform: translateY(100%); }
-.b-transicao__b img { width: 22px; }
-.b-transicao:hover .b-transicao__a, .b-transicao:focus-visible .b-transicao__a { transform: translateY(-100%); opacity: 0; }
-.b-transicao:hover .b-transicao__b, .b-transicao:focus-visible .b-transicao__b { transform: translateY(0); }
-/* Botões com seta: o preenchimento sai da seta e cobre o botão inteiro; o texto troca de cor junto. */
-.b-seta, .b-agendar { --fill: #1e1e1e; --ease: cubic-bezier(0.65, 0, 0.35, 1); position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 52px; padding: 4px; border-radius: 999px; overflow: hidden; }
-.b-seta { border: 1.5px solid rgb(255 255 255 / 0.85); }
-.b-seta span, .b-agendar span { position: relative; z-index: 2; display: flex; align-items: center; height: 100%; padding: 0 1.4rem 0 1.6rem; border-radius: 999px; color: var(--chao); transition: color 0.4s 0.2s, background-color 0.4s 0.2s; }
-.b-seta span { background-color: #fff; }
-.b-seta i, .b-agendar i { position: relative; z-index: 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #fff; font-style: normal; transition: transform 0.7s var(--ease); }
-.b-seta::after, .b-agendar::after { content: ''; position: absolute; z-index: 1; inset: 0; border-radius: 999px; background: var(--fill); clip-path: inset(4px 4px 4px calc(100% - 46px) round 999px); transition: clip-path 0.7s var(--ease); }
-.b-seta:hover::after, .b-seta:focus-visible::after, .b-agendar:hover::after, .b-agendar:focus-visible::after { clip-path: inset(0 0 0 0 round 999px); }
-.b-seta:hover span, .b-seta:focus-visible span { background-color: transparent; color: #fff; }
-.b-agendar:hover span, .b-agendar:focus-visible span { color: #fff; }
-.b-seta:hover i, .b-seta:focus-visible i { transform: rotate(45deg); }
-.b-agendar:hover i, .b-agendar:focus-visible i { transform: translateX(3px); }
-.b-seta--escuro { border-color: transparent; background-image: linear-gradient(var(--chao), var(--chao)), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-agendar { height: 48px; background: #fff; }
-.b-agendar i { width: 38px; height: 38px; }
-
-.b-whats { display: inline-flex; align-items: center; height: 52px; padding: 0 1.6rem; border-radius: 999px; background: #25d366; color: #0b2a17; box-shadow: 0 0 0 4px rgb(37 211 102 / 0.18); transition: transform 0.25s; }
-.b-whats:hover { transform: translateY(-2px); }
+/* Botões: o visual vive em src/ds/botao.css; aqui só a vitrine */
+.ds-botoes { display: grid; gap: 12px; }
+.ds-bt-painel { display: grid; gap: 1.5rem; padding: 1.25rem; border-radius: 14px; background: var(--chao-2); border: 1px solid var(--linha); min-width: 0; }
+.ds-bt-painel--claro { background: #f4eff1; border-color: #e4d9dd; color: var(--chao); }
+.ds-bt-painel--claro figcaption { color: #5a4b51 !important; }
+.ds-bt-painel--claro figcaption b { color: var(--chao) !important; }
+.ds-bt-rotulo { font: 700 0.7rem/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase; color: var(--laranja); }
+.ds-bt-painel--claro .ds-bt-rotulo { color: var(--laranja-texto); }
+.ds-bt-par { display: grid; gap: 1rem; }
+.ds-bt-painel .ds-regras { margin-top: 0; }
+.ds-botoes figure { display: grid; gap: 0.6rem; justify-items: start; min-width: 0; }
+.ds-tokens { margin-top: 1.5rem; width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.ds-tokens th { text-align: left; font: 700 0.7rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-2); padding-bottom: 0.6rem; }
+.ds-tokens td { padding: 0.55rem 0.75rem 0.55rem 0; border-top: 1px solid var(--linha); vertical-align: top; overflow-wrap: anywhere; }
+.ds-tokens code, .ds-uso code { font-size: 0.8rem; color: var(--texto); }
+.ds-tokens td:last-child { color: var(--texto-2); }
+.ds-uso { margin-top: 1rem; padding: 1rem; border-radius: 14px; background: var(--chao-2); border: 1px solid var(--linha); overflow-x: auto; font-size: 0.8rem; line-height: 1.7; }
+.ds-baixar { font-size: 0.8rem; color: var(--laranja); }
 
 /* Cards */
 .ds-cards { display: grid; gap: 12px; }
@@ -143,7 +131,7 @@ h1, h2, h3, h4, b, .carta__de, .t-legenda, nav { font-family: var(--display); }
   .ds-proposito { grid-template-columns: 1fr 1fr; gap: 3rem; }
   .ds-cores { grid-template-columns: repeat(2, 1fr); }
   .ds-gradientes { grid-template-columns: repeat(3, 1fr); }
-  .ds-botoes { grid-template-columns: repeat(3, 1fr); }
+  .ds-bt-par { grid-template-columns: 1fr 1fr; align-items: start; }
   .ds-cards { grid-template-columns: repeat(4, 1fr); }
   .c-destaque, .c-evento { grid-column: span 2; }
   .c-servico { grid-column: span 2; }
@@ -314,3 +302,7 @@ button { font-family: inherit; }
 
 /* Montserrat só nas páginas novas, sem mudar a home */
 :root { --corpo: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif; }
+
+/* Assets do logo (ícone preto em fundo claro) */
+.ds-logo-box--branco { background: #fff; border-color: #e4d9dd; }
+@media (min-width: 768px) { .ds-logo-largo { grid-column: 1 / -1; } }

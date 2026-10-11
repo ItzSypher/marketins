@@ -1,5 +1,5 @@
 import '@fontsource-variable/montserrat';
-import { StrictMode, useEffect, useLayoutEffect, useRef } from 'react';
+import { StrictMode, useEffect, useLayoutEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -15,6 +15,7 @@ import { Conecta } from './Conecta';
 import { Espiral } from './Espiral';
 import { Presenca } from './Presenca';
 import { Checklist } from './Checklist';
+import { Botao } from '../ds/Botao';
 import { clientes, grandes, segmentos } from './dados';
 import '../styles.css';
 import '../sections/abertura-home.css';
@@ -27,9 +28,7 @@ const ORIGEM = 'página teste';
 
 function Seta({ href, children, escuro }: { href: string; children: string; escuro?: boolean }) {
   return (
-    <a className={`b-seta${escuro ? ' b-seta--escuro' : ''}`} href={href} target="_blank" rel="noopener">
-      <span>{children}</span><i aria-hidden="true">↗</i>
-    </a>
+    <Botao variante="seta" href={href} escuro={escuro}>{children}</Botao>
   );
 }
 
@@ -79,30 +78,12 @@ function Faixa() {
 }
 
 function Fecho() {
-  const ima = useRef<HTMLAnchorElement>(null);
-  // botão magnético: só com mouse
-  useEffect(() => {
-    const el = ima.current;
-    if (!el || !matchMedia('(pointer: fine)').matches) return;
-    const x = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3' });
-    const y = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3' });
-    const mover = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      x((e.clientX - r.left - r.width / 2) * 0.35); y((e.clientY - r.top - r.height / 2) * 0.35);
-    };
-    const sair = () => { x(0); y(0); };
-    el.addEventListener('pointermove', mover); el.addEventListener('pointerleave', sair);
-    return () => { el.removeEventListener('pointermove', mover); el.removeEventListener('pointerleave', sair); };
-  }, []);
   return (
     <section className="t-sec">
       <div className="cartao" data-revela>
         <h2 className="t-titulo">Bora conversar sobre o seu negócio?</h2>
         <p className="t-texto">Consultoria sem compromisso, em Nova Iguaçu, em São João de Meriti ou pelo WhatsApp.</p>
-        <a ref={ima} className="b-transicao" href={linkContato(`${ORIGEM} · fim`)} target="_blank" rel="noopener">
-          <span className="b-transicao__a">Agendar reunião</span>
-          <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
-        </a>
+        <Botao href={linkContato(`${ORIGEM} · fim`)}>Agendar reunião</Botao>
         <a className="cartao__ig" href={INSTAGRAM} target="_blank" rel="noopener">@marketins.mkt</a>
       </div>
     </section>

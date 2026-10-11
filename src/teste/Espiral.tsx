@@ -1,54 +1,67 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { trabalhos } from './dados';
+import { Lightbox } from '../ds/Lightbox';
 
 /*
-  Imagens em cascata: as artes giram numa espiral 3D presa ao scroll.
-  Adaptado do bloco "Imagens em cascata" (geometria de referência: igorfrosa.com/mediakit).
-  Cada arte vira N fatias verticais, cada uma girada no próprio ângulo da hélice,
-  o que curva a imagem em volta do cilindro. As imagens entram em "cover" via CSS
-  (--r = largura/altura da arte), então qualquer proporção serve.
+  Imagens em cascata: as artes entram numa fileira reta e, com o scroll, a fileira
+  se enrola numa hélice 3D que desce.
+  Geometria (adaptada do bloco "Imagens em cascata", ref.: igorfrosa.com/mediakit):
+  cada arte vira N fatias verticais. Cada fatia fica num ponto de arco s da fita;
+  a curvatura vai de 0 (fileira plana de frente para a câmera) até 1/raio (hélice).
+  Com curvatura k/raio a fita é um arco de raio raio/k cuja frente não sai do lugar,
+  e a subida por volta é sempre a mesma: as voltas nunca se atravessam no caminho.
+  Inclinação do eixo e da hélice também crescem com k: no começo tudo é reto.
+  As imagens entram em "cover" via CSS (--r = largura/altura da arte).
   Sem altura útil ou com movimento reduzido, vira uma grade estática.
+  Tocar numa carta abre a arte no Lightbox: as fatias de frente recebem o clique
+  (o navegador faz o hit-test 3D); fatias de costas ficam sem pointer-events.
 */
 
 const REPETICOES = 3;
-const DISTANCIA = 1.35; // percurso em alturas úteis de tela
+const DISTANCIA = 1.9; // percurso em alturas úteis de tela
 const SUAVIDADE = 0.13; // suaviza só a espiral; a fixação é imediata
 
 // A carta tem a proporção do post (960×1200, 4:5): a arte aparece inteira.
 // Igual a --largura em espiral.css.
 const PROPORCAO = 4 / 5;
-const VAO = 0.09; // folga entre cartas vizinhas, em alturas de carta
+const VAO = 0.07; // folga entre cartas vizinhas, em alturas de carta
+// enrolar: começa reta, termina de curvar em CURVA_FIM do percurso
+const CURVA_INICIO = 0.06;
+const CURVA_FIM = 0.55;
+const INICIO = 0; // deslocamento da fita (em cartas) no começo e no fim do percurso
+const FIM = 8;
+const PARALLAX = 0.08;
+const SOMBRA = 0.55; // escurecimento máximo, nas cartas de costas
 // desktop: cilindro largo, ~9 cartas por volta
-const VOLTAS = 3.3;
-const PASSO_BASE = 5.6; // altura da hélice em alturas de carta (1,7 por volta: voltas não se tocam)
-const ALT_VH = 0.3;
-const ALT_VW = 0.26;
+const CARTAS_VOLTA = 9;
+const SUBIDA_VOLTA = 1.24; // altura de cada volta em alturas de carta (vão de 0,24 entre voltas)
+const ALT_VH = 0.29;
+const ALT_VW = 0.22;
 const ALT_MAX = 300;
 const ALT_MIN = 64;
-const PERSP_DESKTOP = 2.5;
-const INCLINA_X = 13;
-const INCLINA_Z = -3.4;
-const PARALLAX = 0.13;
-const INICIO = -7;
-const FIM = 7;
+const PERSP_DESKTOP = 2.6;
+const INCLINA_X = 7;
 const FATIAS_DESKTOP = 9;
-const SOMBRA = 0.6; // escurecimento máximo, nas cartas de costas
-const SOMBRA_MOBILE = 0.78;
-// mobile: coluna da largura da tela, 5 cartas por volta, uma carta grande de frente por vez
-const FATIAS_MOBILE = 7;
+const TOPO_DESKTOP = 0.62; // centro da fileira, em fração da altura
+// mobile: uma carta grande no centro, vizinhas aparecendo nas bordas
 const BREAKPOINT = 620;
-const VOLTAS_MOBILE = 6;
-const PASSO_MOBILE = 9.9;
+const FATIAS_MOBILE = 7;
+const CARTAS_VOLTA_MOBILE = 7;
+const SUBIDA_VOLTA_MOBILE = 1.18;
 const ALT_MOBILE_VW = 0.6;
 const ALT_MOBILE_VH = 0.3;
 const ALT_MOBILE_MAX = 300;
 const PERSP_MOBILE = 3.4;
-const INCLINA_X_MOBILE = 11;
-const INCLINA_Z_MOBILE = -2;
+const INCLINA_X_MOBILE = 5;
+const TOPO_MOBILE = 0.6;
+
+const suave = (x: number) => x * x * (3 - 2 * x);
 
 export function Espiral() {
   const raiz = useRef<HTMLElement>(null);
+  const [aberta, setAberta] = useState<number | null>(null);
+  const fecharLightbox = useCallback(() => setAberta(null), []);
 
   useEffect(() => {
     const root = raiz.current!;
@@ -60,32 +73,38 @@ export function Espiral() {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const touch = matchMedia('(pointer: coarse)');
     const limitar = (n: number) => Math.max(0, Math.min(1, n));
+    const GRAU = 180 / Math.PI;
 
     const cartas: HTMLLIElement[] = [];
     const fotos: typeof trabalhos = [];
-    for (let r = 0; r < REPETICOES; r++) trabalhos.forEach((t) => {
+    for (let r = 0; r < REPETICOES; r++) trabalhos.forEach((t, i) => {
       const li = document.createElement('li');
       li.className = 'esp-carta';
+      li.dataset.i = String(i);
       li.style.setProperty('--r', (t.w / t.h).toFixed(4));
       if (t.foco) li.style.setProperty('--foco', t.foco);
       lista.append(li);
       cartas.push(li);
       fotos.push(t);
     });
+    // a primeira arte começa no centro da fileira; sobra fita à esquerda para descer
+    const centro = trabalhos.length * (REPETICOES - 1);
 
     let fatias = 0;
     let tiras: HTMLElement[][] = [];
     let cacheTransform: string[][] = [];
     let cacheAng: number[][] = [];
+    let cacheCostas: boolean[][] = [];
 
-    function aplicar(ci: number, ti: number, transform: string, ang: number) {
+    function aplicar(ci: number, ti: number, transform: string, ang: number, costas: boolean) {
       const el = tiras[ci][ti];
       if (cacheTransform[ci][ti] !== transform) { el.style.transform = transform; cacheTransform[ci][ti] = transform; }
       const a = Math.round(ang);
       if (cacheAng[ci][ti] !== a) {
-        el.style.setProperty('--sombra', ((1 - Math.cos(a * Math.PI / 180)) / 2 * sombra).toFixed(3));
+        el.style.setProperty('--sombra', ((1 - Math.cos(a / GRAU)) / 2 * SOMBRA).toFixed(3));
         cacheAng[ci][ti] = a;
       }
+      if (cacheCostas[ci][ti] !== costas) { el.classList.toggle('esp-costas', costas); cacheCostas[ci][ti] = costas; }
     }
 
     function montarFatias(n: number) {
@@ -108,11 +127,11 @@ export function Espiral() {
       });
       cacheTransform = cartas.map(() => new Array(n).fill(''));
       cacheAng = cartas.map(() => new Array(n).fill(NaN));
+      cacheCostas = cartas.map(() => new Array(n).fill(false));
     }
 
-    let raio = 0, perspectiva = 0, passo = 0, comprimento = 0, alturaHelice = 0;
-    let passoVoltas = PASSO_BASE, voltas = VOLTAS, inclinaX = INCLINA_X, sombra = SOMBRA;
-    let alturaCena = 0, topoEixo = 0, atual = INICIO;
+    let raio = 0, perspectiva = 0, passo = 0, alt = 0, subidaVolta = SUBIDA_VOLTA, inclinaX = INCLINA_X;
+    let alturaCena = 0, larguraCena = 0, topoEixo = 0, atual = 0;
 
     function medirGeometria() {
       const mobile = cena.clientWidth < BREAKPOINT;
@@ -120,24 +139,20 @@ export function Espiral() {
       const n = mobile ? FATIAS_MOBILE : FATIAS_DESKTOP;
       if (n !== fatias) montarFatias(n);
       alturaCena = cena.clientHeight;
+      larguraCena = cena.clientWidth;
+      eixo.style.top = ((mobile ? TOPO_MOBILE : TOPO_DESKTOP) * 100).toFixed(1) + '%';
       topoEixo = eixo.offsetTop;
-      const alt = mobile
-        ? Math.min(Math.max(Math.min(cena.clientWidth * ALT_MOBILE_VW, cena.clientHeight * ALT_MOBILE_VH), ALT_MIN), ALT_MOBILE_MAX)
-        : Math.min(Math.max(Math.min(cena.clientHeight * ALT_VH, cena.clientWidth * ALT_VW), ALT_MIN), ALT_MAX);
-      passoVoltas = mobile ? PASSO_MOBILE : PASSO_BASE;
-      voltas = mobile ? VOLTAS_MOBILE : VOLTAS;
+      alt = mobile
+        ? Math.min(Math.max(Math.min(larguraCena * ALT_MOBILE_VW, alturaCena * ALT_MOBILE_VH), ALT_MIN), ALT_MOBILE_MAX)
+        : Math.min(Math.max(Math.min(alturaCena * ALT_VH, larguraCena * ALT_VW), ALT_MIN), ALT_MAX);
+      subidaVolta = (mobile ? SUBIDA_VOLTA_MOBILE : SUBIDA_VOLTA) * alt;
       inclinaX = mobile ? INCLINA_X_MOBILE : INCLINA_X;
-      const novaSombra = mobile ? SOMBRA_MOBILE : SOMBRA;
-      if (novaSombra !== sombra) { sombra = novaSombra; cacheAng = cartas.map(() => new Array(fatias).fill(NaN)); }
       passo = (PROPORCAO + VAO) * alt;
-      comprimento = passo * cartas.length;
       // o raio sai do espaçamento: cada carta ocupa exatamente o seu arco + VAO
-      raio = comprimento / (2 * Math.PI * voltas);
-      alturaHelice = passoVoltas * alt;
+      raio = (mobile ? CARTAS_VOLTA_MOBILE : CARTAS_VOLTA) * passo / (2 * Math.PI);
       cena.style.setProperty('--card-altura', alt.toFixed(0) + 'px');
       perspectiva = raio * (mobile ? PERSP_MOBILE : PERSP_DESKTOP);
       cena.style.setProperty('--perspectiva', perspectiva.toFixed(0) + 'px');
-      eixo.style.transform = `rotateX(${inclinaX}deg) rotateZ(${mobile ? INCLINA_Z_MOBILE : INCLINA_Z}deg)`;
     }
 
     function esconder(carta: HTMLElement) {
@@ -145,48 +160,52 @@ export function Espiral() {
     }
 
     function desenhar() {
-      const desloc = (0.5 - (atual - INICIO) / (FIM - INICIO)) * PARALLAX * alturaCena;
+      const p = atual;
+      // k: 0 = fileira reta, 1 = hélice
+      const k = suave(limitar((p - CURVA_INICIO) / (CURVA_FIM - CURVA_INICIO)));
+      const desloc = -p * PARALLAX * alturaCena;
       cena.style.transform = `translateY(${desloc.toFixed(1)}px)`;
-      const metade = comprimento / 2;
-      const altCarta = alturaHelice / passoVoltas;
-      const largCarta = altCarta * PROPORCAO;
+      const ax = inclinaX * k;
+      eixo.style.transform = `rotateX(${ax.toFixed(2)}deg)`;
+      const senX = Math.sin(ax / GRAU), cosX = Math.cos(ax / GRAU);
+      const curv = k / raio; // curvatura da fita
+      const R = curv > 1e-6 ? 1 / curv : 0;
+      const sobe = k * subidaVolta / (2 * Math.PI * raio); // subida por px de arco
+      const skew = (Math.atan(sobe) * GRAU).toFixed(2);
+      const largCarta = alt * PROPORCAO;
       const largFatia = largCarta / fatias;
-      const subidaPorRad = alturaHelice / (2 * Math.PI * voltas);
-      const inclinacao = Math.atan(subidaPorRad / raio) * 180 / Math.PI;
-      const senX = Math.sin(inclinaX * Math.PI / 180);
-      const cosX = Math.cos(inclinaX * Math.PI / 180);
+      const fita = INICIO + p * (FIM - INICIO);
       const meio = alturaCena / 2;
+      const P = perspectiva;
+
+      const ponto = (s: number) => {
+        if (!R) return { x: s, z: raio, a: 0 };
+        const a = s * curv;
+        return { x: R * Math.sin(a), z: raio - R * (1 - Math.cos(a)), a };
+      };
 
       cartas.forEach((carta, ci) => {
-        const ordem = cartas.length - 1 - ci;
-        const t = (ordem * passo + largCarta / 2 + atual * passo) / comprimento;
-        if (t < 0 || t > 1) return esconder(carta);
-        const angulo = (t - 0.5) * 360 * voltas;
-        const r = raio * (1 - (t - 0.5) * 0.1);
-        const y = (t - 0.5) * alturaHelice;
-        const meiaAbertura = largCarta / 2 / r * 180 / Math.PI;
-        const angNorm = ((angulo % 360) + 540) % 360 - 180;
-        const angBorda = Math.max(0, Math.abs(angNorm) - meiaAbertura);
-        const zMax = r * Math.cos(angBorda * Math.PI / 180);
-        const meiaAlt = altCarta / 2 + Math.abs(Math.tan(inclinacao * Math.PI / 180)) * largFatia / 2;
-        const zProj = Math.max(zMax + (y - meiaAlt) * senX, zMax + (y + meiaAlt) * senX);
-        const escalaBorda = perspectiva / (perspectiva - zProj);
-        // descarta cartas que encostariam na câmera ou sairiam muito da tela
-        if (zProj > perspectiva * 0.82 || Math.abs(y * escalaBorda) > alturaCena * 1.4) return esconder(carta);
-        const zCentro = r * Math.cos(angulo * Math.PI / 180);
-        const yTela = y * cosX - zCentro * senX;
-        const zTela = y * senX + zCentro * cosX;
-        const escalaCentro = perspectiva / (perspectiva - zTela);
-        const yJanela = desloc + meio + (topoEixo + yTela - meio) * escalaCentro;
-        const margem = (meiaAlt + subidaPorRad * largCarta / 2 / r + r * 0.06) * Math.max(escalaBorda, escalaCentro);
-        if (yJanela + margem < -alturaCena * 0.15 || yJanela - margem > alturaCena * 1.15) return esconder(carta);
+        const u = (ci - centro + fita) * passo;
+        const c = ponto(u);
+        const y = u * sobe;
+        const yT = y * cosX - c.z * senX;
+        const zT = y * senX + c.z * cosX;
+        // descarta cartas que encostariam na câmera
+        if (zT > P * 0.8) return esconder(carta);
+        const esc = P / (P - zT);
+        const margem = alt * 0.8 * esc;
+        const xJ = c.x * esc;
+        const yJ = desloc + meio + (topoEixo + yT - meio) * esc;
+        if (Math.abs(xJ) - margem > larguraCena / 2 || yJ + margem < -alturaCena * 0.1 || yJ - margem > alturaCena * 1.1) return esconder(carta);
         if (carta.style.visibility === 'hidden') carta.style.visibility = '';
         for (let i = 0; i < fatias; i++) {
-          const rad = (i - (fatias - 1) / 2) * largFatia / r;
-          const angFatia = angulo + rad * 180 / Math.PI;
+          const s = u + (i - (fatias - 1) / 2) * largFatia;
+          const f = ponto(s);
+          // de frente para a câmera? (normal da fatia contra o vetor até a câmera)
+          const costas = Math.sin(f.a) * -f.x + Math.cos(f.a) * (P - f.z) <= 0;
           aplicar(ci, i,
-            `translateY(${(y + subidaPorRad * rad).toFixed(1)}px) rotateY(${angFatia.toFixed(2)}deg) translateZ(${r.toFixed(1)}px) skewY(${inclinacao.toFixed(2)}deg)`,
-            angFatia);
+            `translate3d(${f.x.toFixed(1)}px,${(s * sobe).toFixed(1)}px,${f.z.toFixed(1)}px) rotateY(${(f.a * GRAU).toFixed(2)}deg) skewY(${skew}deg)`,
+            f.a * GRAU, costas);
         }
       });
     }
@@ -212,11 +231,11 @@ export function Espiral() {
       quadro = 0;
       posicionar();
       if (!ativa) return;
-      const alvo = INICIO + progresso() * (FIM - INICIO);
+      const alvo = progresso();
       const dt = ultimo ? Math.min(0.1, (agora - ultimo) / 1000) : 1 / 60;
       ultimo = agora;
       atual += (alvo - atual) * (1 - Math.exp(-dt / SUAVIDADE));
-      if (Math.abs(alvo - atual) < 0.0005) atual = alvo;
+      if (Math.abs(alvo - atual) < 0.00005) atual = alvo;
       desenhar();
       if (atual !== alvo && !document.hidden) quadro = requestAnimationFrame(animar); else ultimo = 0;
     }
@@ -244,7 +263,7 @@ export function Espiral() {
         ScrollTrigger.refresh();
       }
       posicionar();
-      if (ativa) { medirGeometria(); atual = INICIO + progresso() * (FIM - INICIO); desenhar(); }
+      if (ativa) { medirGeometria(); atual = progresso(); desenhar(); }
       else { cancelAnimationFrame(quadro); quadro = 0; }
       agendar();
     }
@@ -256,7 +275,13 @@ export function Espiral() {
     const visibilidade = () => {
       if (document.hidden) { cancelAnimationFrame(quadro); quadro = 0; ultimo = 0; } else agendar();
     };
+    // toque/clique numa carta: o hit-test 3D do navegador acha a fatia da frente
+    const clicar = (e: MouseEvent) => {
+      const carta = (e.target as HTMLElement).closest<HTMLElement>('.esp-carta');
+      if (carta?.dataset.i) setAberta(Number(carta.dataset.i));
+    };
 
+    lista.addEventListener('click', clicar);
     document.addEventListener('scroll', agendar, { passive: true, capture: true });
     addEventListener('resize', resize, { passive: true });
     document.addEventListener('visibilitychange', visibilidade);
@@ -274,6 +299,7 @@ export function Espiral() {
       cancelAnimationFrame(medicao);
       ro.disconnect();
       io.disconnect();
+      lista.removeEventListener('click', clicar);
       document.removeEventListener('scroll', agendar, { capture: true });
       removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', visibilidade);
@@ -291,15 +317,20 @@ export function Espiral() {
           <div className="esp-cena" aria-hidden="true"><div className="esp-eixo"><ul className="esp-cartas" /></div></div>
           <div className="esp-copy">
             <p className="t-num">Feito na Marketins</p>
-            <h2>Ideias que ganham vida.</h2>
+            <h2>O que sai da nossa mesa.</h2>
           </div>
           <ul className="esp-grade">
-            {trabalhos.map((t) => (
-              <li key={t.src}><img src={t.src} alt={t.alt} width={t.w} height={t.h} loading="lazy" decoding="async" /></li>
+            {trabalhos.map((t, i) => (
+              <li key={t.src}>
+                <button type="button" onClick={() => setAberta(i)} aria-label={`Ampliar: ${t.alt}`}>
+                  <img src={t.src} alt="" width={t.w} height={t.h} loading="lazy" decoding="async" />
+                </button>
+              </li>
             ))}
           </ul>
         </div>
       </div>
+      <Lightbox itens={trabalhos} indice={aberta} onFechar={fecharLightbox} onMudar={setAberta} rotulo="Trabalhos da Marketins" />
     </section>
   );
 }

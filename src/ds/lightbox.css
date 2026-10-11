@@ -1,0 +1,53 @@
+/* Microlightbox (src/ds/Lightbox.tsx) */
+.lb {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgb(11 7 9 / 0.86);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  touch-action: none; overscroll-behavior: contain;
+  animation: lb-entra 0.2s ease-out;
+}
+.lb-palco {
+  position: absolute; inset: 64px 16px 84px;
+  display: flex; align-items: center; justify-content: center;
+}
+.lb-img {
+  display: block; flex: 0 1 auto; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; width: auto; height: auto;
+  border-radius: 12px; background: var(--chao-2);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.55);
+  user-select: none; -webkit-user-select: none; -webkit-user-drag: none;
+  animation: lb-imagem 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lb-img[data-dir='1'] { --lb-de: 18px; }
+.lb-img[data-dir='-1'] { --lb-de: -18px; }
+
+.lb-conta {
+  position: absolute; left: 50%; bottom: 28px; translate: -50% 0; margin: 0;
+  font: 600 0.78rem/1 var(--corpo); letter-spacing: 0.08em; color: var(--texto-2);
+  font-variant-numeric: tabular-nums;
+}
+.lb-botao {
+  position: absolute; display: grid; place-items: center;
+  width: 48px; height: 48px; padding: 0; border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.18); background: rgb(22 16 19 / 0.78); color: var(--texto);
+  cursor: pointer; transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.lb-botao svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lb-botao:hover { background: var(--magenta); border-color: var(--magenta); }
+.lb-botao:active { transform: scale(0.94); }
+.lb-fechar { top: 10px; right: 12px; }
+/* celular: setas embaixo, ao alcance do polegar */
+.lb-ant { left: 16px; bottom: 14px; }
+.lb-prox { right: 16px; bottom: 14px; }
+
+@media (min-width: 760px) {
+  .lb-palco { inset: 72px 96px 72px; }
+  .lb-fechar { top: 16px; right: 20px; }
+  .lb-ant, .lb-prox { top: 50%; bottom: auto; translate: 0 -50%; }
+  .lb-ant { left: 24px; }
+  .lb-prox { right: 24px; }
+  .lb-conta { bottom: 30px; }
+}
+
+@keyframes lb-entra { from { opacity: 0; } }
+@keyframes lb-imagem { from { opacity: 0; transform: translateX(var(--lb-de, 0)) scale(0.97); } }
+@media (prefers-reduced-motion: reduce) { .lb, .lb-img { animation: none; } }

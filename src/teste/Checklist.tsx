@@ -2,6 +2,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { linkContato } from '../content';
+import { Botao } from '../ds/Botao';
 import './checklist.css';
 
 /* Copy provisória: voz do dono, sem promessa de número ou resultado. `resumo` vai na mensagem do WhatsApp. */
@@ -152,10 +153,7 @@ export function Checklist() {
         </fieldset>
 
         <div className="ck__fim">
-          <a className="b-transicao" href={href} target="_blank" rel="noopener">
-            <span className="b-transicao__a">{n ? 'Mandar meu checklist' : 'Conversar no WhatsApp'}</span>
-            <span className="b-transicao__b">Vamos decolar <img src="/icone.svg" alt="" /></span>
-          </a>
+          <Botao href={href}>{n ? 'Mandar meu checklist' : 'Conversar no WhatsApp'}</Botao>
           <p className="ck__nota">
             {n ? 'O que você marcou já vai escrito na mensagem.' : 'Nada marcado também vale: a conversa é sem compromisso.'}
           </p>

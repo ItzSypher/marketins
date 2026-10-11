@@ -8,7 +8,9 @@ main > section.esp { padding: 0 !important; }
 
 /* grade estática: movimento reduzido ou tela baixa demais */
 .esp-grade { list-style: none; padding: 0; margin: 0 auto; max-width: 1120px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.esp-grade img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; }
+.esp-grade button { display: block; width: 100%; padding: 0; border: 0; border-radius: 12px; background: var(--chao-2); cursor: zoom-in; overflow: hidden; }
+.esp-grade img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 0.4s ease; }
+@media (hover: hover) { .esp-grade button:hover img { transform: scale(1.03); } }
 @media (min-width: 760px) { .esp-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
 
 .esp-cena { display: none; }
@@ -16,11 +18,13 @@ main > section.esp { padding: 0 !important; }
 .esp-ativa.esp-js .esp-palco { position: relative; top: 0; }
 .esp-ativa .esp-clip { height: 100%; overflow: clip; }
 .esp-ativa .esp-grade { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+/* teclado: a lista escondida vira uma faixa de miniaturas quando recebe foco */
+.esp-ativa .esp-grade:focus-within { z-index: 3; left: 16px; right: 16px; bottom: 16px; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; display: flex; justify-content: center; gap: 8px; padding: 8px; border-radius: 16px; background: rgb(11 7 9 / 0.9); }
+.esp-ativa .esp-grade:focus-within li { flex: 0 1 56px; }
 .esp-ativa .esp-copy { position: absolute; left: 50%; top: clamp(32px, 9%, 96px); width: calc(100% - 32px); transform: translateX(-50%); margin: 0; }
 .esp-ativa .esp-cena { display: block; position: absolute; inset: 0; perspective: var(--perspectiva, 1300px); perspective-origin: 50% 50%; pointer-events: none; --fatias: 12; }
 
-.esp-eixo { position: absolute; left: 50%; top: 64%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
-.esp-mobile .esp-eixo { top: 58%; }
+.esp-eixo { position: absolute; left: 50%; top: 60%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
 .esp-cartas { position: absolute; list-style: none; margin: 0; padding: 0; transform-style: preserve-3d; }
 .esp-carta {
   --altura: var(--card-altura, 300px);
@@ -39,7 +43,10 @@ main > section.esp { padding: 0 !important; }
   background-size: var(--bw) var(--bh);
   background-position: calc((var(--largura) - var(--bw)) / 2 - var(--indice, 0) * var(--fatia)) var(--foco, center);
   backface-visibility: visible;
+  pointer-events: auto; cursor: zoom-in;
 }
+/* fatias de costas não recebem o clique: ele passa para a carta da frente */
+.esp-tira.esp-costas { pointer-events: none; }
 .esp-tira[data-ponta='esquerda'] { border-top-left-radius: calc(var(--largura) * 0.04); border-bottom-left-radius: calc(var(--largura) * 0.04); }
 .esp-tira[data-ponta='direita'] { width: var(--fatia); border-top-right-radius: calc(var(--largura) * 0.04); border-bottom-right-radius: calc(var(--largura) * 0.04); }
 .esp-tira::after { content: ''; position: absolute; inset: 0; background: var(--chao); opacity: var(--sombra, 0); pointer-events: none; }

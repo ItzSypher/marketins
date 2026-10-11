@@ -1,12 +1,5 @@
-/* Abertura V2 na home: botão Transição, toque na tela, música e 3D (copiados do design system) */
-.b-transicao { font: 700 0.74rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
-.b-transicao { position: relative; display: grid; min-width: 200px; height: 52px; border-radius: 999px; overflow: hidden; border: 1.5px solid transparent; background-image: linear-gradient(90deg, #4a4a4a, #1e1e1e), var(--borda-figma); background-origin: border-box; background-clip: padding-box, border-box; }
-.b-transicao > span { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0 1.8rem; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.6s; }
-.b-transicao__a { color: #fff; }
-.b-transicao__b { background: #fff; color: var(--chao); transform: translateY(100%); }
-.b-transicao__b img { width: 22px; }
-.b-transicao:hover .b-transicao__a, .b-transicao:focus-visible .b-transicao__a { transform: translateY(-100%); opacity: 0; }
-.b-transicao:hover .b-transicao__b, .b-transicao:focus-visible .b-transicao__b { transform: translateY(0); }
+/* Abertura V2 na home: toque na tela, música e 3D (copiados do design system) */
+/* Botões (.b-transicao, .b-seta): src/ds/botao.css, importado por home-blocos.css */
 .toque { position: fixed; inset: 0; z-index: 60; display: grid; place-content: center; justify-items: center; gap: 1.25rem; border: 0; background: rgb(11 7 9 / 0.94); color: var(--texto); cursor: pointer; font: 600 0.8rem/1 var(--display); letter-spacing: 0.3em; text-transform: uppercase; }
 .toque { transition: opacity 0.6s 0.15s; }
 .toque.is-saindo { opacity: 0; pointer-events: none; }

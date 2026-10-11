@@ -1,0 +1,133 @@
+/* Time: 3 variações (?time=1|2|3). Mobile first; nada de pin. */
+.tm { --tm-ease: cubic-bezier(0.65, 0, 0.25, 1); }
+.tm h3 { margin: 0; }
+.tm__topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0 1.5rem; margin-bottom: 2rem; }
+.tm__cabeca { margin-bottom: 0; }
+
+/* seletor discreto de versões */
+.tm-var { display: inline-flex; align-items: center; gap: 0; margin-top: 1rem; color: var(--texto-2); font: 700 0.62rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; }
+.tm-var span { margin-right: 0.2rem; }
+.tm-var button { position: relative; min-width: 34px; min-height: 44px; padding: 0 0.3rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.tm-var button + button::before { content: '·'; position: absolute; left: -2px; color: var(--linha); }
+.tm-var button[aria-pressed='true'] { color: var(--laranja); }
+.tm-var button:hover { color: var(--texto); }
+.tm-var button:focus-visible { outline: 2px solid var(--laranja); outline-offset: -6px; border-radius: 8px; }
+
+.tm button { -webkit-tap-highlight-color: transparent; }
+
+/* ───────────── 1. seletor do Figma ───────────── */
+.tm1 { display: grid; gap: 8px; }
+.tm1__item { position: relative; height: 64px; overflow: hidden; border-radius: 16px; background: var(--chao-2); transition: height 0.6s var(--tm-ease); isolation: isolate; }
+.tm1__item.is-on { height: min(122vw, 480px); }
+.tm1__bt { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; border-radius: inherit; background: none; color: var(--texto); text-align: left; cursor: pointer; }
+.tm1__bt:focus-visible { outline: 2px solid var(--laranja); outline-offset: -3px; }
+.tm1__foto { position: absolute; top: 0; left: 38%; width: 62%; height: 100%; object-fit: cover; object-position: 50% 21%; transform: scale(1.1); transform-origin: 50% 30%; transition: left 0.6s var(--tm-ease), width 0.6s var(--tm-ease), object-position 0.6s var(--tm-ease); }
+.tm1__item.is-on .tm1__foto { left: 0; width: 100%; object-position: 50% 0%; }
+/* fundo da faixa fechada: a foto some para a esquerda, onde fica o nome */
+.tm1__bt::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, var(--chao-2) 38%, rgb(22 16 19 / 0.55) 62%, rgb(22 16 19 / 0.1)); transition: opacity 0.5s; }
+.tm1__item.is-on .tm1__bt::before { opacity: 0; }
+.tm1__item::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to top, rgb(11 7 9 / 0.96) 4%, rgb(11 7 9 / 0.6) 30%, transparent 55%); opacity: 0; transition: opacity 0.5s; }
+.tm1__item.is-on::after { opacity: 1; }
+.tm1__rot { position: absolute; z-index: 2; left: 20px; top: 50%; transform: translateY(-50%); font: 800 0.95rem/1 var(--display); letter-spacing: 0.02em; text-transform: uppercase; transition: opacity 0.3s; }
+.tm1__item.is-on .tm1__rot { opacity: 0; }
+.tm1__info { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; display: grid; gap: 0.5rem; justify-items: center; padding: 1.5rem 1.25rem; text-align: center; pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity 0.3s, transform 0.3s, visibility 0s 0.3s; }
+.tm1__item.is-on .tm1__info { opacity: 1; visibility: visible; transform: none; transition: opacity 0.5s 0.25s, transform 0.5s 0.25s var(--tm-ease), visibility 0s; }
+.tm1__info h3 { font: 800 1.6rem/1 var(--display); text-transform: uppercase; }
+.tm1__info p { max-width: 30ch; color: var(--texto); font-size: 0.95rem; line-height: 1.4; }
+
+@media (min-width: 900px) {
+  .tm1 { --fx: clamp(84px, 10.5vw, 140px); display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); height: 500px; }
+  .tm1__item, .tm1__item.is-on { height: 450px; flex: 0 0 var(--fx); border-radius: 20px; transition: flex-grow 0.7s var(--tm-ease), height 0.7s var(--tm-ease); }
+  .tm1__item.is-on { height: 500px; flex-grow: 1; }
+  .tm1__foto, .tm1__item.is-on .tm1__foto { left: 0; width: 100%; object-position: 50% 0%; transition: transform 0.7s var(--tm-ease); }
+  .tm1__item:not(.is-on):hover .tm1__foto { transform: scale(1.16); }
+  .tm1__bt::before { background: rgb(11 7 9 / 0.3); }
+  .tm1__item:not(.is-on):hover .tm1__bt::before { opacity: 0; }
+  .tm1__item::after { opacity: 1; background: linear-gradient(to top, rgb(11 7 9 / 0.95) 2%, rgb(11 7 9 / 0.5) 30%, transparent 60%); }
+  .tm1__rot { left: 50%; top: auto; bottom: 26px; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); font-size: clamp(1.05rem, 1.9vw, 1.55rem); white-space: nowrap; }
+  .tm1__info { padding: 2rem 1.75rem; }
+  .tm1__info h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+  .tm1__info p { font-size: 1.05rem; max-width: 30ch; }
+}
+
+/* ───────────── 2. cards sobrepostos ───────────── */
+.tm2__trilho { --w: min(58vw, 240px); display: flex; margin-inline: -16px; padding: 28px 16px 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
+.tm2__trilho::-webkit-scrollbar { display: none; }
+.tm2__card { position: relative; left: 0; flex: 0 0 var(--w); aspect-ratio: 5 / 6; margin: 0 0 0 -50px; padding: 0; overflow: hidden; border: 0; border-radius: 10px; background: #232323; box-shadow: -1rem 0 1rem rgb(8 8 8 / 0.4); color: var(--texto); text-align: left; cursor: pointer; scroll-snap-align: start; isolation: isolate; transition: transform 0.45s var(--tm-ease), left 0.45s var(--tm-ease); }
+.tm2__card:first-child { margin-left: 0; }
+.tm2__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; transform: scale(1.1); transform-origin: 50% 25%; pointer-events: none; }
+.tm2__card::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, rgb(11 7 9 / 0.75), transparent 34%); }
+.tm2__card::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: rgb(11 7 9 / 0.38); box-shadow: inset 0 -3px 0 transparent; transition: background-color 0.45s, box-shadow 0.45s; }
+.tm2__card.is-on { transform: translateY(-20px); }
+.tm2__card.is-on::after { background-color: transparent; box-shadow: inset 0 -4px 0 var(--laranja); }
+.tm2__card.is-on ~ .tm2__card { left: 50px; }
+.tm2__card:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+.tm2__tit { position: absolute; z-index: 2; top: 14px; left: 14px; display: grid; gap: 0.35rem; font: 800 0.82rem/1 var(--display); letter-spacing: 0.02em; text-transform: uppercase; }
+.tm2__tit small { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--laranja); }
+.tm2__fim { flex: 0 0 66px; }
+.tm2__painel { min-height: 8.5rem; margin-top: 1.25rem; }
+.tm2__txt { display: grid; gap: 0.6rem; animation: tm-sobe 0.5s var(--tm-ease) both; }
+.tm2__txt h3 { font: 800 clamp(1.6rem, 6vw, 2.6rem)/1 var(--display); text-transform: uppercase; }
+.tm2__bio { max-width: 40ch; color: var(--texto-2); font-size: 1rem; line-height: 1.45; }
+
+@media (min-width: 900px) {
+  .tm2__trilho { --w: min(230px, calc((min(100vw, 1240px) - 32px + 200px) / 6)); justify-content: center; margin-inline: 0; padding: 40px 0 16px; overflow: visible; }
+  .tm2__fim { flex-basis: 50px; }
+  .tm2__card { aspect-ratio: 4 / 5; }
+  .tm2__card:not(.is-on):hover::after { background-color: rgb(11 7 9 / 0.15); }
+  .tm2__tit { top: 18px; left: 18px; font-size: 0.95rem; }
+  .tm2__painel { margin-top: 2rem; text-align: center; }
+  .tm2__txt { justify-items: center; }
+}
+
+/* ───────────── 3. palco + miniaturas ───────────── */
+.tm3 { display: grid; grid-template-areas: 'palco' 'lista'; gap: 1rem; }
+.tm3__palco { grid-area: palco; position: relative; aspect-ratio: 900 / 1022; max-height: 72svh; width: 100%; overflow: hidden; border-radius: 22px; background: var(--chao-2); touch-action: pan-y; user-select: none; isolation: isolate; }
+.tm3__palco::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to top, rgb(11 7 9 / 0.97) 6%, rgb(11 7 9 / 0.55) 30%, transparent 52%); }
+.tm3__foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; opacity: 0; }
+.tm3__foto.is-sai { opacity: 1; z-index: 1; }
+.tm3__foto.is-on { opacity: 1; z-index: 2; }
+.tm3__foto.is-anima { animation: tm3-sobe 0.85s var(--tm-ease) both; }
+.tm3__palco[data-dir='-1'] .tm3__foto.is-anima { animation-name: tm3-desce; }
+@keyframes tm3-sobe { from { clip-path: inset(100% 0 0 0); transform: scale(1.12); } to { clip-path: inset(0); transform: none; } }
+@keyframes tm3-desce { from { clip-path: inset(0 0 100% 0); transform: scale(1.12); } to { clip-path: inset(0); transform: none; } }
+.tm3__setas { position: absolute; z-index: 4; top: 12px; right: 12px; display: flex; gap: 6px; }
+.tm3__setas button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 50%; background: rgb(11 7 9 / 0.55); color: var(--texto); font-size: 1.1rem; cursor: pointer; backdrop-filter: blur(6px); transition: background-color 0.3s, border-color 0.3s; }
+.tm3__setas button:hover { background: var(--magenta); border-color: var(--magenta); }
+.tm3__setas button:focus-visible { outline: 2px solid var(--laranja); outline-offset: 2px; }
+
+.tm3__info { grid-area: palco; z-index: 2; align-self: end; padding: 1.25rem 1.25rem 1.4rem; pointer-events: none; }
+.tm3__txt { display: grid; gap: 0.55rem; animation: tm-sobe 0.6s 0.15s var(--tm-ease) both; }
+.tm3__txt h3 { font: 800 clamp(1.7rem, 8vw, 2.4rem)/1 var(--display); text-transform: uppercase; }
+.tm3__bio { max-width: 34ch; color: var(--texto); font-size: 0.95rem; line-height: 1.4; }
+
+.tm3__lista { grid-area: lista; position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); padding-bottom: 10px; }
+.tm3__lista::after { content: ''; position: absolute; left: 0; bottom: 0; width: calc(100% / 6); height: 3px; border-radius: 3px; background: var(--gradiente); transform: translateX(calc(var(--i) * 100%)); transition: transform 0.6s var(--tm-ease); }
+.tm3__lista::before { content: ''; position: absolute; left: 0; right: 0; bottom: 1px; height: 1px; background: var(--linha); }
+.tm3__tab { display: grid; justify-items: center; gap: 0.45rem; min-height: 44px; padding: 4px 0 6px; border: 0; background: none; color: var(--texto-2); cursor: pointer; }
+.tm3__mini { display: block; width: 46px; aspect-ratio: 1; padding: 2px; border-radius: 50%; background: var(--linha); transition: background 0.4s, transform 0.4s var(--tm-ease); }
+.tm3__mini img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 14%; filter: grayscale(0.7) brightness(0.75); transition: filter 0.4s; }
+.tm3__nome { max-width: 100%; overflow: hidden; text-overflow: ellipsis; font: 600 0.66rem/1.1 var(--corpo); transition: color 0.3s; }
+.tm3__tab.is-on { color: var(--texto); }
+.tm3__tab.is-on .tm3__mini { background: var(--gradiente); transform: scale(1.08); }
+.tm3__tab.is-on .tm3__mini img, .tm3__tab:hover .tm3__mini img { filter: none; }
+.tm3__tab:focus-visible { outline: 2px solid var(--laranja); outline-offset: 2px; border-radius: 10px; }
+
+@media (min-width: 900px) {
+  .tm3 { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: 1fr auto auto 1fr; grid-template-areas: 'palco .' 'palco info' 'palco lista' 'palco .'; gap: 2.5rem clamp(2rem, 5vw, 5rem); align-items: end; }
+  .tm3__palco { max-height: 600px; max-width: 528px; }
+  .tm3__palco::after { opacity: 0.35; }
+  .tm3__info { grid-area: info; padding: 0; pointer-events: auto; }
+  .tm3__txt { gap: 1rem; }
+  .tm3__txt h3 { font-size: clamp(2.6rem, 5vw, 4.6rem); }
+  .tm3__bio { font-size: 1.15rem; color: var(--texto-2); max-width: 32ch; }
+  .tm3__mini { width: 68px; }
+  .tm3__nome { font-size: 0.82rem; }
+  .tm3__tab { padding-bottom: 12px; }
+}
+
+@keyframes tm-sobe { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .tm *, .tm *::before, .tm *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
