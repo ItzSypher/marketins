@@ -265,7 +265,7 @@ html { scrollbar-color: var(--laranja) var(--chao); scrollbar-width: thin; }
 ::-webkit-scrollbar-thumb { background: var(--laranja); border-radius: 8px; }
 
 /* Responsivo: botões não herdam fonte; telas pequenas e baixas */
-button { font-family: inherit; }
+button, input, select, textarea, code, pre, kbd { font-family: inherit; }
 .pessoa__texto { font-family: var(--corpo); }
 .ds-3d .logo3d--icone { width: min(100%, 300px); margin-inline: auto; }
 .carta__de { line-height: 1.4; }
@@ -300,8 +300,7 @@ button { font-family: inherit; }
 .som__balao { position: fixed; z-index: 50; right: 82px; bottom: 26px; padding: 0.6rem 0.9rem; border: 0; border-radius: 14px 14px 4px 14px; background: #fff; color: var(--chao); font: 700 0.68rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 10px 30px rgb(0 0 0 / 0.4); animation: balao 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes balao { from { opacity: 0; transform: translateX(10px) scale(0.9); } }
 
-/* Montserrat só nas páginas novas, sem mudar a home */
-:root { --corpo: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif; }
+/* Fonte do corpo: Jost (tokens.css) */
 
 /* Assets do logo (ícone preto em fundo claro) */
 .ds-logo-box--branco { background: #fff; border-color: #e4d9dd; }

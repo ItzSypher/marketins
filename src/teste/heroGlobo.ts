@@ -1,10 +1,7 @@
 /*
-  Cópia do motor de globo3d.ts para a hero (não editar o original), com opções a mais:
-  - vistas/etapa/ciclo: enquadramento próprio e etapa fixa (sem passar Baixada → Rio → Mundo);
-  - quadro(w, h): o globo é desenhado num quadrado virtual de lado S, posto em (x, y) dentro do host.
-    O canvas só cobre o host (setViewOffset), então um planeta enorme cortado pela borda custa pouco;
-  - origemSempre: o rótulo da Baixada também aparece na vista do mundo; pontos: densidade.
-  Uso: const c = criarGlobo(THREE, host, { reduzido, aoFalhar, ... }); c.destruir() limpa tudo.
+  Cópia do motor de globo3d.ts para a hero (não editar o original). Só a hero 1 usa este arquivo:
+  o globo fica no centro, gira pelas etapas Baixada → Rio → Mundo e volta a girar depois de arrastado.
+  Uso: const c = criarGlobo(THREE, host, { reduzido, aoFalhar }); c.destruir() limpa tudo.
 */
 import type * as T3 from 'three';
 import './globo3d.css';
@@ -41,19 +38,10 @@ const VISTAS = [
 const DURACAO = [3.8, 3.8, 6.5]; // segundos em cada etapa
 const Z_MUNDO = 4.4; // a partir daqui os nomes das cidades do mundo aparecem
 
-export type Vista = { lat: number; lon: number; z: number };
-export type Quadro = { S: number; x: number; y: number };
 export type Opcoes = {
   reduzido: boolean;
   aoFalhar: () => void;
   aoMudar?: (i: number) => void;
-  vistas?: Vista[];
-  etapa?: number;
-  /** false: fica na etapa inicial, balança de leve e volta ao lugar depois de arrastar */
-  ciclo?: boolean;
-  quadro?: (w: number, h: number) => Quadro;
-  origemSempre?: boolean;
-  pontos?: number;
 };
 type Tipo = 'bxd' | 'rio' | 'dest';
 type Rotulo = { el: HTMLDivElement; pos: T3.Vector3; tipo: Tipo; on: boolean; foco: boolean; w: number; h: number };
@@ -61,8 +49,6 @@ type Marcador = { anel: T3.Mesh; s: number; ph: number; tipo: Tipo };
 
 export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): Controle {
   const { reduzido } = opts;
-  const VIS = opts.vistas ?? VISTAS;
-  const ciclo = opts.ciclo !== false;
   const mobile = Math.min(innerWidth, innerHeight) < 700;
   const ll = (lat: number, lon: number, r: number) => {
     const a = lat * D2R, o = lon * D2R, c = Math.cos(a);
@@ -124,7 +110,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
     const i = y * W + x;
     return (mascara[i >> 3] >> (i & 7)) & 1;
   };
-  const N = opts.pontos ?? (mobile ? 12000 : 26000);
+  const N = mobile ? 12000 : 26000;
   const pos: number[] = [], rnd: number[] = [], ga = Math.PI * (3 - Math.sqrt(5));
   for (let i = 0; i < N; i++) {
     const y = 1 - (2 * (i + 0.5)) / N, r = Math.sqrt(1 - y * y), f = i * ga, x = Math.cos(f) * r, z = Math.sin(f) * r;
@@ -210,18 +196,18 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
   DESTINOS.forEach((d, i) => marcar(d.lat, d.lon, 'dest', d.nome, i + 2));
 
   /* estado da animação */
-  let etapa = opts.etapa ?? (reduzido ? 2 : 0);
+  let etapa = reduzido ? 2 : 0;
   const peso = [0, 0, 0];
   peso[etapa] = 1;
-  let rotY = -VIS[etapa].lon * D2R, rotAlvo: number | null = null, vel = 0;
-  let inc = VIS[etapa].lat * D2R, camZ = VIS[etapa].z;
+  let rotY = -VISTAS[etapa].lon * D2R, rotAlvo: number | null = null, vel = 0;
+  let inc = VISTAS[etapa].lat * D2R, camZ = VISTAS[etapa].z;
   let t = 0, desde = 0, pausaAte = 0, raf = 0, ultimo = 0, W = 300, H = 300;
   let visivel = false, arraste: { x: number; r: number; lx: number; id: number } | null = null;
 
   const definir = (i: number, instantaneo: boolean) => {
     etapa = i;
     desde = t;
-    const v = VIS[i];
+    const v = VISTAS[i];
     rotAlvo = -v.lon * D2R;
     if (instantaneo) {
       rotY = rotAlvo; rotAlvo = null; inc = v.lat * D2R; camZ = v.z;
@@ -254,7 +240,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
       if (x0 < 2 || y0 < 2 || x0 + w > W - 2 || y0 + h > H - 2) return false;
       return ocupados.every((q) => !(x0 < q[2] + 3 && x0 + w + 3 > q[0] && y0 < q[3] + 2 && y0 + h + 2 > q[1]));
     };
-    const mundo = ciclo ? camZ > Z_MUNDO : etapa === 2;
+    const mundo = camZ > Z_MUNDO;
     rotulos.forEach((l) => {
       v3.copy(l.pos).applyMatrix4(group.matrixWorld);
       const frente = normal.copy(v3).normalize().dot(dirCam);
@@ -262,7 +248,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
       if (!l.w) { l.w = l.el.offsetWidth || 80; l.h = l.el.offsetHeight || 20; }
       const x = (v3.x * 0.5 + 0.5) * W, y = (-v3.y * 0.5 + 0.5) * H, w = l.w, h = l.h;
       let mostra = false, px = 0, py = 0;
-      if (frente > 0.2 && (l.tipo === 'rio' || (l.tipo === 'dest' ? mundo : !mundo || !!opts.origemSempre))) {
+      if (frente > 0.2 && (l.tipo === 'rio' || (l.tipo === 'dest' ? mundo : !mundo))) {
         const lugares = l.tipo === 'bxd'
           ? [[x - 12 - w, y - h - 2], [x - w / 2, y + 12], [x - 12 - w, y - h / 2]]
           : l.tipo === 'rio'
@@ -281,17 +267,10 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
   };
 
   const passo = (dt: number) => {
-    if (ciclo && !arraste && t > pausaAte && t - desde > DURACAO[etapa]) definir((etapa + 1) % 3, false);
+    if (!arraste && t > pausaAte && t - desde > DURACAO[etapa]) definir((etapa + 1) % 3, false);
     const k = 1 - Math.exp(-dt * 2.4);
     if (arraste) { /* rotação guiada pelo ponteiro */ }
-    else if (!ciclo) {
-      // etapa fixa: depois de soltar, desliza e volta devagar ao enquadramento, balançando de leve
-      if (t > pausaAte) {
-        let d = -VIS[etapa].lon * D2R + Math.sin(t * 0.22) * 0.07 - rotY;
-        d = Math.atan2(Math.sin(d), Math.cos(d));
-        rotY += d * (1 - Math.exp(-dt * 1.2));
-      } else { rotY += vel; vel *= Math.pow(0.94, dt * 60); }
-    } else if (rotAlvo !== null) {
+    else if (rotAlvo !== null) {
       let d = rotAlvo - rotY;
       d = Math.atan2(Math.sin(d), Math.cos(d));
       rotY += d * (1 - Math.exp(-dt * 3));
@@ -301,7 +280,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
       vel *= Math.pow(0.94, dt * 60);
       if (etapa === 2 && t > pausaAte) rotY += 0.08 * dt;
     }
-    const v = VIS[etapa];
+    const v = VISTAS[etapa];
     inc += (v.lat * D2R - inc) * k;
     camZ += (v.z - camZ) * k;
     for (let i = 0; i < 3; i++) peso[i] += ((i === etapa ? 1 : 0) - peso[i]) * (1 - Math.exp(-dt * 3));
@@ -325,10 +304,9 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
   const medir = () => {
     W = Math.max(2, host.clientWidth);
     H = Math.max(2, host.clientHeight || W);
-    const q = opts.quadro ? opts.quadro(W, H) : { S: W, x: 0, y: (H - W) / 2 };
     renderer.setSize(W, H, false);
-    camera.setViewOffset(q.S, q.S, -q.x, -q.y, W, H);
-    mPts.uniforms.uSize.value = Math.max(2.1, (q.S / 660) * 3.5) * renderer.getPixelRatio();
+    camera.setViewOffset(W, W, 0, -(H - W) / 2, W, H);
+    mPts.uniforms.uSize.value = Math.max(2.1, (W / 660) * 3.5) * renderer.getPixelRatio();
     rotulos.forEach((l) => { l.w = 0; });
     if (!raf) desenhar();
   };
@@ -349,7 +327,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
   const aoSoltar = (e: PointerEvent) => {
     if (!arraste || e.pointerId !== arraste.id) return;
     arraste = null;
-    pausaAte = t + (ciclo ? 6 : 2.5);
+    pausaAte = t + 6;
   };
   const aoVisibilidade = () => (document.hidden ? desligar() : ligar());
   const aoPerderContexto = () => { desligar(); opts.aoFalhar(); };

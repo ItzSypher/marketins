@@ -23,8 +23,8 @@
   --texto-2: #b9aab0;          /* sobre --chao: 9:1 */
 
   /* Tipografia */
-  --display: 'Benzin', system-ui, sans-serif;
-  --corpo: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --display: 'Benzin', 'Jost Variable', sans-serif;
+  --corpo: 'Jost Variable', 'Jost', sans-serif;
 
   --gutter: clamp(16px, 5vw, 72px);
   color-scheme: dark;

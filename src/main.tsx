@@ -1,4 +1,4 @@
-import '@fontsource-variable/montserrat';
+import '@fontsource-variable/jost';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

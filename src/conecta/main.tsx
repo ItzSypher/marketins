@@ -1,4 +1,4 @@
-import '@fontsource-variable/montserrat';
+import '@fontsource-variable/jost';
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import Lenis from 'lenis';

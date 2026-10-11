@@ -123,5 +123,4 @@ main > .bloco, main > .vitrine, main > .conecta2 { padding: 5rem 16px; max-width
 }
 @media (prefers-reduced-motion: reduce) { .logos__trilho { animation: none; } }
 
-:root { --corpo: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif; }
 :root { --borda-figma: linear-gradient(90deg, #3a6bff, #c0187a 55%, #fe5223); }

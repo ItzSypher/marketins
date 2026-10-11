@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createRoot } from 'react-dom/client';
 import { destaques, linkContato } from '../content';
 import { Equipe, IphoneReels, Mosaico, Musica } from './blocos';
-import '@fontsource-variable/montserrat';
+import '@fontsource-variable/jost';
 import '../tokens.css';
 import { Logo3D } from './Logo3D';
 import { Botao } from './Botao';
@@ -182,7 +182,7 @@ function App() {
         </div>
       </Secao>
 
-      <Secao id="tipografia" titulo="Tipografia" porque="Benzin em tudo que é título e botão. Texto corrido na fonte do sistema, para ler rápido no celular.">
+      <Secao id="tipografia" titulo="Tipografia" porque="Benzin em tudo que é título e botão. Texto corrido em Jost, leve e legível no celular. Só duas fontes no site.">
         <div className="ds-pesos">
           {[400, 500, 600, 700, 800].map((w) => <p key={w} style={{ fontWeight: w }}>Benzin {w} · Marketins</p>)}
         </div>
