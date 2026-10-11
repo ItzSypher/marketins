@@ -89,7 +89,7 @@ export function Checklist() {
         <header className="ck__cab" data-revela>
           <span className="t-num">Checklist rápido</span>
           <h2 className="t-titulo ck__titulo" id={`${uid}-t`}>Quanto de Marketins o seu negócio precisa?</h2>
-          <p className="t-texto">Marque o que é verdade aí hoje. Cada item acende um pedaço da marca.</p>
+          <p className="t-texto">Marque o que acontece aí hoje.</p>
         </header>
 
         <div className={`ck-palco${cheio ? ' is-cheio' : ''}`} style={{ '--p': n / TOTAL } as React.CSSProperties}>

@@ -5,8 +5,8 @@ import { eventoConecta } from './dados';
 import './conecta.css';
 
 // Pop-up do Marketins Conecta com contagem regressiva.
-// - Só aparece depois da Entrada (`marketins:entrou` + 2,5 s) ou 4 s após carregar
-//   se a pessoa já entrou nesta sessão. Nunca logo de cara.
+// - Só aparece depois da Entrada, quando a pessoa rola além da hero (ou após 12 s).
+//   Nunca logo de cara nem por cima do título.
 // - Fechou (X, "Agora não", Esc, toque fora): vira uma pílula no canto inferior
 //   esquerdo que reabre o pop-up. O fechamento fica no sessionStorage.
 // - No dia 16 mostra "É hoje!"; do dia 17 em diante some.
@@ -65,18 +65,30 @@ export function Conecta() {
     setEstado('aberto');
   }, []);
 
-  // quando aparecer
+  // quando aparecer: depois da Entrada, só quando a pessoa já passou da hero (ou 12 s), para não cobrir o título
   useEffect(() => {
     if (Date.now() >= FIM) return;
     let t = 0;
-    const entrou = () => {
-      gravar(CHAVE_ENTROU);
+    let armado = false;
+    const rolou = () => { if (armado && scrollY > innerHeight * 0.8) disparar(); };
+    const disparar = () => {
+      if (!armado) return;
+      armado = false;
       window.clearTimeout(t);
-      t = window.setTimeout(mostrar, 2500);
+      removeEventListener('scroll', rolou);
+      mostrar();
     };
-    if (ler(CHAVE_ENTROU)) t = window.setTimeout(mostrar, 4000);
+    const armar = () => {
+      if (armado) return;
+      armado = true;
+      addEventListener('scroll', rolou, { passive: true });
+      t = window.setTimeout(disparar, 12000);
+      rolou();
+    };
+    const entrou = () => { gravar(CHAVE_ENTROU); armar(); };
+    if (ler(CHAVE_ENTROU)) armar();
     window.addEventListener('marketins:entrou', entrou);
-    return () => { window.clearTimeout(t); window.removeEventListener('marketins:entrou', entrou); };
+    return () => { window.clearTimeout(t); removeEventListener('scroll', rolou); window.removeEventListener('marketins:entrou', entrou); };
   }, [mostrar]);
 
   // conversa com o Assistente
