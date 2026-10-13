@@ -18,11 +18,14 @@ function temWebGL() {
   } catch { return false; }
 }
 
-/** Logo da Marketins ou do Conecta girando em WebGL. Sem WebGL ou com "reduzir movimento", mostra a imagem parada. */
+// celular ou tela de toque: o three (≈190 KB gz) e a extrusão custam segundos de CPU; fica a imagem girando em CSS
+const telaLeve = () => matchMedia('(max-width: 999px), (pointer: coarse)').matches;
+
+/** Logo da Marketins ou do Conecta girando em WebGL. Sem WebGL ou com "reduzir movimento", mostra a imagem parada; no celular, a imagem gira em CSS. */
 export function Logo3D({ tipo, className, impulso = 0 }: Props) {
   const caixa = useRef<HTMLDivElement>(null);
   const giro = useRef({ extra: 0 });
-  const [usar3D] = useState(() => temWebGL() && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [usar3D] = useState(() => !telaLeve() && temWebGL() && !matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => { if (impulso) giro.current.extra += Math.PI * 2; }, [impulso]);
 
@@ -60,7 +63,7 @@ export function Logo3D({ tipo, className, impulso = 0 }: Props) {
           const fill = ((path.userData as { style?: { fill?: string } } | undefined)?.style?.fill ?? '');
           if (!fill || fill === 'none') return;
           const gradiente = fill.startsWith('url');
-          const shapes = SVGLoader.createShapes(path);
+          const shapes = path.toShapes();
           const geo = new THREE.ExtrudeGeometry(shapes, { depth: 6 + (i % 3), bevelEnabled: true, bevelThickness: 1.2, bevelSize: 0.8, bevelSegments: 3, curveSegments: 18 });
           let mat: InstanceType<typeof THREE.MeshStandardMaterial>;
           if (gradiente) {
@@ -117,12 +120,12 @@ export function Logo3D({ tipo, className, impulso = 0 }: Props) {
       let visivel = true;
       const io = new IntersectionObserver(([en]) => { visivel = en.isIntersecting; }); io.observe(el);
 
-      const relogio = new THREE.Clock();
+      const t0 = performance.now();
       let raf = 0, extraAtual = 0;
       const loop = () => {
         raf = requestAnimationFrame(loop);
-        if (!visivel) return;
-        const t = relogio.getElapsedTime();
+        if (!visivel || document.hidden) return;
+        const t = (performance.now() - t0) / 1000;
         extraAtual += (giro.current.extra - extraAtual) * 0.06;
         if (tipo === 'icone') grupo.rotation.y = t * 0.9 + extraAtual;
         else grupo.rotation.y = Math.sin(t * 0.7) * 0.55 + extraAtual;
@@ -143,7 +146,7 @@ export function Logo3D({ tipo, className, impulso = 0 }: Props) {
   }, [tipo, usar3D]);
 
   return (
-    <div ref={caixa} className={`logo3d logo3d--${tipo}${className ? ` ${className}` : ''}`}>
+    <div ref={caixa} className={`logo3d logo3d--${tipo}${usar3D ? '' : ' logo3d--css'}${className ? ` ${className}` : ''}`}>
       <img className="logo3d__fallback" src={tipo === 'icone' ? '/icone.svg' : '/conecta-3d.webp'} alt="" />
     </div>
   );

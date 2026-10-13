@@ -108,6 +108,11 @@
 .assist__tocar:hover { background: rgb(255 255 255 / 0.08); border-color: rgb(255 255 255 / 0.4); }
 .assist__tocar[aria-pressed='true'] { border-color: rgb(254 82 35 / 0.6); }
 
+/* toque: sem backdrop-filter no botão fixo (recompõe a cada quadro de scroll) */
+@media (max-width: 999px), (pointer: coarse) {
+  .assist__botao { background: rgb(22 16 19 / 0.96); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
 /* celular: com o pop-up do Conecta aberto, o botão sai de cena (o pop-up ocupa a base da tela) */
 @media (max-width: 639px) {
   :root[data-conecta-aberto] .assist { opacity: 0; pointer-events: none; transform: translateY(12px); }

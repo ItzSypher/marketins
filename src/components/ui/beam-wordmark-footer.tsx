@@ -230,6 +230,8 @@ const CSS =
   'linear-gradient(var(--bwf-ang),transparent calc(var(--bwf-b) - 34%),rgba(var(--bwf-acc),.12) calc(var(--bwf-b) - 27%),transparent calc(var(--bwf-b) - 20%))}' +
   '.bwf-glow{position:absolute;inset:0;opacity:var(--bwf-g);background:radial-gradient(circle 26cqw at var(--bwf-px) var(--bwf-py),rgba(var(--bwf-hot),.13),rgba(var(--bwf-acc),.07) 40%,transparent 70%)}' +
   ".bwf-grain{position:absolute;inset:0;opacity:.12;mix-blend-mode:overlay;background-image:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")}" +
+  // celular/toque: sem blur grande no feixe nem mistura overlay no grão (custo de composição)
+  '@media (max-width:999px),(pointer:coarse){.bwf-beam{filter:none}.bwf-grain{display:none}}' +
   // grade
   '.bwf-inner{position:relative;z-index:2;box-sizing:border-box;max-width:1180px;margin:0 auto;padding:clamp(56px,8.5cqw,112px) clamp(20px,6cqw,88px) 0;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1.1fr) minmax(0,.7fr);column-gap:clamp(24px,4.5cqw,64px);row-gap:44px}' +
   '.bwf-label{font-size:11.5px;font-weight:600;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:rgb(var(--bwf-hot));padding-bottom:14px;position:relative;display:block}' +

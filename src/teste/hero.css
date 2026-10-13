@@ -61,17 +61,17 @@
     -webkit-mask-image: none; mask-image: none; }
   .hr-globo--centro canvas { -webkit-mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); mask-image: radial-gradient(closest-side, #000 86%, transparent 100%); }
 
-  /* símbolo branco: bem maior que o globo, um pouco à esquerda e acima, girando devagar e descendo com a rolagem */
+  /* símbolo branco: bem maior que o globo, um pouco à esquerda e acima, girando e descendo com a rolagem.
+     Sem drop-shadow nem giro infinito no celular: com a máscara do pai, cada quadro redesenhava 900px de filtro */
   .hr-fundo { display: block; position: absolute; z-index: 2; inset: -10% 0 0; pointer-events: none;
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
     transform: translate3d(0, calc(var(--hr-p, 0) * 22%), 0) scale(calc(1 + var(--hr-p, 0) * 0.12)); will-change: transform; }
   .hr .hr-simbolo { width: calc(min(100cqw - 20px, 100cqh, 620px) * 1.85); left: 40%; top: 57%; opacity: 0.42;
-    filter: drop-shadow(0 0 0.5px #fff) drop-shadow(0 0 10px rgb(208 0 77 / 0.55));
-    transform: rotate(calc(var(--hr-p, 0) * 50deg)); animation-duration: 160s; }
+    transform: rotate(calc(var(--hr-p, 0) * 50deg)); animation: none; will-change: transform; }
   .hr-txt { gap: 0.9rem; }
   .hr-h1 { gap: 0.6rem; }
   .hr-h1__local { text-wrap: balance; }
-  .hr-h1__frase { font-size: min(2.4rem, (100vw - 32px) / 13); }
+  .hr-h1__frase { font-size: min(2.2rem, (100vw - 32px) / 14.5); }
   .hr-h1__frase > span { display: block; }
 }
 @media (max-width: 999px) and (min-width: 600px) {

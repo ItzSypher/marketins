@@ -4,34 +4,41 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 .t-sec { padding: 5rem 16px; max-width: 1240px; margin-inline: auto; }
 .t-num { font: 700 0.72rem/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase; color: var(--laranja); }
 .t-cabeca { display: grid; gap: 1rem; margin-bottom: 2.5rem; }
-.t-titulo { font: 800 clamp(1.9rem, 7vw, 4.2rem)/1 var(--display); text-transform: uppercase; letter-spacing: -0.01em; max-width: 18ch; }
+.t-titulo { font: 800 clamp(1.5rem, 6.4vw, 4.2rem)/1 var(--display); text-transform: uppercase; letter-spacing: -0.01em; max-width: 18ch; }
 .t-texto { color: var(--texto-2); max-width: 52ch; font-size: 1.05rem; }
 
 /* 01: pilha */
 .pilha { display: grid; gap: 1.5rem; }
-.pilha__card { position: sticky; top: calc(72px + var(--i) * 14px); display: grid; overflow: hidden; border-radius: 28px; background: var(--chao-2); border: 1px solid var(--linha); transform-origin: center top; box-shadow: 0 -20px 60px rgb(0 0 0 / 0.5); }
+.pilha__card { position: sticky; top: calc(72px + var(--i) * 14px); display: grid; overflow: hidden; border-radius: 28px; background: var(--chao-2); border: 1px solid var(--linha); transform-origin: center top; box-shadow: 0 -12px 30px rgb(0 0 0 / 0.5); }
 .pilha__midia { aspect-ratio: 16 / 10; border-radius: 0; }
 .pilha__midia { display: grid; place-items: center; background: var(--gradiente-texto); padding: 1.5rem; }
 .pilha__logo { width: min(60%, 320px); height: auto; max-height: 55%; object-fit: contain; filter: brightness(0) invert(1); }
-.pilha__marca { font: 800 clamp(2.2rem, 9vw, 4.6rem)/1 var(--display); text-transform: uppercase; text-align: center; color: #fff; }
+.pilha__marca { font: 800 1.6rem/1 var(--display); text-transform: uppercase; text-align: center; color: #fff; }
 .pilha__info { display: grid; gap: 0.8rem; justify-items: start; padding: 1.5rem; }
-.pilha__nome { font: 800 clamp(1.6rem, 6vw, 3.2rem)/1.05 var(--display); text-transform: uppercase; }
+.pilha__nome { font: 800 clamp(1.25rem, 5vw, 3.2rem)/1.05 var(--display); text-transform: uppercase; }
 .pilha__troca { display: grid; overflow: hidden; line-height: 1.12; }
 .pilha__troca b { grid-area: 1 / 1; font-weight: inherit; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
 .pilha__troca b + b { transform: translateY(110%); color: var(--laranja); }
 .pilha__card:hover .pilha__troca b:first-child { transform: translateY(-110%); }
 .pilha__card:hover .pilha__troca b + b { transform: none; }
 .pilha__seg { color: var(--texto-2); }
+/* sem logo, o nome já aparece em .pilha__nome: no celular a marca grande não repete e a faixa fica baixa */
+.pilha__midia:has(.pilha__marca) { aspect-ratio: 16 / 5; }
+.pilha__marca { display: none; }
+/* escurecer o card de baixo: overlay com opacity (criado em main.tsx), sem filter no scrub */
+.pilha__vel { position: absolute; inset: 0; z-index: 2; background: #000; opacity: 0; pointer-events: none; border-radius: inherit; }
+/* animações infinitas só rodam com a seção à vista (classe .is-fora vem do main.tsx) */
+.is-fora .logos__trilho, .is-fora .ck-palco.is-cheio .ck-simbolo__voo, .is-fora .fd-reel__ouvir { animation-play-state: paused; }
 
 /* faixa abaixo da hero */
 .faixa-clientes { padding: 2.5rem 0 1.5rem !important; margin-inline: 0; max-width: none; width: 100%; overflow: hidden; }
 .letreiro { overflow: hidden; padding: 0.4rem 0; }
 .letreiro__trilho { display: flex; width: max-content; gap: 0; }
-.letreiro span { display: inline-flex; align-items: center; gap: 1.2rem; padding-right: 1.2rem; white-space: nowrap; font: 800 clamp(2.2rem, 8vw, 6.5rem)/1.1 var(--display); text-transform: uppercase; color: var(--texto); }
+.letreiro span { display: inline-flex; align-items: center; gap: 1.2rem; padding-right: 1.2rem; white-space: nowrap; font: 800 clamp(1.5rem, 6.5vw, 6.5rem)/1.1 var(--display); text-transform: uppercase; color: var(--texto); }
 .letreiro span:nth-child(3n + 2) { color: transparent; -webkit-text-stroke: 1.5px var(--texto-2); }
 .letreiro i { font-style: normal; font-size: 0.4em; color: var(--laranja); }
 .letreiro--seg { background: var(--gradiente-texto); transform: rotate(-2deg); margin-block: 1.5rem; }
-.letreiro--seg span { color: #fff; font-size: clamp(1.3rem, 4vw, 2.6rem); }
+.letreiro--seg span { color: #fff; font-size: clamp(1.1rem, 4vw, 2.6rem); }
 .letreiro--seg span:nth-child(3n + 2) { color: #fff; -webkit-text-stroke: 0; }
 .letreiro--seg i { color: #fff; }
 
@@ -41,6 +48,14 @@ html { scrollbar-color: var(--laranja) var(--chao); }
 .cartao__ig { color: var(--texto-2); font: 700 0.75rem/1 var(--display); letter-spacing: 0.1em; text-decoration: none; }
 .cartao__ig:hover { color: var(--laranja); }
 
+@media (min-width: 1000px) {
+  .letreiro span { font-size: clamp(2.2rem, 8vw, 6.5rem); }
+  .letreiro--seg span { font-size: clamp(1.3rem, 4vw, 2.6rem); }
+  .pilha__nome { font-size: clamp(1.6rem, 6vw, 3.2rem); }
+  .pilha__marca { display: block; font-size: clamp(2.2rem, 9vw, 4.6rem); }
+  .pilha__midia:has(.pilha__marca) { aspect-ratio: auto; }
+  .pilha__card { box-shadow: 0 -20px 60px rgb(0 0 0 / 0.5); }
+}
 @media (min-width: 768px) {
   .pilha__card { grid-template-columns: 1.25fr 1fr; align-items: center; min-height: 440px; }
   .pilha__midia { aspect-ratio: auto; height: 100%; }

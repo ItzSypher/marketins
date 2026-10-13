@@ -93,6 +93,8 @@ function Fecho() {
 function App() {
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // toque: scroll nativo (Lenis em celular só adiciona trabalho na thread principal)
+    if (matchMedia('(pointer: coarse)').matches) return;
     const lenis = new Lenis();
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (t: number) => lenis.raf(t * 1000);
@@ -119,16 +121,28 @@ function App() {
         });
       });
       // pilha: o card de baixo encolhe e escurece quando o próximo cobre
+      // (escurece com um véu preto animando opacity: filter em scrub é caro)
+      const veus: HTMLElement[] = [];
       gsap.utils.toArray<HTMLElement>('.pilha__card').forEach((c, i, todos) => {
         const prox = todos[i + 1];
         if (!prox) return;
-        gsap.fromTo(c, { scale: 1, filter: 'brightness(1)' }, { scale: 0.94, filter: 'brightness(0.7)', ease: 'none', scrollTrigger: { trigger: prox, start: 'top 70%', end: 'top 20%', scrub: true } });
+        const vel = document.createElement('span');
+        vel.className = 'pilha__vel';
+        vel.setAttribute('aria-hidden', 'true');
+        c.append(vel);
+        veus.push(vel);
+        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: prox, start: 'top 70%', end: 'top 20%', scrub: true } });
+        tl.fromTo(c, { scale: 1 }, { scale: 0.94 }, 0).fromTo(vel, { opacity: 0 }, { opacity: 0.3 }, 0);
       });
+      return () => veus.forEach((v) => v.remove());
     });
+    // animações infinitas pausam fora da tela (ver .is-fora em teste.css)
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('is-fora', !e.isIntersecting)), { rootMargin: '100px 0px' });
+    document.querySelectorAll('section.logos, section.fd, section.ck').forEach((el) => io.observe(el));
     const recalcular = () => ScrollTrigger.refresh();
     document.fonts?.ready.then(recalcular);
     addEventListener('load', recalcular);
-    return () => { mm.revert(); removeEventListener('load', recalcular); };
+    return () => { io.disconnect(); mm.revert(); removeEventListener('load', recalcular); };
   }, []);
 
   return (

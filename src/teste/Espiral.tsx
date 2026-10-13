@@ -18,7 +18,7 @@ import { Lightbox } from '../ds/Lightbox';
   (o navegador faz o hit-test 3D); fatias de costas ficam sem pointer-events.
 */
 
-const REPETICOES = 3;
+const REPETICOES = 3; // desktop; abaixo de 1000px é 1 (menos cartas e imagens)
 const DISTANCIA = 1.9; // percurso em alturas úteis de tela
 const SUAVIDADE = 0.13; // suaviza só a espiral; a fixação é imediata
 
@@ -46,15 +46,17 @@ const FATIAS_DESKTOP = 9;
 const TOPO_DESKTOP = 0.62; // centro da fileira, em fração da altura
 // mobile: uma carta grande no centro, vizinhas aparecendo nas bordas
 const BREAKPOINT = 620;
-const FATIAS_MOBILE = 7;
+const FATIAS_MOBILE = 5;
+const FATIAS_TABLET = 5; // 620–999px
+const LARGURA_COMPLETA = 1000; // a partir daqui vale o visual completo do desktop
 const CARTAS_VOLTA_MOBILE = 7;
 const SUBIDA_VOLTA_MOBILE = 1.18;
 const ALT_MOBILE_VW = 0.6;
-const ALT_MOBILE_VH = 0.3;
+const ALT_MOBILE_VH = 0.34;
 const ALT_MOBILE_MAX = 300;
 const PERSP_MOBILE = 3.4;
 const INCLINA_X_MOBILE = 5;
-const TOPO_MOBILE = 0.6;
+const TOPO_MOBILE = 0.52;
 
 const suave = (x: number) => x * x * (3 - 2 * x);
 
@@ -77,7 +79,8 @@ export function Espiral() {
 
     const cartas: HTMLLIElement[] = [];
     const fotos: typeof trabalhos = [];
-    for (let r = 0; r < REPETICOES; r++) trabalhos.forEach((t, i) => {
+    const repeticoes = innerWidth < LARGURA_COMPLETA ? 1 : REPETICOES;
+    for (let r = 0; r < repeticoes; r++) trabalhos.forEach((t, i) => {
       const li = document.createElement('li');
       li.className = 'esp-carta';
       li.dataset.i = String(i);
@@ -88,7 +91,8 @@ export function Espiral() {
       fotos.push(t);
     });
     // a primeira arte começa no centro da fileira; sobra fita à esquerda para descer
-    const centro = trabalhos.length * (REPETICOES - 1);
+    // (com 1 repetição o percurso FIM ainda cabe: a fita começa no 9º e termina no 1º)
+    const centro = repeticoes > 1 ? trabalhos.length * (repeticoes - 1) : Math.min(trabalhos.length - 1, Math.round(FIM));
 
     let fatias = 0;
     let tiras: HTMLElement[][] = [];
@@ -107,6 +111,13 @@ export function Espiral() {
       if (cacheCostas[ci][ti] !== costas) { el.classList.toggle('esp-costas', costas); cacheCostas[ci][ti] = costas; }
     }
 
+    // as imagens só entram nas fatias quando a seção chega perto (1 tela): nada baixa na carga
+    let perto = false;
+    function carregar() {
+      if (!perto) return;
+      tiras.forEach((l, ci) => l.forEach((t) => { if (!t.style.backgroundImage) t.style.backgroundImage = `url("${fotos[ci].src}")`; }));
+    }
+
     function montarFatias(n: number) {
       fatias = n;
       cena.style.setProperty('--fatias', String(n));
@@ -116,7 +127,6 @@ export function Espiral() {
         for (let i = 0; i < n; i++) {
           const t = document.createElement('i');
           t.className = 'esp-tira';
-          t.style.backgroundImage = `url("${fotos[ci].src}")`;
           t.style.setProperty('--indice', String(i));
           if (i === 0) t.dataset.ponta = 'esquerda';
           if (i === n - 1) t.dataset.ponta = 'direita';
@@ -125,6 +135,7 @@ export function Espiral() {
         }
         return l;
       });
+      carregar();
       cacheTransform = cartas.map(() => new Array(n).fill(''));
       cacheAng = cartas.map(() => new Array(n).fill(NaN));
       cacheCostas = cartas.map(() => new Array(n).fill(false));
@@ -136,7 +147,7 @@ export function Espiral() {
     function medirGeometria() {
       const mobile = cena.clientWidth < BREAKPOINT;
       root.classList.toggle('esp-mobile', mobile);
-      const n = mobile ? FATIAS_MOBILE : FATIAS_DESKTOP;
+      const n = mobile ? FATIAS_MOBILE : innerWidth < LARGURA_COMPLETA ? FATIAS_TABLET : FATIAS_DESKTOP;
       if (n !== fatias) montarFatias(n);
       alturaCena = cena.clientHeight;
       larguraCena = cena.clientWidth;
@@ -291,6 +302,10 @@ export function Espiral() {
     ro.observe(root.parentElement!);
     const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) agendar(); });
     io.observe(root);
+    const ioImg = new IntersectionObserver((e) => {
+      if (e.some((x) => x.isIntersecting)) { perto = true; carregar(); ioImg.disconnect(); }
+    }, { rootMargin: '100% 0px 100% 0px' });
+    ioImg.observe(root);
     document.fonts?.ready.then(agendarMedicao);
     medir();
 
@@ -299,6 +314,7 @@ export function Espiral() {
       cancelAnimationFrame(medicao);
       ro.disconnect();
       io.disconnect();
+      ioImg.disconnect();
       lista.removeEventListener('click', clicar);
       document.removeEventListener('scroll', agendar, { capture: true });
       removeEventListener('resize', resize);

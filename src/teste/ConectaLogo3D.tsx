@@ -7,7 +7,9 @@ import { useEffect, useRef, useState } from 'react';
     como a arte 3D do Figma.
   - Movimento: balanço lento no eixo Y e, a cada 10 s, uma volta completa.
   - Sem WebGL ou com "reduzir movimento": o SVG parado (nítido em qualquer tela).
-  - `ativo` pausa o desenho quando o card está fechado (o contexto WebGL é criado uma vez só).
+  - `ativo` pausa o desenho quando o card está fechado. O three só é baixado na primeira vez que
+    o card abre grande (o contexto WebGL é criado uma vez só).
+  - Celular ou tela de toque: o SVG parado. O 3D custa segundos de CPU num celular médio.
 */
 
 const SRC = '/conecta/conecta-logo.svg';
@@ -44,7 +46,11 @@ export function ConectaLogo3D({ ativo, className }: { ativo: boolean; className?
   const caixa = useRef<HTMLDivElement>(null);
   const ligado = useRef(ativo);
   ligado.current = ativo;
-  const [usar3D] = useState(() => temWebGL() && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [pode3D] = useState(() => !matchMedia('(max-width: 999px), (pointer: coarse)').matches
+    && !matchMedia('(prefers-reduced-motion: reduce)').matches && temWebGL());
+  const [jaAbriu, setJaAbriu] = useState(ativo);
+  if (ativo && !jaAbriu) setJaAbriu(true);
+  const usar3D = pode3D && jaAbriu;
 
   useEffect(() => {
     if (!usar3D) return;

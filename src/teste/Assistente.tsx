@@ -97,7 +97,7 @@ export function Assistente() {
 
   return (
     <div ref={raiz} className={`assist${aberto ? ' is-aberto' : ''}${tocando ? ' is-tocando' : ''}`}>
-      <audio ref={audio} src="/media/musica.mp3" loop preload="auto" onTimeUpdate={tempo} />
+      <audio ref={audio} src="/media/musica.mp3" loop preload="none" onTimeUpdate={tempo} />
 
       <div id={`${id}-painel`} className="assist__painel" role="dialog" aria-modal="false" aria-labelledby={`${id}-oi`}>
         <header className="assist__topo">

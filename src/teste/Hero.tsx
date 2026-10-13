@@ -57,12 +57,23 @@ function Globo({ className, ativo }: { className: string; ativo: boolean }) {
         })
         .catch(falhou);
     };
+    // celular: o three (≈190 KB gz) é montado depois que a cortina da entrada sobe e o navegador folga,
+    // para o toque de entrada e a primeira rolagem não travarem
+    const celular = matchMedia('(max-width: 999px)').matches;
+    let espera = 0;
+    const quandoFolgar = (f: () => void) => {
+      if (!celular) { f(); return; }
+      espera = window.setTimeout(() => {
+        if ('requestIdleCallback' in window) requestIdleCallback(() => { if (vivo) f(); }, { timeout: 1500 });
+        else f();
+      }, 1100);
+    };
     let io: IntersectionObserver | null = null;
     if ('IntersectionObserver' in window) {
-      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io?.disconnect(); carregar(); } }, { rootMargin: '300px 0px' });
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io?.disconnect(); quandoFolgar(carregar); } }, { rootMargin: '300px 0px' });
       io.observe(el);
-    } else carregar();
-    return () => { vivo = false; io?.disconnect(); c?.destruir(); c = null; };
+    } else quandoFolgar(carregar);
+    return () => { vivo = false; window.clearTimeout(espera); io?.disconnect(); c?.destruir(); c = null; };
   }, [ativo]);
 
   if (estado === 'falhou') return null;

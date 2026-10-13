@@ -7,7 +7,8 @@ import './conecta.css';
 
 // Aviso do Marketins Conecta com contagem regressiva, em três tamanhos:
 //   grande (modal com véu, contagem enorme e o logo em 3D)
-//   → fechar → canto (card menor no canto inferior esquerdo; no celular, na base da tela)
+//   → fechar → canto (card menor no canto inferior esquerdo; no celular pula direto para o selo,
+//     porque o card cobria quase metade da tela)
 //   → minimizar → selo (símbolo girando + "Conecta 16/10")
 //   → tocar no selo → grande de novo.
 // - Só aparece depois da Entrada, quando a pessoa rola além da hero (ou após 12 s).
@@ -26,10 +27,12 @@ const FIM = INICIO + DIA; // o dia do evento inteiro (horário de início ainda 
 
 type Estado = 'espera' | 'grande' | 'canto' | 'selo';
 
+const celular = () => matchMedia('(max-width: 699px)').matches;
 const lerEstado = (): Estado | null => {
   try {
     const v = sessionStorage.getItem(CHAVE_ESTADO);
-    return v === 'canto' || v === 'selo' ? v : null;
+    if (v === 'canto') return celular() ? 'selo' : 'canto';
+    return v === 'selo' ? v : null;
   } catch { return null; }
 };
 const gravar = (k: string, v: string) => { try { sessionStorage.setItem(k, v); } catch { /* sem storage: segue sem lembrar */ } };
@@ -159,14 +162,16 @@ export function Conecta() {
     return () => window.removeEventListener('marketins:assistente', ouvir);
   }, [mostrar]);
 
-  // grande → canto (devolve o foco a quem o tinha; se era o selo, que sumiu, vai para o card do canto)
+  // grande → canto, ou selo no celular (devolve o foco a quem o tinha; se era o selo, que sumiu, vai para o card do canto)
   const fecharGrande = useCallback(() => {
-    gravar(CHAVE_ESTADO, 'canto');
-    setEstado('canto');
+    const prox = celular() ? 'selo' : 'canto';
+    gravar(CHAVE_ESTADO, prox);
+    setEstado(prox);
     const volta = antes.current;
     antes.current = null;
     window.setTimeout(() => {
       if (volta && volta.isConnected && !selo.current?.contains(volta) && volta.offsetParent !== null) volta.focus({ preventScroll: true });
+      else if (prox === 'selo') selo.current?.focus({ preventScroll: true });
       else tituloCanto.current?.focus({ preventScroll: true });
     }, 40);
   }, []);

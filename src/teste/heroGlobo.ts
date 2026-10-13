@@ -69,7 +69,8 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
   const camadaRotulos = document.createElement('div');
   camadaRotulos.className = 'pr-rotulos';
   host.append(canvas, camadaRotulos);
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.75 : 2));
+  // celular: pixel ratio 1 (pontos e arcos continuam nítidos) e 30 quadros por segundo; poupa GPU e bateria
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1 : 2));
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
@@ -295,6 +296,7 @@ export function criarGlobo(THREE: typeof T3, host: HTMLElement, opts: Opcoes): C
 
   const quadro = (agora: number) => {
     raf = requestAnimationFrame(quadro);
+    if (mobile && agora - ultimo < 30) return;
     const dt = Math.min(0.05, Math.max(0, (agora - ultimo) / 1000));
     ultimo = agora;
     t += dt;

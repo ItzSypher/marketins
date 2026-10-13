@@ -91,7 +91,7 @@
   border-radius: clamp(14px, 2.4vw, 22px); background: rgb(255 255 255 / 0.04); border: 1px solid var(--linha);
 }
 .cgr__cel b {
-  font: 800 clamp(1.7rem, min(8.6vw, 10dvh), 6rem)/0.9 var(--display);
+  font: 800 clamp(1.4rem, min(7vw, 10dvh), 6rem)/0.9 var(--display);
   font-variant-numeric: tabular-nums; letter-spacing: 0;
   background: linear-gradient(180deg, #fff 55%, #ffd9cc); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
