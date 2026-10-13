@@ -6,9 +6,8 @@ import { empresa } from './dados';
 import './feed.css';
 
 /*
-  Feed: celular com o Instagram da Marketins. Duas versões (?feed=1|2):
-  1: perfil → posts um a um → Reels do Sérgio (vídeo toca, a música do site pausa).
-  2: posts um a um → termina no perfil com "Ver os Reels" / "Seguir".
+  Feed: celular com o Instagram da Marketins: perfil → 3 posts um a um → Reels do Sérgio
+  (vídeo toca, a música do site pausa).
   A seção é alta e o palco fica preso (position: sticky); o ScrollTrigger só lê o progresso
   e troca a etapa. Cada etapa anima o trilho do celular até o post seguinte (passo a passo).
   Fundo em camadas: brilhos, o contorno do símbolo em três escalas e posts soltos em volta,
@@ -23,22 +22,19 @@ const posts: { src: string; alt: string; legenda: string }[] = [
   { src: '/conecta/salve-a-data.webp', alt: 'Post do Marketins Conecta: 16 de outubro, salve essa data', legenda: 'Marketins Conecta: 16 de outubro. Salve essa data.' },
   { src: '/conecta/time-conecta.webp', alt: 'Post do Marketins Conecta com o time da agência', legenda: 'O time no Marketins Conecta.' },
   { src: '/trabalhos/04.webp', alt: 'Post da Marketins: "Quem é a Marketins?"', legenda: 'Quem é a Marketins?' },
-  { src: '/trabalhos/08.webp', alt: 'Post da Marketins: "Onde estamos?" com as unidades', legenda: 'Onde estamos? Nova Iguaçu e São João de Meriti.' },
-  { src: '/trabalhos/01.webp', alt: 'Arte da Marketins para a Mozi: caixa de salgados', legenda: 'Arte para a Mozi.' },
-  { src: '/trabalhos/06.webp', alt: 'Arte da Marketins para o BNI Baixada RJ', legenda: 'Arte para o BNI Baixada RJ.' },
 ];
+// posts soltos em volta do celular (decorativos)
+const soltos = ['/trabalhos/04.webp', '/trabalhos/01.webp', '/conecta/time-conecta.webp'];
 
-type Var = 1 | 2;
-const lerVar = (): Var => (new URLSearchParams(location.search).get('feed') === '2' ? 2 : 1);
 
 // mesmo contrato do IphoneReels antigo: o Assistente pausa e retoma a música por este evento
 const somDoSite = (acao: 'pausar' | 'retomar') =>
   window.dispatchEvent(new CustomEvent('marketins:musica', { detail: acao }));
 
 const POSTS_IDS = posts.map((_, i) => `p${i}`);
-const etapasDe = (v: Var) => (v === 1 ? ['perfil', ...POSTS_IDS, 'reel'] : [...POSTS_IDS, 'perfil']);
-// quanto de scroll cada etapa ocupa: a primeira já aparece antes de prender; o fim (Reels/perfil) fica mais
-const pesoDe = (e: string, i: number) => (e === 'reel' ? 2.4 : i === 0 ? 0.8 : e === 'perfil' ? 1.8 : 1);
+const ETAPAS = ['perfil', ...POSTS_IDS, 'reel'];
+// quanto de scroll cada etapa ocupa: a primeira já aparece antes de prender; o Reels fica mais
+const pesoDe = (e: string, i: number) => (e === 'reel' ? 2.4 : i === 0 ? 0.8 : 1);
 const etapaNo = (etapas: string[], p: number) => {
   const pesos = etapas.map(pesoDe);
   let alvo = p * pesos.reduce((a, b) => a + b, 0);
@@ -98,7 +94,6 @@ function Avatar({ tam }: { tam: 'g' | 'p' }) {
 }
 
 export function Feed() {
-  const [v, setV] = useState<Var>(lerVar);
   const [etapa, setEtapa] = useState(0);
   const [perto, setPerto] = useState(false);
   const [calmo] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -112,7 +107,7 @@ export function Feed() {
   const video = useRef<HTMLVideoElement>(null);
   const musicaPausada = useRef(false);
 
-  const etapas = etapasDe(v);
+  const etapas = ETAPAS;
   const N = etapas.length;
   const atual = etapas[Math.min(etapa, N - 1)];
   const itens = etapas.filter((e) => e !== 'reel');
@@ -121,15 +116,6 @@ export function Feed() {
   const postAtual = atual.startsWith('p') ? Number(atual.slice(1)) : -1;
   const carregar = perto ? 'eager' : 'lazy';
   const contorno = useContorno(perto);
-
-  const trocarVar = (n: Var) => {
-    if (n === v) return;
-    setV(n);
-    setEtapa(0);
-    const url = new URL(location.href);
-    url.searchParams.set('feed', String(n));
-    history.replaceState(history.state, '', url);
-  };
 
   /* scroll: proximidade, etapa, parallax e saída */
   useLayoutEffect(() => {
@@ -148,7 +134,7 @@ export function Feed() {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       ScrollTrigger.create({
         trigger: el, start: 'top top', end: 'bottom bottom',
-        onUpdate: (st) => setEtapa(etapaNo(etapasDe(v), st.progress)),
+        onUpdate: (st) => setEtapa(etapaNo(ETAPAS, st.progress)),
         onLeaveBack: () => setEtapa(0),
       });
       const faixa = { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.6 };
@@ -160,7 +146,7 @@ export function Feed() {
       gsap.fromTo(q('.fd-cel'), { rotateY: -14, rotateX: 6 }, { rotateY: 10, rotateX: -3, ease: 'none', scrollTrigger: faixa });
     });
     return () => { fixos.forEach((s) => s.kill()); mm.revert(); };
-  }, [v]);
+  }, []);
 
   /* passo a passo: o trilho anda até o item da etapa */
   const mover = useRef<(inst?: boolean) => void>(() => {});
@@ -170,7 +156,7 @@ export function Feed() {
     const max = Math.max(0, t.scrollHeight - j.clientHeight);
     gsap.to(t, { y: -Math.min(item.offsetTop, max), duration: inst ? 0 : 0.8, ease: 'power3.out', overwrite: true });
   };
-  useLayoutEffect(() => { mover.current(); }, [itemAtual, v]);
+  useLayoutEffect(() => { mover.current(); }, [itemAtual]);
   useEffect(() => {
     const j = janela.current; if (!j || calmo) return;
     let primeira = true;
@@ -227,7 +213,7 @@ export function Feed() {
   const preload = !perto ? 'none' : etapa >= N - 3 ? 'auto' : 'metadata';
 
   const blocoPerfil = (
-    <div className={`fd-perfil${v === 2 ? ' fd-perfil--fim' : ''}`} key="perfil">
+    <div className="fd-perfil" key="perfil">
       <div className="fd-perfil__topo">
         <a href={empresa.instagram} target="_blank" rel="noopener" aria-label="Abrir o Instagram da Marketins"><Avatar tam="g" /></a>
         <div className="fd-perfil__id">
@@ -289,7 +275,7 @@ export function Feed() {
   );
 
   return (
-    <section id="feed" ref={sec} className={`fd fd--v${v}${calmo ? ' fd--calmo' : ''}`} aria-labelledby="fd-titulo"
+    <section id="feed" ref={sec} className={`fd${calmo ? ' fd--calmo' : ''}`} aria-labelledby="fd-titulo"
       style={{ '--fd-etapas': N } as CSSProperties}>
       <div className="fd-palco">
         <div className="fd-fundo" aria-hidden="true">
@@ -327,19 +313,13 @@ export function Feed() {
                 </span>
               </div>
             )}
-            <div className="fd-var" role="group" aria-label="Comparar versões da seção do feed">
-              <span aria-hidden="true">Feed</span>
-              {([1, 2] as Var[]).map((n) => (
-                <button key={n} type="button" aria-pressed={v === n} aria-label={`Versão ${n}${n === 1 ? ', com o Reels' : ', termina no perfil'}`} onClick={() => trocarVar(n)}>{n}</button>
-              ))}
-            </div>
           </div>
 
           <div className="fd-area">
             <div className="fd-cena">
-              <img className="fd-solto fd-solto--a" src={posts[2].src} alt="" loading={carregar} decoding="async" data-prof="0.7" />
-              <img className="fd-solto fd-solto--b" src={posts[4].src} alt="" loading={carregar} decoding="async" data-prof="0.9" />
-              <img className="fd-solto fd-solto--c" src={posts[1].src} alt="" loading={carregar} decoding="async" data-prof="1.5" />
+              <img className="fd-solto fd-solto--a" src={soltos[0]} alt="" loading={carregar} decoding="async" data-prof="0.7" />
+              <img className="fd-solto fd-solto--b" src={soltos[1]} alt="" loading={carregar} decoding="async" data-prof="0.9" />
+              <img className="fd-solto fd-solto--c" src={soltos[2]} alt="" loading={carregar} decoding="async" data-prof="1.5" />
 
               <div className="fd-cel" role="group" aria-label="Instagram da Marketins no celular">
                 <div className="fd-cel__tela">
@@ -355,12 +335,12 @@ export function Feed() {
                   <div className="fd-janela" ref={janela} data-lenis-prevent={calmo ? '' : undefined} tabIndex={calmo ? 0 : undefined}
                     aria-label={calmo ? 'Feed do Instagram, role para ver' : undefined}>
                     <div className="fd-trilho" ref={trilho}>
-                      {v === 1 ? [blocoPerfil, ...blocosPosts] : [...blocosPosts, blocoPerfil]}
-                      {calmo && v === 1 && <div className="fd-reel fd-reel--lista" key="reel">{videoEl}</div>}
+                      {[blocoPerfil, ...blocosPosts]}
+                      {calmo && <div className="fd-reel fd-reel--lista" key="reel">{videoEl}</div>}
                     </div>
                   </div>
 
-                  {!calmo && v === 1 && (
+                  {!calmo && (
                     <div className={`fd-reel${noReel ? ' is-on' : ''}`} aria-hidden={!noReel}>
                       {videoEl}
                       <button className="fd-reel__toque" type="button" onClick={alternar} tabIndex={noReel ? 0 : -1}

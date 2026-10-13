@@ -1,17 +1,8 @@
-/* Time: esteira infinita + destaque em 2 versões (?time=1|2). Mobile first; nada de pin. */
+/* Time: esteira infinita + destaque (cascata no PC, palco no celular). Mobile first; nada de pin. */
 .tm { --tm-ease: cubic-bezier(0.65, 0, 0.25, 1); }
 .tm h3 { margin: 0; }
 .tm__topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0 1.5rem; margin-bottom: 2rem; }
 .tm__cabeca { margin-bottom: 0; }
-
-/* seletor discreto de versões */
-.tm-var { display: inline-flex; align-items: center; gap: 0; margin-top: 1rem; color: var(--texto-2); font: 700 0.62rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; }
-.tm-var span { margin-right: 0.2rem; }
-.tm-var button { position: relative; min-width: 34px; min-height: 44px; padding: 0 0.3rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
-.tm-var button + button::before { content: '·'; position: absolute; left: -2px; color: var(--linha); }
-.tm-var button[aria-pressed='true'] { color: var(--laranja); }
-.tm-var button:hover { color: var(--texto); }
-.tm-var button:focus-visible { outline: 2px solid var(--laranja); outline-offset: -6px; border-radius: 8px; }
 
 .tm button { -webkit-tap-highlight-color: transparent; }
 
@@ -53,7 +44,7 @@
 .tm-setas button:hover { background: var(--magenta); border-color: var(--magenta); }
 .tm-setas button:focus-visible { outline: 2px solid var(--laranja); outline-offset: 2px; }
 
-/* ───────────── 1. cascata ───────────── */
+/* ───────────── cascata (PC) ───────────── */
 /* celular: os de trás sobem e encolhem a partir do topo; PC: vão para a direita */
 .tm-cas { --dx: 0px; --dy: -24px; --ds: 0.07; position: relative; aspect-ratio: 900 / 1022; margin-top: 72px; touch-action: pan-y; user-select: none; }
 .tm-cas__card { position: absolute; inset: 0; overflow: hidden; border-radius: 22px; background: var(--chao-2); box-shadow: 0 -10px 30px rgb(0 0 0 / 0.45); transform-origin: 50% 0%; transform: translate(calc(var(--q) * var(--dx)), calc(var(--q) * var(--dy))) scale(calc(1 - var(--q) * var(--ds))); transition: transform 0.65s var(--tm-ease), opacity 0.5s, filter 0.65s; cursor: pointer; }
@@ -75,7 +66,7 @@
   100% { z-index: 20; opacity: 1; transform: none; }
 }
 
-/* ───────────── 2. mini-avatares ───────────── */
+/* ───────────── palco (celular) + mini-avatares ───────────── */
 .tm-palco { position: relative; aspect-ratio: 900 / 1022; overflow: hidden; border-radius: 22px; background: var(--chao-2); touch-action: pan-y; user-select: none; isolation: isolate; }
 .tm-palco__foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; opacity: 0; }
 .tm-palco__foto.is-sai { opacity: 1; z-index: 1; }

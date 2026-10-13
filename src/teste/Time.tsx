@@ -8,11 +8,10 @@ import './time.css';
   - Esteira: carrossel infinito de fotos grandes que anda sozinho (rAF no scrollLeft, então também
     rola com o dedo). Começa no Sérgio. Pausa no hover, no toque e com foco de teclado; com
     prefers-reduced-motion fica parado e só rola na mão. Nome e número ficam EMBAIXO da foto.
-  - Tocar numa pessoa abre o destaque (foto grande + número + nome + texto). Duas versões, por
-    ?time=1|2 (padrão 1):
-    1. Cascata (Figma, nó 5029:5573, "Versão Mobile"): o escolhido na frente e os próximos
-       escalonados atrás (para cima no celular, para a direita no PC), trocando com animação.
-    2. Mini-avatares: foto grande + fileira de avatares redondos para trocar de pessoa.
+  - Tocar numa pessoa abre o destaque (foto grande + número + nome + texto), com a fileira de
+    mini-avatares redondos para trocar de pessoa. A foto muda conforme a tela:
+    PC (900px+): cascata (Figma, nó 5029:5573): o escolhido na frente e os próximos escalonados à direita.
+    Celular: palco, a foto nova entra por cima da anterior com uma cortina.
     Nas duas: setas, swipe, teclado (setas e Esc) e botão para voltar à esteira.
 */
 
@@ -21,22 +20,24 @@ const N = time.length;
 const dois = (n: number) => String(n).padStart(2, '0');
 const W = 900, H = 1022;
 
-type Var = 1 | 2;
-const lerVar = (): Var => (new URLSearchParams(location.search).get('time') === '2' ? 2 : 1);
+const PC = '(min-width: 900px)';
+function usePC() {
+  const [pc, setPc] = useState(() => matchMedia(PC).matches);
+  useEffect(() => {
+    const mq = matchMedia(PC);
+    const mudou = () => setPc(mq.matches);
+    mq.addEventListener('change', mudou);
+    return () => mq.removeEventListener('change', mudou);
+  }, []);
+  return pc;
+}
 const semMovimento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function Time() {
-  const [v, setV] = useState<Var>(lerVar);
+  const pc = usePC();
   const [aberto, setAberto] = useState<number | null>(null);
   const [ultimo, setUltimo] = useState(0);
   const [focarCard, setFocarCard] = useState(false);
-
-  const trocarVar = (n: Var) => {
-    setV(n);
-    const url = new URL(location.href);
-    url.searchParams.set('time', String(n));
-    history.replaceState(history.state, '', url);
-  };
 
   const abrir = (i: number) => { setUltimo(i); setAberto(i); };
   const voltar = (sel: number, teclado: boolean) => { setUltimo(sel); setFocarCard(teclado); setAberto(null); };
@@ -48,16 +49,10 @@ export function Time() {
           <p className="t-num">O time</p>
           <h2 className="t-titulo" id="tm-titulo">Quem vai cuidar da sua marca</h2>
         </header>
-        <div className="tm-var" role="group" aria-label="Comparar versões do destaque do time">
-          <span aria-hidden="true">Time</span>
-          {([1, 2] as Var[]).map((n) => (
-            <button key={n} type="button" aria-pressed={v === n} aria-label={`Versão ${n}: ${n === 1 ? 'cascata' : 'mini-avatares'}`} onClick={() => trocarVar(n)}>{n}</button>
-          ))}
-        </div>
       </div>
       {aberto === null
         ? <Esteira inicio={ultimo} focar={focarCard} abrir={abrir} />
-        : <Destaque key={v} v={v} inicio={aberto} voltar={voltar} />}
+        : <Destaque key={pc ? 'pc' : 'cel'} cascata={pc} inicio={aberto} voltar={voltar} />}
     </section>
   );
 }
@@ -190,9 +185,9 @@ function Esteira({ inicio, focar, abrir }: { inicio: number; focar: boolean; abr
   );
 }
 
-/* ───────────── destaque (cascata ou mini-avatares) ───────────── */
+/* ───────────── destaque (cascata no PC, palco no celular; avatares nos dois) ───────────── */
 
-function Destaque({ v, inicio, voltar }: { v: Var; inicio: number; voltar: (sel: number, teclado: boolean) => void }) {
+function Destaque({ cascata, inicio, voltar }: { cascata: boolean; inicio: number; voltar: (sel: number, teclado: boolean) => void }) {
   const [sel, setSel] = useState(inicio);
   const raiz = useRef<HTMLDivElement>(null);
   const toque = useRef<number | null>(null);
@@ -225,14 +220,14 @@ function Destaque({ v, inicio, voltar }: { v: Var; inicio: number; voltar: (sel:
   return (
     <div
       ref={raiz}
-      className={`tm-dq tm-dq--${v === 1 ? 'cascata' : 'avatares'}`}
+      className={`tm-dq tm-dq--${cascata ? 'cascata' : 'avatares'}`}
       role="region"
       aria-roledescription="carrossel"
       aria-label="Destaque do time. Use as setas para trocar de pessoa."
       tabIndex={-1}
       onKeyDown={tecla}
     >
-      {v === 1
+      {cascata
         ? <Cascata sel={sel} vis={vis} escolher={setSel} gestos={gestos} />
         : <Palco sel={sel} vis={vis} gestos={gestos} />}
 
@@ -245,15 +240,13 @@ function Destaque({ v, inicio, voltar }: { v: Var; inicio: number; voltar: (sel:
           </div>
         </div>
 
-        {v === 2 && (
-          <div className="tm-av" role="group" aria-label="Escolher pessoa do time">
-            {time.map((m, i) => (
-              <button key={m.nome} type="button" className={`tm-av__bt${i === sel ? ' is-on' : ''}`} aria-label={m.nome} aria-pressed={i === sel} onClick={() => setSel(i)}>
-                <img src={m.foto} alt={m.nome} width={W} height={H} loading="lazy" decoding="async" />
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="tm-av" role="group" aria-label="Escolher pessoa do time">
+          {time.map((m, i) => (
+            <button key={m.nome} type="button" className={`tm-av__bt${i === sel ? ' is-on' : ''}`} aria-label={m.nome} aria-pressed={i === sel} onClick={() => setSel(i)}>
+              <img src={m.foto} alt="" width={W} height={H} loading="lazy" decoding="async" />
+            </button>
+          ))}
+        </div>
 
         <div className="tm-dq__ctrl">
           <div className="tm-setas">
@@ -270,7 +263,7 @@ function Destaque({ v, inicio, voltar }: { v: Var; inicio: number; voltar: (sel:
 type Vis = { sel: number; antes: number | null; dir: 1 | -1 };
 type Gestos = { onPointerDown: (e: RPointerEvent) => void; onPointerUp: (e: RPointerEvent) => void; onPointerCancel: () => void };
 
-/* 1. cascata: o escolhido na frente, os próximos escalonados atrás */
+/* PC: cascata, o escolhido na frente, os próximos escalonados atrás */
 function Cascata({ sel, vis, escolher, gestos }: { sel: number; vis: Vis; escolher: (i: number) => void; gestos: Gestos }) {
   return (
     <div className="tm-cas" data-dir={vis.dir} {...gestos}>
@@ -297,7 +290,7 @@ function Cascata({ sel, vis, escolher, gestos }: { sel: number; vis: Vis; escolh
   );
 }
 
-/* 2. palco: a foto nova entra por cima da anterior com uma cortina */
+/* celular: palco, a foto nova entra por cima da anterior com uma cortina */
 function Palco({ sel, vis, gestos }: { sel: number; vis: Vis; gestos: Gestos }) {
   return (
     <div className="tm-palco" data-dir={vis.dir} {...gestos}>
