@@ -148,7 +148,7 @@ export function Checklist() {
   };
 
   const escolhidos = ITENS.filter((_, i) => marcado[i]).map((it) => it.resumo);
-  const href = linkContato(`página teste · checklist: ${escolhidos.length ? escolhidos.join(', ') : 'nada marcado'}`);
+  const href = linkContato(`checklist: ${escolhidos.length ? escolhidos.join(', ') : 'nada marcado'}`);
   const cor = (c: Cor) => (c === 'B' ? '#fff' : c === 'M' ? '#d0004d' : c === 'L' ? '#fe5223' : `url(#${uid}-p)`);
   const ordem = new Map<number, number>();
 

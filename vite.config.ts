@@ -8,8 +8,8 @@ export default defineConfig({
   css: { postcss: {} },
   build: {
     rollupOptions: {
-      // Prévia do design system como página separada; o site continua em index.html.
-      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html'), teste: resolve(__dirname, 'teste.html'), conecta: resolve(__dirname, 'conecta.html') },
+      // index.html é o site (código em src/teste); anterior.html guarda a home antiga (src/main.tsx).
+      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html'), anterior: resolve(__dirname, 'anterior.html'), conecta: resolve(__dirname, 'conecta.html') },
     },
   },
   server: { port: 5173, host: true },

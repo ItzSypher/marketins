@@ -55,7 +55,7 @@ Quando o pedido for vago ou abrir uma frente nova (seção, página, campanha, c
 
 ## Comandos
 
-- `npm install` e depois `npm run dev`: servidor local em http://localhost:5173 (`/`, `/sergio.html`, `/teste.html`).
-- `npm run build`: typecheck + build (Vite, multi-página: `index`, `sergio`, `teste`).
+- `npm install` e depois `npm run dev`: servidor local em http://localhost:5173 (`/` é o site, código em `src/teste/`; `/anterior.html` é a home antiga; `/sergio.html`).
+- `npm run build`: typecheck + build (Vite, multi-página: `index`, `anterior`, `sergio`, `conecta`).
 - `npx vite preview --port 4180`: confere o build. Na nuvem, rode com `setsid` para não travar o shell.
 - Capturas na nuvem (sem Chrome do usuário): Chromium em `/opt/pw-browsers/chromium` com `--use-angle=swiftshader`.

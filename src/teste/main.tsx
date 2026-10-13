@@ -24,7 +24,7 @@ import './teste.css';
 import './espiral.css';
 
 gsap.registerPlugin(ScrollTrigger);
-const ORIGEM = 'página teste';
+const ORIGEM = 'home';
 
 function Seta({ href, children, escuro }: { href: string; children: string; escuro?: boolean }) {
   return (

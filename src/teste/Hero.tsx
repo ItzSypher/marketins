@@ -6,7 +6,7 @@ import { ENTRADA_FECHOU, entradaAberta } from './Entrada';
 import './hero.css';
 
 /*
-  Hero da página teste: o globo no centro, sobre a foto apagada, com o símbolo grande ao fundo e o título embaixo.
+  Hero do site: o globo no centro, sobre a foto apagada, com o símbolo grande ao fundo e o título embaixo.
   (Versão única; as variações 2 e 3 foram descartadas pelo cliente.)
   Abaixo de 1000px não há foto (nem download dela): só o globo, com o contorno do símbolo grande atrás
   dando profundidade, que desce e gira um pouco com a rolagem (parado com prefers-reduced-motion).
@@ -94,7 +94,7 @@ function Texto() {
       </h1>
       <p className="hr-apoio">Social media, design, audiovisual e tráfego pago, tudo com o mesmo time. Primeiro a gente entende o seu negócio.</p>
       <div className="hr-cta">
-        <Botao href={linkContato('página teste · hero')}>Agendar reunião</Botao>
+        <Botao href={linkContato('hero')}>Agendar reunião</Botao>
       </div>
     </div>
   );

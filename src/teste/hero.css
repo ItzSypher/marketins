@@ -1,4 +1,4 @@
-/* Hero da página teste (Hero.tsx): globo no centro. Mobile first; composição de desktop a partir de 1000px. */
+/* Hero do site (Hero.tsx): globo no centro. Mobile first; composição de desktop a partir de 1000px. */
 .hr { position: relative; isolation: isolate; overflow: hidden; min-height: max(100svh, 680px); background: var(--chao); color: var(--texto); font-family: var(--corpo);
   display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 0.75rem; padding: 60px 16px 32px; }
 
