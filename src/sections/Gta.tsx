@@ -13,7 +13,7 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
  * entra "Nada de GTA 6. Aqui é Marketins", o foguete sobe em 3D
  * e depois vem o "marketins" com a máscara (Stage, igual ao site).
  */
-export function GTA() {
+export function GTA({ saiNoFim = true }: { saiNoFim?: boolean } = {}) {
   const raiz = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -51,11 +51,14 @@ export function GTA() {
         // o foguete sobe em 3D
         .fromTo(q('.gta__foguete'), { yPercent: 120, scale: 0.4, autoAlpha: 0 }, { yPercent: 0, scale: 1, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 3.2)
         .fromTo(q('.gta__assina'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6 }, 4.2)
-        // segura um pouco e sai para o "marketins" (o logo não aparece duas vezes)
-        .fromTo(q('.gta__foguete, .gta__assina'), { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 0.6, duration: 0.7, ease: 'power2.in', immediateRender: false }, 5.4);
+        ;
+      // segura um pouco e sai para o "marketins" (o logo não aparece duas vezes).
+      // Sem o Stage depois (página /gta), o foguete fica e sobe junto com a rolagem.
+      if (saiNoFim) tl.fromTo(q('.gta__foguete, .gta__assina'), { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 0.6, duration: 0.7, ease: 'power2.in', immediateRender: false }, 5.4);
+      else tl.to({}, { duration: 0.8 });
     });
     return () => mm.revert();
-  }, []);
+  }, [saiNoFim]);
 
   return (
     <section className="gta" ref={raiz} aria-label="Nada de GTA 6. Aqui é Marketins.">

@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       // index.html é o site (código em src/teste); anterior.html guarda a home antiga (src/main.tsx).
-      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html'), anterior: resolve(__dirname, 'anterior.html'), conecta: resolve(__dirname, 'conecta.html') },
+      input: { main: resolve(__dirname, 'index.html'), sergio: resolve(__dirname, 'sergio.html'), anterior: resolve(__dirname, 'anterior.html'), conecta: resolve(__dirname, 'conecta.html'), gta: resolve(__dirname, 'gta.html') },
     },
   },
   server: { port: 5173, host: true },
