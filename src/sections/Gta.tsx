@@ -30,7 +30,9 @@ export function GTA({ saiNoFim = true }: { saiNoFim?: boolean } = {}) {
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
-          trigger: el, start: 'top top', end: '+=3400', pin: true, scrub: 1,
+          // celular: percurso mais curto (a mesma sequência em ~2 telas, não ~4)
+          trigger: el, start: 'top top', end: () => `+=${innerWidth < 1000 ? 1500 : 3400}`, pin: true, scrub: 1,
+          invalidateOnRefresh: true,
           // voltou para antes do X: o GTA fica inteiro, mesmo se a rolagem pulou etapas
           onLeaveBack: () => gsap.set([q('.gta__entrada'), q('.gta__ceu')], { autoAlpha: 1, scale: 1 }),
         },
